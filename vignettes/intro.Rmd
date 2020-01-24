@@ -1,0 +1,126 @@
+---
+title: "intro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(jsontools)
+```
+
+## json vectors
+
+Create JSON vectors
+
+```{r}
+x <- c('{"def": 1, "abc": 2}', '{"def": 2}', '[2, 1, 3]')
+json2(x)
+json2(c(x, NA))
+
+# new_json2()
+# as_json2()
+```
+
+Comparison ignores order of keys and the formatting of the input
+
+```{r}
+x <- new_json2('{"a": {"x": 1, "y": 2}}')
+x2 <- new_json2('{"a": {
+     "y": 2,
+     "x": 1
+    }
+  }'
+)
+
+x == x2
+```
+
+
+## reading, writing, formating, parsing
+
+```{r}
+json_vec <- c('{"abc": 1}', '{"def": 2}', '[1, 2, 3]')
+parse_json(json_vec)
+parse_json_vector(json_vec)
+
+x <- list(a = list(x = 1), b = list(x = 2), c = list(x = 3))
+format_json(x)
+format_json_vector(x)
+```
+
+
+## Convert a data.frame to JSON
+
+```{r}
+format_json_rowwise(mtcars[c("mpg", "cyl")])
+```
+
+
+## JSON helpers
+
+### Keys and Paths
+
+*Keys* are the top level names in a JSON object, e.g. `{"a": {"x": 1}, "b": 2, "c": 3}` has the keys "a", "b", and "c".
+*Paths* describe how to get to a value in a JSON string.
+
+```{r}
+x1 = json2('{"a": {"x": 1}, "b": 2, "c": 3}')
+x2 = json2('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
+x <- c(x1, x2, NA)
+
+json_keys(x)
+json_paths(x)
+
+json_has_key(x, "b")
+json_has_keys(x, c("a", "b"))
+json_has_all_keys(x, c("a", "b"))
+json_has_any_keys(x, c("a", "b"))
+
+json_has_path(x, c("a", "y"))
+json_has_paths(x, list(c("a", "x"), c("a", "y")))
+json_has_all_paths(x, list(c("a", "x"), c("a", "y")))
+json_has_any_paths(x, list(c("a", "x"), c("a", "y")))
+```
+
+### Modify
+
+```{r}
+json_set(x, path = "abc", value = "new value")
+
+json_modify(
+  x,
+  abc = list(
+    def = 20,
+    xyz = 10
+  ),
+  new_key = "new value"
+)
+
+json_merge(x, '{"a": 11, "b": 2}')
+
+json_delete_path(x, path = "abc")
+```
+
+### Get data
+
+To extract data of a JSON for a certain path use the `json_extract_*()` family of functions:
+
+```{r}
+json_get(x, "a")
+json_extract_dbl(x, "b")
+json_extract_lst(x, "a")
+```
+
+
+## Differences between R lists and JSON
+* JSON and lists have an important difference: lists in `\R{}` can be partially named. In JSON consists of arrays (all elements are unnamed) and objects (all fields are named).
