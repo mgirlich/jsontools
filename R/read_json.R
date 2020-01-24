@@ -13,11 +13,7 @@
 parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                        simplifyMatrix = FALSE, flatten = FALSE,
                        bigint_as_char = TRUE, na = list(), ...) {
-  # TODO use list_parse and get rid of simplifyVector, ...?
-  # TODO add argument spec
-  # TODO flag to sort before parsing?
   if (vec_size(x) == 0) {
-    # TODO should this return na?
     return(NULL)
   }
 
@@ -26,7 +22,6 @@ parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
   }
 
   if (is.na(x)) {
-    # TODO return parse result according to spec
     return(na)
   }
 
@@ -83,7 +78,6 @@ read_json <- function(path, ...) {
 parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                               simplifyMatrix = FALSE, flatten = FALSE,
                               bigint_as_char = TRUE, na = list(), ...) {
-  # TODO see from_json
   lapply(
     x,
     parse_json,

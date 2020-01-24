@@ -11,7 +11,6 @@
 #'
 #' @export
 json_get <- function(x, path, json2 = TRUE) {
-  # TODO maybe rename to json_subset?
   jq_cmd <- jq_get_key(path)
   jq_do(x, jq_cmd, json2 = json2)
 }

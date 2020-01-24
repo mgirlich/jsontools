@@ -4,17 +4,10 @@ format.json2 <- function(x, ..., pretty = FALSE) {
     return(character())
   }
 
-  # TODO left align doesn't look nice?
-  # --> that is the default formatting...
-  # x <- c('{"def": 1, "abc": 2}', '{"def": 2}', '[2, 1, 3]')
-  # json2(x)
-
   if (is_true(pretty)) {
     x <- purrr::map_chr(x, jsonlite::prettify)
   }
 
-  # TODO maybe use justify = "none"
-  # ifelse(is.na(x), "<NA>", NextMethod("format", x, justify = "none"))
   ifelse(is.na(x), "<NA>", x)
 }
 
@@ -25,12 +18,9 @@ obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
   }
 
   if (is_true(pretty)) {
-    # TODO should this support names via `labels` arg?
     cat(format(x, pretty = TRUE))
   } else {
     out <- stats::setNames(format(x), names(x))
-    # TODO use cat() to get justify = "none"?
-    # --> doesn't print names then
     print(out, quote = FALSE)
   }
 

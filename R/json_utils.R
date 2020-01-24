@@ -14,17 +14,14 @@ escape <- function(x) {
 
 
 jq_do <- function(x, ..., json2 = TRUE) {
-  #' Known jqr bugs:
-  #' * jqr::jq(c("1", "2")) # returns 12
-  #' * jqr::jq(NA_character_) # errors
-  #' * jqr::jq(c('{"a": 1}', '2'), ".a") # suppresses error and doesn't return anything for 2nd argument
-  # TODO jq_do(c("1", "2"))
+  # workaround for https://github.com/ropensci/jqr/issues/78
   idx <- !is.na(vec_data(x))
   r <- rep_along(x, NA_character_)
   r_jq <- jqr::jq(x[idx], ...)
 
+  # workaround for jqr bug
+  # https://github.com/ropensci/jqr/issues/80
   if (length(r_jq) != sum(idx)) {
-    # TODO jqr doesn't get the error message...
     abort("some error in jq")
   }
 
@@ -39,7 +36,6 @@ jq_do <- function(x, ..., json2 = TRUE) {
 
 
 check1 <- function(x) {
-  # TODO better error message
   if (!length(x) == 1) {
     abort("length must be one")
   }

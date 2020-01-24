@@ -25,8 +25,6 @@ json2 <- function(x = character()) {
 new_json2 <- function(x = character()) {
   # TODO really export new_json2?
   vec_assert(x, character())
-  # TODO remove original formatting? OR keep original formatting?
-  # TODO add attribute `pretty`?
   x_sorted <- jq_do(x, flags = jqr::jq_flags(sorted = TRUE), json2 = FALSE)
   new_vctr(x_sorted, class = c("json2"), inherit_base_type = TRUE)
 }

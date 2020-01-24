@@ -49,10 +49,6 @@ json_keys1 <- function(x) {
 #' json_has_all_keys1(x1, c("a", "b"))
 #' json_has_any_keys1(x1, c("a", "b"))
 json_has_keys <- function(x, keys) {
-  # TODO keys via dots or via single argument?
-  # TODO use IN for multiple keys?
-  # https://stedolan.github.io/jq/manual/#example20
-  # jqr::jq('["foo", "bar"]', '.[] | in({"foo": 42})')
   jq_cmd <- jq_has_keys(keys)
   template <- rep_along(keys, NA)
   purrr::map(

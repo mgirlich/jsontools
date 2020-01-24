@@ -1,19 +1,29 @@
-test_that("construction works", {
-  skip("not yet clear how to test")
-  json2('{"abc": 1}')
-  new_json2(c('{"abc": 1}', NA))
-  # TODO that should work as well
-  new_json2(c(NA_character_, NA))
+test_that("low-level constructor", {
+  expect_length(new_json2(), 0)
+  expect_length(new_json2(character()), 0)
+
+  expect_length(new_json2(NA_character_), 1)
+
+  expect_length(new_json2(x_valid), 1)
+  expect_length(new_json2(c(x_valid, NA_character_)), 2)
+
+  skip("not yet decided whether they should work")
+  new_json2(NA)
+  new_json2(x_jqson)
+  new_json2(x_jsonlite)
+  new_json2(x_pq_json)
+  new_json2(x_invalid)
 })
 
-expect_invalid_json <- function(object, offsets, locations) {
-  err <- expect_error(object, class = "jsontools_error_invalid_json")
-  expect_equal(err$offsets, offsets)
-  expect_equal(err$locations, locations)
-}
+
+test_that("construction works", {
+  expect_equal(json2(x_valid), new_json2(x_valid))
+  expect_equal(json2(c(x_valid, NA)), new_json2(c(x_valid, NA)))
+  expect_equal(json2(c(NA, NA)), new_json2(c(NA_character_, NA_character_)))
+})
+
 
 test_that("input is validated", {
-  # TODO should that work??
   expect_invalid_json(
     json2(""),
     offsets = 1,

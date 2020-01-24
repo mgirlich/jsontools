@@ -52,9 +52,6 @@ vec_cast.character.json2 <- function(x, to, ...) {
 #' @method vec_cast.json2 jqson
 #' @export
 vec_cast.json2.jqson <- function(x, to, ...) {
-  # TODO really remove all attributes?
-  # attributes(x) <- NULL
-  # as_json2(unclass(x))
   json2(vec_data(x))
 }
 

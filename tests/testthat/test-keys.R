@@ -12,9 +12,6 @@ test_that("json_keys works", {
     list_of_chr(c("a", "b", "c"), c("a", "s", "t"), character())
   )
 
-  # TODO should this return NULL or character() or NA?
-  # TODO for arrays this returns character but should probably be numeric?
-  # TODO test with erroneous input
   expect_equal(
     json_keys(NA_character_),
     list_of_chr(character())
@@ -35,7 +32,6 @@ test_that("json_keys1 works", {
 })
 
 test_that("json_has_keys works", {
-  # TODO should this return list_of<logical>? or a matrix?
   expect_equal(
     json_has_keys(x, c("b", "s")),
     list(c(b = TRUE, s = FALSE), c(b = FALSE, s = TRUE), c(b = NA, s = NA))

@@ -78,7 +78,6 @@ jq_has_key <- function(key) {
 
 #' jq_has_keys(c("abc", "Foo"))
 jq_has_keys <- function(keys) {
-  # TODO could return object instead?
   array_elts <- lapply(keys, jq_has_key)
   paste0("[", paste0(array_elts, collapse = ", "), "]")
 }

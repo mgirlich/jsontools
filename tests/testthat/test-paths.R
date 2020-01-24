@@ -18,9 +18,6 @@ test_that("json_paths works", {
     )
   )
 
-  # TODO should this return NULL or character() or NA?
-  # TODO for arrays this returns character but should probably be numeric?
-  # TODO test with erroneous input
   expect_equal(
     json_paths(NA_character_),
     list_of_chr2(NULL)
@@ -41,7 +38,6 @@ test_that("json_paths1 works", {
 })
 
 test_that("json_has_paths works", {
-  # TODO should this return list_of<logical>? or a matrix?
   expect_equal(
     json_has_paths(x, list(c("a", "x"), c("b", "s"))),
     list(

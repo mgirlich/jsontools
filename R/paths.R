@@ -14,8 +14,6 @@
 json_paths <- function(x) {
   # TODO this is annoying for arrays
   r <- parse_json_vector(jq_do(x, "[paths]"))
-  # TODO what should be returned for x = NA?
-  # r <- lapply(r, `%||%`, character())
   as_list_of(r, .ptype = list_of(.ptype = character()))
 }
 
@@ -63,7 +61,6 @@ json_has_paths <- function(x, paths) {
   jq_cmd <- c("[paths]", path_check, "map(any)")
 
   template <- rep_along(paths, NA)
-  # TODO use original input as path names?
   purrr::map(
     jq_do(x, jq_cmd),
     ~ setNames(parse_json(.x, na = template), paths)
@@ -73,7 +70,6 @@ json_has_paths <- function(x, paths) {
 #' @rdname json_has_paths
 #' @export
 json_has_path <- function(x, path) {
-  # TODO check path...
   if (any(lengths(path) > 1)) {
     abort("all path elements must have lenth 1")
   }
