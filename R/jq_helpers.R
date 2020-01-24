@@ -77,9 +77,13 @@ jq_has_key <- function(key) {
 
 
 #' jq_has_keys(c("abc", "Foo"))
-jq_has_keys <- function(keys) {
+jq_has_keys <- function(keys, array = TRUE) {
   array_elts <- lapply(keys, jq_has_key)
-  paste0("[", paste0(array_elts, collapse = ", "), "]")
+  if (is_true(array)) {
+    paste0("[", paste0(array_elts, collapse = ", "), "]")
+  } else {
+    paste0("{", paste0(escape(keys), ": ", array_elts, collapse = ", "), "}")
+  }
 }
 
 
