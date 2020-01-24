@@ -78,7 +78,7 @@ json_set <- function(x, path, value, create = FALSE) {
 #'   ),
 #'   new_key = "new value"
 #' )
-#' cannot update array element
+#' # cannot update array element
 json_modify <- function(x, ...) {
   # 1) iteratively update via json_set
   # for (i in seq_along(values)) {

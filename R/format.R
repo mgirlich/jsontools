@@ -1,7 +1,8 @@
 #' @export
 format.json2 <- function(x, ..., pretty = FALSE) {
-  if (length(x) == 0)
+  if (length(x) == 0) {
     return(character())
+  }
 
   # TODO left align doesn't look nice?
   # --> that is the default formatting...
@@ -19,8 +20,9 @@ format.json2 <- function(x, ..., pretty = FALSE) {
 
 #' @export
 obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
-  if (length(x) == 0)
+  if (length(x) == 0) {
     return()
+  }
 
   if (is_true(pretty)) {
     # TODO should this support names via `labels` arg?

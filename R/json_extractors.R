@@ -31,7 +31,7 @@ json_get <- function(x, path, json2 = TRUE) {
 #'   mutate(
 #'     array_parsed = json_extract_lst(json_array, ptype = double()),
 #'     array_parsed2 = json_extract_dbl(json_object, path = list("Sepal.Width", 0)),
-#'     array_species = json_extract_chr(json_object, path = 'Species')
+#'     array_species = json_extract_chr(json_object, path = "Species")
 #'   ) %>%
 #'   select(-json_array, -json_object) %>%
 #'   tidyr::unnest(cols = c(array_parsed))

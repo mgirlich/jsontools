@@ -60,6 +60,6 @@ validate_single_element <- function(x) {
   if (length(x) == 0 || is.na(x)) {
     TRUE
   } else {
-   jsonlite::validate(x)
+    jsonlite::validate(x)
   }
 }

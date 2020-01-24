@@ -11,8 +11,8 @@
 #'
 #' @export
 parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
-                      simplifyMatrix = FALSE, flatten = FALSE,
-                      bigint_as_char = TRUE, na = list(), ...) {
+                       simplifyMatrix = FALSE, flatten = FALSE,
+                       bigint_as_char = TRUE, na = list(), ...) {
   # TODO use list_parse and get rid of simplifyVector, ...?
   # TODO add argument spec
   # TODO flag to sort before parsing?
@@ -53,11 +53,13 @@ read_json <- function(path, ...) {
   }
 
   if (is.character(txt) && length(txt) == 1 && nchar(txt, type = "bytes") <
-      2084 && !validate(txt)) {
+    2084 && !validate(txt)) {
     if (grepl("^https?://", txt, useBytes = TRUE)) {
       loadpkg("curl")
-      h <- curl::new_handle(useragent = paste("jsonlite /",
-                                              R.version.string))
+      h <- curl::new_handle(useragent = paste(
+        "jsonlite /",
+        R.version.string
+      ))
       curl::handle_setheaders(h, Accept = "application/json, text/*, */*")
       txt <- curl::curl(txt, handle = h)
     }
@@ -79,8 +81,8 @@ read_json <- function(path, ...) {
 #' parse_json_vector(x = c('"a"', '"b"'))
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
-                             simplifyMatrix = FALSE, flatten = FALSE,
-                             bigint_as_char = TRUE, na = list(), ...) {
+                              simplifyMatrix = FALSE, flatten = FALSE,
+                              bigint_as_char = TRUE, na = list(), ...) {
   # TODO see from_json
   lapply(
     x,

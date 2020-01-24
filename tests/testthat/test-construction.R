@@ -15,7 +15,7 @@ expect_invalid_json <- function(object, offsets, locations) {
 test_that("input is validated", {
   # TODO should that work??
   expect_invalid_json(
-    json2(''),
+    json2(""),
     offsets = 1,
     locations = 1
   )
@@ -29,14 +29,14 @@ test_that("input is validated", {
 
   # mixed results
   expect_invalid_json(
-    json2(c('[1, 2]', '{"abc"')),
+    json2(c("[1, 2]", '{"abc"')),
     offsets = 1,
     locations = 2
   )
 
   # multiple errors
   expect_invalid_json(
-    json2(c('[1', '{"abc"')),
+    json2(c("[1", '{"abc"')),
     offsets = c(1, 1),
     locations = c(1, 2)
   )

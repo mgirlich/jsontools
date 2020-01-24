@@ -24,7 +24,7 @@
 # vec_as_jq_index(list("commit", "committer", "name", 1:10))
 vec_as_jq_index <- function(x) {
   # noquote(paste0('."', x, '"', collapse = ""))
-  noquote(paste0('.[', escape(x), "]", collapse = ""))
+  noquote(paste0(".[", escape(x), "]", collapse = ""))
 }
 
 
@@ -72,7 +72,7 @@ jq_has_key <- function(key) {
   }
 
   key <- escape(key)
-  glue('has({key})')
+  glue("has({key})")
 }
 
 

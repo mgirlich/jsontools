@@ -27,7 +27,8 @@ if (FALSE) {
     assignInNamespace("base_scalar", fixed_base_scalar, ns = "dbplyr")
     assignInNamespace(
       "sql_translate_env.PqConnection",
-      fixed_pq_translator, ns = "dbplyr"
+      fixed_pq_translator,
+      ns = "dbplyr"
     )
   })
 }

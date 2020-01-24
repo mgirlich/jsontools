@@ -51,7 +51,8 @@ format_json_rowwise <- function(df, null = c("list", "null"),
   withr::local_tempfile("tmp_file")
   textcon <- withr::local_connection(file(tmp_file, "a+"))
   jsonlite::stream_out(
-    df, con = textcon,
+    df,
+    con = textcon,
     verbose = FALSE,
     null = null, na = na, auto_unbox = auto_unbox,
     matrix = matrix,

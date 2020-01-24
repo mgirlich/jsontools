@@ -39,12 +39,13 @@
 #' @param ... arguments passed on to class specific \code{print} methods
 #' @references Jeroen Ooms (2014). The \code{jsonlite} Package: A Practical and Consistent Mapping Between JSON Data and \R{} Objects. \emph{arXiv:1403.2805}. \url{https://arxiv.org/abs/1403.2805}
 #' @export
-#' @examples # Stringify some data
+#' @examples
+#' # Stringify some data
 #' cat(format_json(mtcars, pretty = TRUE))
 #'
 #' # Decimal vs significant digits
-#' format_json(pi, digits=3)
-#' format_json(pi, digits=I(3))
+#' format_json(pi, digits = 3)
+#' format_json(pi, digits = I(3))
 format_json <- function(x,
                         null = c("list", "null"),
                         na = c("null", "string"), auto_unbox = FALSE,
