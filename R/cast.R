@@ -34,17 +34,11 @@ vec_cast.character.json2 <- function(x, to, ...) {
   vec_data(x)
 }
 
-#' #' @method vec_cast.json2 list
-#' #' @export
-#' vec_cast.json2.list <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-#'   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-#' }
-#'
-#' #' @method vec_cast.json2 vctrs_list_of
-#' #' @export
-#' vec_cast.json2.vctrs_list_of <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-#'   vec_list_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-#' }
+#' @method vec_cast.list json2
+#' @export
+vec_cast.list.json2 <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  lapply(seq_along(x), function(i) x[[i]])
+}
 
 
 # json classes from other packages ----------------------------------------
