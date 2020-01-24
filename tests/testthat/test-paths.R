@@ -40,15 +40,22 @@ test_that("json_paths1 works", {
 test_that("json_has_paths works", {
   expect_equal(
     json_has_paths(x, list(c("a", "x"), c("b", "s"))),
-    list(
-      c(`["a","x"]` = TRUE, `["b","s"]` = FALSE),
-      c(`["a","x"]` = NA, `["b","s"]` = NA)
+    matrix(
+      c(TRUE, FALSE, NA, NA),
+      nrow = 2,
+      byrow = TRUE,
+      dimnames = list(NULL, c('["a","x"]', '["b","s"]'))
     )
   )
 
   expect_equal(
     json_has_paths(NA_character_, list(c("a", "x"), c("b", "s"))),
-    list(c(`["a","x"]` = NA, `["b","s"]` = NA))
+    matrix(
+      c(NA, NA),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = list(NULL, c('["a","x"]', '["b","s"]'))
+    )
   )
 })
 

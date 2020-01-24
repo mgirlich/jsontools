@@ -51,9 +51,12 @@ json_keys1 <- function(x) {
 json_has_keys <- function(x, keys) {
   jq_cmd <- jq_has_keys(keys)
   template <- rep_along(keys, NA)
-  purrr::map(
-    jq_do(x, jq_cmd),
-    ~ setNames(parse_json(.x, na = template), keys)
+  r <- parse_json_vector(jq_do(x, jq_cmd), na = template)
+  matrix(
+    unlist(r),
+    nrow = length(x),
+    byrow = TRUE,
+    dimnames = list(NULL, keys)
   )
 }
 
@@ -61,20 +64,19 @@ json_has_keys <- function(x, keys) {
 #' @export
 json_has_key <- function(x, key) {
   check1(key)
-  r <- purrr::flatten_lgl(json_has_keys(x, key))
-  unname(r)
+  unname(json_has_keys(x, key)[, 1])
 }
 
 #' @rdname json_has_keys
 #' @export
 json_has_all_keys <- function(x, keys) {
-  purrr::map_lgl(json_has_keys(x, keys), all)
+  apply(json_has_keys(x, keys), 1, all)
 }
 
 #' @rdname json_has_keys
 #' @export
 json_has_any_keys <- function(x, keys) {
-  purrr::map_lgl(json_has_keys(x, keys), any)
+  apply(json_has_keys(x, keys), 1, any)
 }
 
 #' @rdname json_has_keys
@@ -88,7 +90,7 @@ json_has_key1 <- function(x, key) {
 #' @export
 json_has_keys1 <- function(x, keys) {
   check1(x)
-  json_has_keys(x, keys)[[1]]
+  json_has_keys(x, keys)[1, ]
 }
 
 #' @rdname json_has_keys

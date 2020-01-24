@@ -34,12 +34,22 @@ test_that("json_keys1 works", {
 test_that("json_has_keys works", {
   expect_equal(
     json_has_keys(x, c("b", "s")),
-    list(c(b = TRUE, s = FALSE), c(b = FALSE, s = TRUE), c(b = NA, s = NA))
+    matrix(
+      c(TRUE, FALSE, FALSE, TRUE, NA, NA),
+      nrow = 3,
+      byrow = TRUE,
+      dimnames = list(NULL, c("b", "s"))
+    )
   )
 
   expect_equal(
     json_has_keys(NA_character_, c("b", "s")),
-    list(c(b = NA, s = NA))
+    matrix(
+      c(NA, NA),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = list(NULL, c("b", "s"))
+    )
   )
 })
 

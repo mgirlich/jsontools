@@ -61,9 +61,12 @@ json_has_paths <- function(x, paths) {
   jq_cmd <- c("[paths]", path_check, "map(any)")
 
   template <- rep_along(paths, NA)
-  purrr::map(
-    jq_do(x, jq_cmd),
-    ~ setNames(parse_json(.x, na = template), paths)
+  r <- parse_json_vector(jq_do(x, jq_cmd), na = template)
+  matrix(
+    unlist(r),
+    nrow = length(x),
+    byrow = TRUE,
+    dimnames = list(NULL, paths)
   )
 }
 
@@ -74,20 +77,19 @@ json_has_path <- function(x, path) {
     abort("all path elements must have lenth 1")
   }
 
-  r <- purrr::flatten_lgl(json_has_paths(x, list(path)))
-  unname(r)
+  unname(json_has_paths(x, key)[, 1])
 }
 
 #' @rdname json_has_paths
 #' @export
 json_has_all_paths <- function(x, paths) {
-  purrr::map_lgl(json_has_paths(x, paths), all)
+  apply(json_has_paths(x, paths), 1, all)
 }
 
 #' @rdname json_has_paths
 #' @export
 json_has_any_paths <- function(x, paths) {
-  purrr::map_lgl(json_has_paths(x, paths), any)
+  apply(json_has_paths(x, paths), 1, any)
 }
 
 #' @rdname json_has_paths
@@ -101,7 +103,7 @@ json_has_path1 <- function(x, path) {
 #' @export
 json_has_paths1 <- function(x, paths) {
   check1(x)
-  json_has_paths(x, paths)[[1]]
+  json_has_paths(x, paths)[1, ]
 }
 
 #' @rdname json_has_paths
