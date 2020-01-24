@@ -4,7 +4,7 @@
 \alias{jq_has_keys}
 \title{jq_has_keys(c("abc", "Foo"))}
 \usage{
-jq_has_keys(keys)
+jq_has_keys(keys, array = TRUE)
 }
 \description{
 jq_has_keys(c("abc", "Foo"))

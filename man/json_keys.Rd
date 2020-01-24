@@ -11,8 +11,8 @@ Postgres: \code{jsonb_object_keys(x)}
 jq: \code{keys(x)}
 }
 \examples{
-x1 = c('{"a": {"x": 1}, "b": 2, "c": 3}')
-x2 = c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
+x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
+x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
 x <- c(x1, x2)
 json_keys(x)
 json_keys1(x1)

@@ -10,6 +10,6 @@ json_merge(x, y)
 Merge two jsons
 }
 \examples{
-something like list_modify and list_merge?
+# something like list_modify and list_merge?
 json_merge('{"a": 1, "c": 3}', '{"a": 11, "b": 2}')
 }

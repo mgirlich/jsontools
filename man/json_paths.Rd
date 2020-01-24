@@ -14,8 +14,8 @@ Postgres: doesn't exist
 jq: \code{paths(x)}
 }
 \examples{
-x1 = c('{"a": {"x": 1}, "b": 2, "c": 3}')
-x2 = c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
+x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
+x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
 x <- c(x1, x2)
 json_paths(x)
 
