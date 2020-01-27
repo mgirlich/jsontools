@@ -13,7 +13,7 @@
 #' json_paths1(x1)
 json_paths <- function(x) {
   # TODO this is annoying for arrays
-  r <- parse_json_vector(jq_do(x, "[paths]"))
+  r <- parse_json_vector(jq_do(x, "[paths]"), .na = NULL)
   as_list_of(r, .ptype = list_of(.ptype = character()))
 }
 
@@ -61,7 +61,7 @@ json_has_paths <- function(x, paths) {
   jq_cmd <- c("[paths]", path_check, "map(any)")
 
   template <- rep_along(paths, NA)
-  r <- parse_json_vector(jq_do(x, jq_cmd), na = template)
+  r <- parse_json_vector(jq_do(x, jq_cmd), .na = template)
   matrix(
     unlist(r),
     nrow = length(x),

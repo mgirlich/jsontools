@@ -119,5 +119,5 @@ parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALS
 
 
 json_na_error <- function() {
-  stop_jsontools("na_json", message = "input is NA.\nUse argument .na to specify a default value.")
+  stop_jsontools("na_json", message = "input is NA.\nTo use a default value use the argument .na.")
 }

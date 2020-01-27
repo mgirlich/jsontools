@@ -7,12 +7,11 @@
 #' @examples
 #' x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
 #' x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-#' x <- c(x1, x2)
+#' x <- c(x1, x2, NA)
 #' json_keys(x)
 #' json_keys1(x1)
 json_keys <- function(x) {
-  r <- parse_json_vector(jq_do(x, "keys"))
-  r <- lapply(r, `%||%`, character())
+  r <- parse_json_vector(jq_do(x, "keys"), .na = character())
   as_list_of(r, .ptype = character())
 }
 
@@ -51,7 +50,7 @@ json_keys1 <- function(x) {
 json_has_keys <- function(x, keys) {
   jq_cmd <- jq_has_keys(keys)
   template <- rep_along(keys, NA)
-  r <- parse_json_vector(jq_do(x, jq_cmd), na = template)
+  r <- parse_json_vector(jq_do(x, jq_cmd), .na = template)
   matrix(
     unlist(r),
     nrow = length(x),
