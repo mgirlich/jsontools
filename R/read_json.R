@@ -6,23 +6,44 @@
 #' @param simplifyMatrix coerce JSON arrays containing vectors of equal mode and dimension into matrix or array
 #' @param flatten automatically \code{\link{flatten}} nested data frames into a single non-nested data frame
 #' @param bigint_as_char Parse big ints as character?
-#' @param na Value to return `x` is `NA`
+#' @param .na Value to return if `x` is `NA`. By default an error of class
+#' `jsontools_error_na_json` is thrown.
+#' @param .null Return the prototype of `.null` if `x` is `NULL`
+#'   or a zero length character
 #' @param ... arguments passed on to [`jsonlite::parse_json`]
 #'
 #' @export
+#' @examples
+#' # Parse escaped unicode
+#' parse_json('{"city" : "Z\\u00FCrich"}')
+#'
+#' # big integers
+#' big_num <- "9007199254740993"
+#' as.character(parse_json(big_num, bigint_as_char = FALSE))
+#' as.character(parse_json(big_num, bigint_as_char = TRUE))
+#'
+#' # NA error by default
+#' parse_json(NA)
+#' # ... but one can specify a default value
+#' parse_json(NA, .na = data.frame(a = 1, b = 2))
+#'
+#' # input of size 0
+#' parse_json(NULL)
+#' parse_json(character(), .null = data.frame(a = 1, b = 2))
 parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                        simplifyMatrix = FALSE, flatten = FALSE,
-                       bigint_as_char = TRUE, na = list(),
+                       bigint_as_char = TRUE, .na = json_na_error(),
+                       .null = NULL,
                        ...) {
-  if (vec_size(x) == 0) {
-    return(NULL)
+  if (is_null(x) || (is_character(x) && vec_size(x) == 0)) {
+    return(vec_ptype(.null))
   }
 
   if (is.na(x)) {
-    return(na)
+    return(.na)
   }
 
-  if (length(x) > 1 || !is.character(x)) {
+  if (length(x) > 1 || !is_character(x)) {
     abort("x must be a scalar character")
   }
 
@@ -76,9 +97,11 @@ read_json <- function(path, ...) {
 #' @examples
 #' parse_json_vector(x = c('"a"', '"b"'))
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
+#' parse_json_vector(x = c('"a"', NA), .na = 1)
 parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                               simplifyMatrix = FALSE, flatten = FALSE,
-                              bigint_as_char = TRUE, na = list(),
+                              bigint_as_char = TRUE, .na = json_na_error(),
+                              .null = NULL,
                               ...) {
   lapply(
     x,
@@ -88,7 +111,13 @@ parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALS
     simplifyMatrix = simplifyMatrix,
     flatten = flatten,
     bigint_as_char = bigint_as_char,
-    na = na,
+    .na = .na,
+    .null = .null,
     ...
   )
+}
+
+
+json_na_error <- function() {
+  stop_jsontools("na_json", message = "input is NA.\nUse argument .na to specify a default value.")
 }
