@@ -7,12 +7,14 @@
 #' @param flatten automatically \code{\link{flatten}} nested data frames into a single non-nested data frame
 #' @param bigint_as_char Parse big ints as character?
 #' @param na Value to return `x` is `NA`
+#' @param sort Sort keys in objects (also nested objects) in alphabetical order?
 #' @param ... arguments passed on to [`jsonlite::parse_json`]
 #'
 #' @export
 parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                        simplifyMatrix = FALSE, flatten = FALSE,
-                       bigint_as_char = TRUE, na = list(), ...) {
+                       bigint_as_char = TRUE, na = list(),
+                       sort = TRUE, ...) {
   if (vec_size(x) == 0) {
     return(NULL)
   }
@@ -25,8 +27,8 @@ parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
     abort("x must be a scalar character")
   }
 
-  if (is.na(x)) {
-    return(na)
+  if (is_true(sort)) {
+    x <- jq_do(x, flags = jqr::jq_flags(sorted = TRUE), json2 = FALSE)
   }
 
   jsonlite::parse_json(
@@ -81,7 +83,12 @@ read_json <- function(path, ...) {
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
                               simplifyMatrix = FALSE, flatten = FALSE,
-                              bigint_as_char = TRUE, na = list(), ...) {
+                              bigint_as_char = TRUE, na = list(),
+                              sort = TRUE, ...) {
+  if (is_true(sort)) {
+    x <- jq_do(x, flags = jqr::jq_flags(sorted = TRUE), json2 = FALSE)
+  }
+
   lapply(
     x,
     parse_json,
@@ -91,6 +98,7 @@ parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALS
     flatten = flatten,
     bigint_as_char = bigint_as_char,
     na = na,
+    sort = FALSE,
     ...
   )
 }
