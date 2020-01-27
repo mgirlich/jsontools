@@ -11,7 +11,8 @@ parse_json_vector(
   simplifyMatrix = FALSE,
   flatten = FALSE,
   bigint_as_char = TRUE,
-  na = list(),
+  .na = json_na_error(),
+  .null = NULL,
   ...
 )
 }
@@ -21,4 +22,5 @@ Parse a vector of jsons into a list
 \examples{
 parse_json_vector(x = c('"a"', '"b"'))
 parse_json_vector(x = c('"a"', '["b", "c"]'))
+parse_json_vector(x = c('"a"', NA), .na = 1)
 }

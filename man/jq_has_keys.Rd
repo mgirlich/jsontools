@@ -2,10 +2,12 @@
 % Please edit documentation in R/jq_helpers.R
 \name{jq_has_keys}
 \alias{jq_has_keys}
-\title{jq_has_keys(c("abc", "Foo"))}
+\title{jq_has_keys(c("abc", "Foo"))
+jq_has_keys(c("abc", "Foo"), object = TRUE)}
 \usage{
-jq_has_keys(keys, array = TRUE)
+jq_has_keys(keys, object = FALSE)
 }
 \description{
 jq_has_keys(c("abc", "Foo"))
+jq_has_keys(c("abc", "Foo"), object = TRUE)
 }

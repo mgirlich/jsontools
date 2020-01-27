@@ -11,7 +11,8 @@ parse_json(
   simplifyMatrix = FALSE,
   flatten = FALSE,
   bigint_as_char = TRUE,
-  na = list(),
+  .na = json_na_error(),
+  .null = NULL,
   ...
 )
 }
@@ -28,10 +29,32 @@ parse_json(
 
 \item{bigint_as_char}{Parse big ints as character?}
 
-\item{na}{Value to return \code{x} is \code{NA}}
+\item{.na}{Value to return if \code{x} is \code{NA}. By default an error of class
+\code{jsontools_error_na_json} is thrown.}
+
+\item{.null}{Return the prototype of \code{.null} if \code{x} is \code{NULL}
+or a zero length character}
 
 \item{...}{arguments passed on to \code{\link[jsonlite:parse_json]{jsonlite::parse_json}}}
 }
 \description{
 Convert JSON to an \R{} object
+}
+\examples{
+# Parse escaped unicode
+parse_json('{"city" : "Z\\\\u00FCrich"}')
+
+# big integers
+big_num <- "9007199254740993"
+as.character(parse_json(big_num, bigint_as_char = FALSE))
+as.character(parse_json(big_num, bigint_as_char = TRUE))
+
+# NA error by default
+parse_json(NA)
+# ... but one can specify a default value
+parse_json(NA, .na = data.frame(a = 1, b = 2))
+
+# input of size 0
+parse_json(NULL)
+parse_json(character(), .null = data.frame(a = 1, b = 2))
 }
