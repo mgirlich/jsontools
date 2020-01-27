@@ -17,6 +17,10 @@ parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
     return(NULL)
   }
 
+  if (is.na(x)) {
+    return(na)
+  }
+
   if (length(x) > 1 || !is.character(x)) {
     abort("x must be a scalar character")
   }
