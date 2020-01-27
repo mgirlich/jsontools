@@ -25,8 +25,7 @@ json2 <- function(x = character()) {
 new_json2 <- function(x = character()) {
   # TODO really export new_json2?
   vec_assert(x, character())
-  x_sorted <- jq_do(x, flags = jqr::jq_flags(sorted = TRUE), json2 = FALSE)
-  new_vctr(x_sorted, class = c("json2"), inherit_base_type = TRUE)
+  new_vctr(x, class = c("json2"), inherit_base_type = TRUE)
 }
 
 #' @export
