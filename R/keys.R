@@ -7,18 +7,20 @@
 #' @examples
 #' x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
 #' x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-#' x <- c(x1, x2, NA)
-#' json_keys(x)
-#' json_keys1(x1)
-json_keys <- function(x) {
-  r <- parse_json_vector(jq_do(x, "keys"), .na = character())
+#' x <- c(x1, x2)
+#' jsonr_keys(x)
+#' jsonr_keys(c(x, NA), .na = c("a", "b"))
+#' jsonr_keys1(x1)
+jsonr_keys <- function(x, .na = json_na_error()) {
+  r_jq <- jq_do(x, "keys", .na = NA_character_)
+  r <- parse_json_vector(r_jq, .na = .na)
   as_list_of(r, .ptype = character())
 }
 
 #' @export
-json_keys1 <- function(x) {
+jsonr_keys1 <- function(x, .na = json_na_error()) {
   check1(x)
-  json_keys(x)[[1]]
+  jsonr_keys(x, .na = .na)[[1]]
 }
 
 
@@ -36,72 +38,68 @@ json_keys1 <- function(x) {
 #'
 #' @export
 #' @examples
-#' json_has_key(x, "b")
+#' jsonr_has_key(x, "b")
 #'
-#' json_has_keys(x, c("a", "b"))
-#' json_has_all_keys(x, c("a", "b"))
-#' json_has_any_keys(x, c("a", "b"))
+#' jsonr_has_keys(x, c("a", "b"))
+#' jsonr_has_all_keys(x, c("a", "b"))
+#' jsonr_has_any_keys(x, c("a", "b"))
 #'
-#' json_has_key1(x1, "b")
+#' jsonr_has_key1(x1, "b")
 #'
-#' json_has_keys1(x1, c("a", "b"))
-#' json_has_all_keys1(x1, c("a", "b"))
-#' json_has_any_keys1(x1, c("a", "b"))
-json_has_keys <- function(x, keys) {
-  jq_cmd <- jq_has_keys(keys)
-  template <- rep_along(keys, NA)
-  r <- parse_json_vector(jq_do(x, jq_cmd), .na = template)
-  matrix(
-    unlist(r),
-    nrow = length(x),
-    byrow = TRUE,
-    dimnames = list(NULL, keys)
-  )
+#' jsonr_has_keys1(x1, c("a", "b"))
+#' jsonr_has_all_keys1(x1, c("a", "b"))
+#' jsonr_has_any_keys1(x1, c("a", "b"))
+jsonr_has_keys <- function(x, keys) {
+  jq_cmd <- jq_has_keys(keys, object = TRUE)
+  template <- as.list(set_names(rep_along(keys, NA), keys))
+  r_jq <- jq_do(x, jq_cmd, .na = NA_character_)
+  r <- parse_json_vector(r_jq, .na = template)
+  dplyr::bind_rows(r)
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_key <- function(x, key) {
+jsonr_has_key <- function(x, key) {
   check1(key)
-  unname(json_has_keys(x, key)[, 1])
+  jsonr_has_keys(x, key)[[key]]
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_all_keys <- function(x, keys) {
-  apply(json_has_keys(x, keys), 1, all)
+jsonr_has_all_keys <- function(x, keys) {
+  row_all(jsonr_has_keys(x, keys))
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_any_keys <- function(x, keys) {
-  apply(json_has_keys(x, keys), 1, any)
+jsonr_has_any_keys <- function(x, keys) {
+  row_any(jsonr_has_keys(x, keys))
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_key1 <- function(x, key) {
+jsonr_has_key1 <- function(x, key) {
   check1(x)
-  json_has_key(x, key)
+  jsonr_has_key(x, key)
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_keys1 <- function(x, keys) {
+jsonr_has_keys1 <- function(x, keys) {
   check1(x)
-  json_has_keys(x, keys)[1, ]
+  unlist(jsonr_has_keys(x, keys))
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_all_keys1 <- function(x, keys) {
+jsonr_has_all_keys1 <- function(x, keys) {
   check1(x)
-  json_has_all_keys(x, keys)[[1]]
+  jsonr_has_all_keys(x, keys)
 }
 
-#' @rdname json_has_keys
+#' @rdname jsonr_has_keys
 #' @export
-json_has_any_keys1 <- function(x, keys) {
+jsonr_has_any_keys1 <- function(x, keys) {
   check1(x)
-  json_has_any_keys(x, keys)[[1]]
+  jsonr_has_any_keys(x, keys)
 }

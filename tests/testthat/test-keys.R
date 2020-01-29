@@ -1,66 +1,68 @@
 x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
 x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-x <- c(x1, x2, NA)
+x <- c(x1, x2)
+
+tibble <- tibble::tibble
 
 list_of_chr <- function(...) {
   list_of(..., .ptype = character())
 }
 
-test_that("json_keys works", {
+test_that("jsonr_keys works", {
   expect_equal(
-    json_keys(x),
-    list_of_chr(c("a", "b", "c"), c("a", "s", "t"), character())
+    jsonr_keys(x),
+    list_of_chr(c("a", "b", "c"), c("a", "s", "t"))
+  )
+
+  expect_error(
+    jsonr_keys(NA),
+    class = "jsontools_error_na_json"
   )
 
   expect_equal(
-    json_keys(NA_character_),
-    list_of_chr(character())
+    jsonr_keys(NA, .na = c("a", "b")),
+    list_of_chr(c("a", "b"))
   )
 })
 
 
-test_that("json_keys1 works", {
+test_that("jsonr_keys1 works", {
   expect_equal(
-    json_keys1(x[1]),
+    jsonr_keys1(x[1]),
     c("a", "b", "c")
   )
 
+  expect_error(
+    jsonr_keys1(NA_character_),
+    class = "jsontools_error_na_json"
+  )
+
   expect_equal(
-    json_keys1(NA_character_),
+    jsonr_keys1(NA_character_, .na = character()),
     character()
   )
 })
 
-test_that("json_has_keys works", {
+test_that("jsonr_has_keys works", {
   expect_equal(
-    json_has_keys(x, c("b", "s")),
-    matrix(
-      c(TRUE, FALSE, FALSE, TRUE, NA, NA),
-      nrow = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("b", "s"))
-    )
+    jsonr_has_keys(x, c("b", "s")),
+    tibble(b = c(TRUE, FALSE), s = c(FALSE, TRUE))
   )
 
   expect_equal(
-    json_has_keys(NA_character_, c("b", "s")),
-    matrix(
-      c(NA, NA),
-      nrow = 1,
-      byrow = TRUE,
-      dimnames = list(NULL, c("b", "s"))
-    )
+    jsonr_has_keys(NA_character_, c("b", "s")),
+    tibble(b = NA, s = NA)
   )
 })
 
-test_that("json_has_keys1 works", {
+test_that("jsonr_has_keys1 works", {
   expect_equal(
-    json_has_keys1(x[1], c("b", "s")),
+    jsonr_has_keys1(x[1], c("b", "s")),
     c(b = TRUE, s = FALSE)
   )
 
   expect_equal(
-    json_has_keys1(NA_character_, c("b", "s")),
+    jsonr_has_keys1(NA_character_, c("b", "s")),
     c(b = NA, s = NA)
   )
 })

@@ -5,27 +5,27 @@ format.json2 <- function(x, ..., pretty = FALSE) {
   }
 
   if (is_true(pretty)) {
-    x <- purrr::map_chr(x, jsonlite::prettify)
+    x <- prettify(x)
   }
 
-  ifelse(is.na(x), "<NA>", x)
+  vec_data(x)
 }
 
 #' @export
-obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
-  if (length(x) == 0) {
-    return()
-  }
-
-  if (is_true(pretty)) {
-    cat(format(x, pretty = TRUE))
-  } else {
-    out <- stats::setNames(format(x), names(x))
-    print(out, quote = FALSE)
-  }
-
-  invisible(x)
-}
+# obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
+#   if (length(x) == 0) {
+#     return()
+#   }
+#
+#   if (is_true(pretty)) {
+#     cat(format(x, pretty = TRUE))
+#   } else {
+#     out <- stats::setNames(format(x), names(x))
+#     print(out, quote = FALSE)
+#   }
+#
+#   invisible(x)
+# }
 
 #' @export
 vec_ptype_abbr.json2 <- function(x) {

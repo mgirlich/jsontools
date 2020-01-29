@@ -1,30 +1,3 @@
-#' Get paths
-#'
-#' Postgres: doesn't exist
-#' jq: `paths(x)`
-#'
-#' @export
-#' @examples
-#' x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
-#' x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-#' x <- c(x1, x2)
-#' json_paths(x)
-#'
-#' json_paths1(x1)
-json_paths <- function(x) {
-  # TODO this is annoying for arrays
-  r <- parse_json_vector(jq_do(x, "[paths]"), .na = NULL)
-  as_list_of(r, .ptype = list_of(.ptype = character()))
-}
-
-#' @rdname json_paths
-#' @export
-json_paths1 <- function(x) {
-  check1(x)
-  json_paths(x)[[1]]
-}
-
-
 #' Does path exists?
 #'
 #' @details
@@ -40,82 +13,92 @@ json_paths1 <- function(x) {
 #'
 #' @export
 #' @examples
-#' json_has_path(x, c("a", "y"))
-#' json_has_path(x, list("a", "y"))
+#' jsonr_has_path(x, ".a.y")
 #'
-#' json_has_paths(x, list(c("a", "x"), c("a", "y")))
-#' json_has_all_paths(x, list(c("a", "x"), c("a", "y")))
-#' json_has_any_paths(x, list(c("a", "x"), c("a", "y")))
+#' jsonr_has_paths(x, c(".a.x", ".a.y"))
+#' jsonr_has_all_paths(x, c(".a.x", ".a.y"))
+#' jsonr_has_any_paths(x, c(".a.x", ".a.y"))
 #'
 #'
-#' json_has_path1(x1, c("a", "y"))
-#' json_has_path1(x1, list("a", "y"))
+#' jsonr_has_path1(x1, ".a.y")
 #'
-#' json_has_paths1(x1, list(c("a", "x"), c("a", "y")))
-#' json_has_all_paths1(x1, list(c("a", "x"), c("a", "y")))
-#' json_has_any_paths1(x1, list(c("a", "x"), c("a", "y")))
-json_has_paths <- function(x, paths) {
-  paths <- purrr::map_chr(paths, vec_as_jq_path)
-  path_check_elts <- paste0("[.[] == ", paths, "]", collapse = ", ")
-  path_check <- paste0("[", path_check_elts, "]")
-  jq_cmd <- c("[paths]", path_check, "map(any)")
+#' jsonr_has_paths1(x1, c(".a.x", ".a.y"))
+#' jsonr_has_all_paths1(x1, c(".a.x", ".a.y"))
+#' jsonr_has_any_paths1(x1, c(".a.x", ".a.y"))
+jsonr_has_paths <- function(x, paths) {
+  # convert paths to index notation: https://github.com/stedolan/jq/issues/1949
+  # strategy:
+  # 1. get all paths
+  # 2. convert all paths to index notation
+  # 3. build object that checks for each index path if it exists in array
 
-  template <- rep_along(paths, NA)
-  r <- parse_json_vector(jq_do(x, jq_cmd), .na = template)
-  matrix(
-    unlist(r),
-    nrow = length(x),
-    byrow = TRUE,
-    dimnames = list(NULL, paths)
-  )
+  pathexpr <- 'map(
+    if type == "number" then
+      "[\\(tostring)]"
+    else
+      "."+.
+    end
+  ) | join("")'
+  # alternative: convert index notation to paths via path
+
+  jq_get_path_as_index <- paste0("[paths] | map(", pathexpr, ")")
+  path_check_elts <- glue_jq('"{paths}": ([.[] == "{paths}"] | any)')
+
+  path_check <- paste0("{", paste0(path_check_elts, collapse = ", "), "}")
+  jq_cmd <- c(jq_get_path_as_index, path_check)
+
+  template <- as.list(set_names(rep_along(paths, NA), paths))
+  r_jq <- jq_do(x, jq_cmd, .na = NA_character_)
+  r <- parse_json_vector(r_jq, .na = template)
+  dplyr::bind_rows(r)
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_path <- function(x, path) {
+jsonr_has_path <- function(x, path) {
   if (any(lengths(path) > 1)) {
-    abort("all path elements must have lenth 1")
+    abort("all path elements must have length 1")
   }
 
-  unname(json_has_paths(x, key)[, 1])
+  jsonr_has_paths(x, path)[[path]]
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_all_paths <- function(x, paths) {
-  apply(json_has_paths(x, paths), 1, all)
+jsonr_has_all_paths <- function(x, paths) {
+  row_all(jsonr_has_paths(x, paths))
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_any_paths <- function(x, paths) {
-  apply(json_has_paths(x, paths), 1, any)
+jsonr_has_any_paths <- function(x, paths) {
+  row_any(jsonr_has_paths(x, paths))
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_path1 <- function(x, path) {
+jsonr_has_path1 <- function(x, path) {
   check1(x)
-  json_has_path(x, path)
+  jsonr_has_path(x, path)
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_paths1 <- function(x, paths) {
+jsonr_has_paths1 <- function(x, paths) {
   check1(x)
-  json_has_paths(x, paths)[1, ]
+  unlist(jsonr_has_paths(x, paths))
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_all_paths1 <- function(x, paths) {
+jsonr_has_all_paths1 <- function(x, paths) {
   check1(x)
-  json_has_all_paths(x, paths)[[1]]
+  jsonr_has_all_paths(x, paths)
 }
 
-#' @rdname json_has_paths
+#' @rdname jsonr_has_paths
 #' @export
-json_has_any_paths1 <- function(x, paths) {
+jsonr_has_any_paths1 <- function(x, paths) {
   check1(x)
-  json_has_any_paths(x, paths)[[1]]
+  jsonr_has_any_paths(x, paths)
 }

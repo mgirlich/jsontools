@@ -1,8 +1,11 @@
-# glue_jq <- function() {
-#
-# }
-#
-#
+# jq help:
+# Merge two arrays: https://github.com/stedolan/jq/issues/680
+
+glue_jq <- function(..., .envir = parent.frame()) {
+  noquote(glue::glue(..., .envir = .envir))
+}
+
+
 # jq_transformer <- function() {
 #   # convert list/vector to path
 #
@@ -18,6 +21,10 @@
 #
 #   # array representation of path
 # }
+
+jq_slurp <- function(x) {
+  sprintf("[%s]", paste0(x, collapse = ","))
+}
 
 
 # vec_as_jq_index(c("commit", "committer", "name"))
@@ -55,13 +62,19 @@ print.jq_path <- function(x, ...) {
 }
 
 
-#' jq_get_key("abc")
-#' jq_get_key(c("abc", "def"))
-#' jq_get_key(list("abc", 2))
-jq_get_key <- function(key) {
-  path <- vec_as_jq_path(key)
+#' jq_get_path(".abc")
+#' jq_get_path(".abc.def"))
+#' jq_get_path(".abc[2]")
+jq_get_path <- function(path) {
+  # path <- vec_as_jq_path(path)
   glue("getpath({path})")
 }
+
+
+# jq_get_index <- function(path) {
+#   # path <- vec_as_jq_path(path)
+#   glue("getpath({path})")
+# }
 
 
 #' jq_has_key("abc")
@@ -72,7 +85,7 @@ jq_has_key <- function(key) {
   }
 
   key <- escape(key)
-  glue("has({key})")
+  glue_jq("has({key})")
 }
 
 
@@ -91,14 +104,41 @@ jq_has_keys <- function(keys, object = FALSE) {
 
 #' jq_set("abc", 1)
 #' jq_set(c("abc", "def"), 1)
-jq_set <- function(key, value) {
+jq_set_path <- function(key, value) {
   path <- vec_as_jq_path(key)
   value <- escape(value)
-  glue("setpath({path}; {value})")
+  glue_jq("setpath({path}; {value})")
 }
 
 
-jq_delete <- function(key) {
-  path <- vec_as_jq_path(key)
-  glue("delpaths([{path}])")
+jq_set_id <- function(id, value) {
+  value <- escape(value)
+
+  if (length(value) == 1) {
+    glue_jq("{id} = {value}")
+  } else {
+    c(
+      glue_jq("{jq_slurp(value)} as $values"),
+      "[$values, .]",
+      "transpose",
+      glue_jq('map((.[0] as $val | .[1] | {id} = $val))'),
+      ".[]"
+    )
+  }
+}
+
+
+jq_delete_id <- function(id) {
+  glue_jq("del({id})")
+}
+
+
+jq_validate_path <- function(path) {
+  if (length(path) > 1) {
+    abort("concatenate multi paths with .")
+  }
+
+  if (!startsWith(path, ".")) {
+    abort("path must start .")
+  }
 }

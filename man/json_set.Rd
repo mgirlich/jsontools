@@ -4,7 +4,7 @@
 \alias{json_set}
 \title{Update value}
 \usage{
-json_set(x, path, value, create = FALSE)
+json_set(x, id, value)
 }
 \description{
 json: \link{{"f1": 1, "f2": null}, 2}
@@ -15,8 +15,7 @@ key: x | (.\link{0}.f3|=3)
 path: setpath(\link{0, "f3"}, 3)
 }
 \examples{
-json_set(x, path = "abc", value = "new value")
-json_set(x, path = c("abc", "def"), value = "new value")
-json_set(x, path = "new_key", value = "new value")
-json_set(x, path = "new key", value = "new value")
+json_set(x, id = ".abc", value = "new value")
+json_set(x, id = ".a.x", value = "new value")
+json_set(x, id = '.["new key"]', value = "new value")
 }

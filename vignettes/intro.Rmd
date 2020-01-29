@@ -18,7 +18,82 @@ knitr::opts_chunk$set(
 library(jsontools)
 ```
 
-## json vectors
+## Goals
+This package has three goals:
+1. easy parsing from JSON and easy conversion to JSON
+2. extract a subset of data from JSON without having to parse everything
+3. basic modification of JSON
+
+The second and third goals are motivated by how one can work with JSON in a Postgres database.
+
+
+## Case Study
+
+
+```{r}
+# json_string <- c(tidyjson::worldbank[1:4], NA_character_)
+json_string <- tidyjson::worldbank[1:4]
+```
+
+First, we create a JSON vector
+
+```{r}
+(json <- json2(json_string))
+```
+
+and it also prints nicely in a tibble
+
+```{r}
+library(dplyr)
+# TODO problem printing in Rmd??
+data <- tibble(
+  i = seq_along(json),
+  body = json
+)
+```
+
+Let's first have a look at what keys are typically in our JSON objects
+
+```{r}
+jsonr_keys(json[1:3])
+```
+
+
+```{r}
+data_africa_with_closingdate <- data %>% 
+  filter(
+    jsonr_has_key(body, "closingdate"),
+    jsonr_extract_chr(body, ".regionname") == "Africa"
+  )
+```
+
+
+```{r}
+# multi update with json_set()
+data %>% 
+  mutate(
+    region = jsonr_extract_chr(body, ".regionname"),
+    body = json_set(body, ".regionname", tolower(region)),
+    region_new = jsonr_extract_chr(body, ".regionname")
+  ) %>% 
+  select(-body)
+```
+
+or creating a new structure
+
+```{r}
+json_build_object(
+  data$body,
+  regionname,
+  totalamt,
+  first_major_sector = `.majorsector_percent[0].name`,
+  country = .countryshortname,
+  major_sectors = `[.majorsector_percent[].Name]`
+)
+```
+
+
+## JSON vectors
 
 Create JSON vectors
 
@@ -27,11 +102,10 @@ x <- c('{"def": 1, "abc": 2}', '{"def": 2}', '[2, 1, 3]')
 json2(x)
 json2(c(x, NA))
 
-# new_json2()
-# as_json2()
+json_sort(x)
 ```
 
-Comparison ignores order of keys and the formatting of the input
+comparing
 
 ```{r}
 x <- new_json2('{"a": {"x": 1, "y": 2}}')
@@ -42,85 +116,75 @@ x2 <- new_json2('{"a": {
   }'
 )
 
-x == x2
+json_equal(x, x2)
 ```
 
 
-## reading, writing, formating, parsing
+## Parsing from JSON
+
+There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`). But for me they all had some drawbacks when working with JSON columns from Postgres:
 
 ```{r}
-json_vec <- c('{"abc": 1}', '{"def": 2}', '[1, 2, 3]')
-parse_json(json_vec)
-parse_json_vector(json_vec)
+x <- tidyjson::worldbank
+RJSONIO::fromJSON(x)
+rjson::fromJSON(x)
+jsonlite::fromJSON(x)
 
-x <- list(a = list(x = 1), b = list(x = 2), c = list(x = 3))
-format_json(x)
-format_json_vector(x)
+RJSONIO::fromJSON(NA_character_)
+rjson::fromJSON(NA_character_)
+jsonlite::fromJSON(NA_character_)
+
+RJSONIO::fromJSON(NULL)
+rjson::fromJSON(NULL)
+jsonlite::fromJSON(NULL)
 ```
 
 
-## Convert a data.frame to JSON
+* they are not vectorized. `rjson` simply uses the first element of the input, `RJSONIO` throws an error, and `jsonlite` pastes the input together and then complains about trailing garbage.
+* one cannot control what happens with `NA` as input.
+* one cannot control what happens with `NULL` as input.
+* the automatic conversion of `jsonlite` is great but cannot be controlled very well.
+* the camel case syntax doesn't fit to the rest of the tidyverse.
 
-```{r}
-format_json_rowwise(mtcars[c("mpg", "cyl")])
-```
+`jsontools` relies on `jsonlite` for parsing from JSON and conversion to JSON. For parsing it has the following functions:
 
+* `parse_json()` to parse a character vector of length 1 (i.e. a scalar).
+* `parse_json_vector()` to parse a character vector of any length.
 
-## JSON helpers
-
-### Keys and Paths
-
-*Keys* are the top level names in a JSON object, e.g. `{"a": {"x": 1}, "b": 2, "c": 3}` has the keys "a", "b", and "c".
-*Paths* describe how to get to a value in a JSON string.
-
-```{r}
-x1 = json2('{"a": {"x": 1}, "b": 2, "c": 3}')
-x2 = json2('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-x <- c(x1, x2, NA)
-
-json_keys(x)
-json_paths(x)
-
-json_has_key(x, "b")
-json_has_keys(x, c("a", "b"))
-json_has_all_keys(x, c("a", "b"))
-json_has_any_keys(x, c("a", "b"))
-
-json_has_path(x, c("a", "y"))
-json_has_paths(x, list(c("a", "x"), c("a", "y")))
-json_has_all_paths(x, list(c("a", "x"), c("a", "y")))
-json_has_any_paths(x, list(c("a", "x"), c("a", "y")))
-```
-
-### Modify
-
-```{r}
-json_set(x, path = "abc", value = "new value")
-
-json_modify(
-  x,
-  abc = list(
-    def = 20,
-    xyz = 10
-  ),
-  new_key = "new value"
-)
-
-json_merge(x, '{"a": 11, "b": 2}')
-
-json_delete_path(x, path = "abc")
-```
-
-### Get data
-
-To extract data of a JSON for a certain path use the `json_extract_*()` family of functions:
-
-```{r}
-json_get(x, "a")
-json_extract_dbl(x, "b")
-json_extract_lst(x, "a")
-```
+To control what is returned on `NA` resp. `NULL` as input there are the arguments `.na` and `.null`.
 
 
-## Differences between R lists and JSON
-* JSON and lists have an important difference: lists in `\R{}` can be partially named. In JSON consists of arrays (all elements are unnamed) and objects (all fields are named).
+## Conversion to JSON
+
+drawbacks:
+
+* not vectorized
+* no JSON vector class --> printing is not so nice
+* converting a data frame rowwise to a vector of JSON is not so easy or slow.
+
+For conversion there are the following functions:
+
+* `format_json()`: convert an R object to JSON.
+* `format_json_vector()`: convert each element of an R object to JSON and return them as a JSON vector.
+* `format_json_rowwise()`:
+
+
+## Index
+
+
+## Extract JSON data
+
+Three kind of function simplify working with JSON:
+
+* `json_extract()` and variants to extract data from a JSON vector.
+* `json_has_key()`, `json_has_path()` and variants to check whether a certain element exists.
+* `json_keys()` to get the keys of an object.
+
+
+## Basic modification of JSON
+
+* `json_set()`: modify the element at a given index.
+* `json_modify()` # mutate
+* `json_merge()`: merge with another JSON.
+* `json_build_object()` # transmute
+* `json_delete_id()`: to delete the element at a given index

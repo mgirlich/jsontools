@@ -8,92 +8,96 @@
 #'        .["a"]
 #' * path: getpath(["a", "b"])
 #'         .a.b
-#'
-#' @export
 json_get <- function(x, path, json2 = TRUE) {
-  jq_cmd <- jq_get_key(path)
-  jq_do(x, jq_cmd, json2 = json2)
+  # jq_cmd <- jq_get_path(path)
+  jq_validate_path(path)
+  jq_do(x, path, json2 = json2, .na = NA_character_)
 }
-
 
 #' Extract from a json
 #'
 #' @export
 #' @examples
-#' dd %>%
-#'   transmute(
-#'     budget = json_extract_lst(body, "budget"),
-#'     amount = json_extract_dbl(body, c("budget", "amount")),
-#'   )
+#' jsonr_extract_int(x, ".b")
+#' jsonr_extract_lst(x, ".a")
+#' jsonr_extract_int(x, ".a.x")
 #'
-#' db_tbl %>%
-#'   mutate(
-#'     array_parsed = json_extract_lst(json_array, ptype = double()),
-#'     array_parsed2 = json_extract_dbl(json_object, path = list("Sepal.Width", 0)),
-#'     array_species = json_extract_chr(json_object, path = "Species")
-#'   ) %>%
-#'   select(-json_array, -json_object) %>%
-#'   tidyr::unnest(cols = c(array_parsed))
-json_extract <- function(x, ptype, path = zap()) {
+#' if (FALSE) {
+#'   dd %>%
+#'     transmute(
+#'       budget = jsonr_extract_lst(body, "budget"),
+#'       amount = jsonr_extract_dbl(body, c("budget", "amount")),
+#'     )
+#'
+#'   db_tbl %>%
+#'     mutate(
+#'       array_parsed = jsonr_extract_lst(json_array, ptype = double()),
+#'       array_parsed2 = jsonr_extract_dbl(json_object, path = list("Sepal.Width", 0)),
+#'       array_species = jsonr_extract_chr(json_object, path = "Species")
+#'     ) %>%
+#'     select(-json_array, -json_object) %>%
+#'     tidyr::unnest(cols = c(array_parsed))
+#' }
+jsonr_extract <- function(x, ptype, path = zap()) {
   if (!rlang::is_zap(path)) {
     x <- json_get(x, path, json2 = FALSE)
   }
-  x_parsed_list <- lapply(x, parse_json)
+  x_parsed_list <- parse_json_vector(x, .na = NA)
 
   # NOTE dropping column doesn't work in a mutate verb
   # --> to drop the column one would need another verb :-(
   vctrs::vec_cast(x_parsed_list, to = ptype)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_lgl <- function(x, path = zap()) {
-  json_extract(x, ptype = logical(), path = path)
+jsonr_extract_lgl <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = logical(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_int <- function(x, path = zap()) {
-  json_extract(x, ptype = integer(), path = path)
+jsonr_extract_int <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = integer(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_dbl <- function(x, path = zap()) {
-  json_extract(x, ptype = double(), path = path)
+jsonr_extract_dbl <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = double(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_chr <- function(x, path = zap()) {
-  json_extract(x, ptype = character(), path = path)
+jsonr_extract_chr <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = character(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_fct <- function(x, path = zap()) {
-  json_extract(x, ptype = factor(), path = path)
+jsonr_extract_fct <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = factor(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_dat <- function(x, path = zap()) {
-  json_extract(x, ptype = vctrs::new_date(), path = path)
+jsonr_extract_dat <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = vctrs::new_date(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_dtt <- function(x, path = zap()) {
-  json_extract(x, ptype = vctrs::new_datetime(), path = path)
+jsonr_extract_dtt <- function(x, path = zap()) {
+  jsonr_extract(x, ptype = vctrs::new_datetime(), path = path)
 }
 
-#' @rdname json_extract
+#' @rdname jsonr_extract
 #' @export
-json_extract_lst <- function(x, path = zap(), ptype = zap()) {
+jsonr_extract_lst <- function(x, path = zap(), ptype = zap()) {
   if (rlang::is_zap(ptype)) {
     ptype <- list()
   } else {
     ptype <- vctrs::list_of(.ptype = ptype)
   }
-  json_extract(x, ptype = ptype, path = path)
+  jsonr_extract(x, ptype = ptype, path = path)
 }
