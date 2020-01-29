@@ -9,7 +9,6 @@
 #' * path: getpath(["a", "b"])
 #'         .a.b
 json_get <- function(x, path, json2 = TRUE) {
-  # jq_cmd <- jq_get_path(path)
   jq_validate_path(path)
   jq_do(x, path, json2 = json2, .na = NA_character_)
 }

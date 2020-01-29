@@ -21,6 +21,8 @@ library(jsontools)
 [Postgres manual](https://www.postgresql.org/docs/current/functions-json.html)
 [jq manual](https://stedolan.github.io/jq/manual/#Assignment)
 [try out jq online](https://jqplay.org/)
+[SQLite](https://www.sqlite.org/json1.html)
+[SQL 2016](https://modern-sql.com/blog/2017-06/whats-new-in-sql-2016)
 
 |Operator|Description|Example|Example Result|
 |--- |--- |--- |--- |

@@ -21,3 +21,28 @@ jsonr_paths1 <- function(x) {
   check1(x)
   jsonr_paths(x)[[1]]
 }
+
+
+# vec_as_jq_index(c("commit", "committer", "name"))
+# vec_as_jq_index(list("commit", "committer", "name", 1:10))
+vec_as_jq_index <- function(x) {
+  # noquote(paste0('."', x, '"', collapse = ""))
+  noquote(paste0(".[", escape(x), "]", collapse = ""))
+}
+
+#' jq_path("abc")
+#' jq_path(c("abc", "def"))
+#' jq_path(list("abc", 2))
+vec_as_jq_path <- function(x) {
+  x <- escape(x)
+  path <- paste0(x, collapse = ",")
+  structure(
+    glue("[{path}]"),
+    class = c("jq_path", "character")
+  )
+}
+
+
+print.jq_path <- function(x, ...) {
+  cat(x)
+}

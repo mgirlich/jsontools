@@ -6,45 +6,8 @@ glue_jq <- function(..., .envir = parent.frame()) {
 }
 
 
-# jq_transformer <- function() {
-#   # convert list/vector to path
-#
-#   # object construction: named list
-#   # {message: .commit.message, name: .commit.committer.name}'
-#   # {message: .["commit"].["message"], name: .["commit"].["committer"].["name"]}'
-#   x <- list(
-#     message = c("commit", "message"),
-#     name = c("commit", "committer", "name")
-#   )
-#
-#   # array/string slice? .[10:15]
-#
-#   # array representation of path
-# }
-
 jq_slurp <- function(x) {
   sprintf("[%s]", paste0(x, collapse = ","))
-}
-
-
-# vec_as_jq_index(c("commit", "committer", "name"))
-# vec_as_jq_index(list("commit", "committer", "name", 1:10))
-vec_as_jq_index <- function(x) {
-  # noquote(paste0('."', x, '"', collapse = ""))
-  noquote(paste0(".[", escape(x), "]", collapse = ""))
-}
-
-
-#' jq_path("abc")
-#' jq_path(c("abc", "def"))
-#' jq_path(list("abc", 2))
-vec_as_jq_path <- function(x) {
-  x <- escape(x)
-  path <- paste0(x, collapse = ",")
-  structure(
-    glue("[{path}]"),
-    class = c("jq_path", "character")
-  )
 }
 
 
@@ -55,26 +18,6 @@ vec_as_jq_path <- function(x) {
 jq.pq_jsonb <- function(x, ...) {
   jqr::jq(as.character(x), ...)
 }
-
-
-print.jq_path <- function(x, ...) {
-  cat(x)
-}
-
-
-#' jq_get_path(".abc")
-#' jq_get_path(".abc.def"))
-#' jq_get_path(".abc[2]")
-jq_get_path <- function(path) {
-  # path <- vec_as_jq_path(path)
-  glue("getpath({path})")
-}
-
-
-# jq_get_index <- function(path) {
-#   # path <- vec_as_jq_path(path)
-#   glue("getpath({path})")
-# }
 
 
 #' jq_has_key("abc")
@@ -99,15 +42,6 @@ jq_has_keys <- function(keys, object = FALSE) {
   } else {
     paste0("[", paste0(array_elts, collapse = ", "), "]")
   }
-}
-
-
-#' jq_set("abc", 1)
-#' jq_set(c("abc", "def"), 1)
-jq_set_path <- function(key, value) {
-  path <- vec_as_jq_path(key)
-  value <- escape(value)
-  glue_jq("setpath({path}; {value})")
 }
 
 
