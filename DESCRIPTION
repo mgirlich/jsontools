@@ -22,5 +22,6 @@ Imports:
     jsonlite,
     glue,
     jqr,
-    rlang
+    rlang,
+    pillar
 VignetteBuilder: knitr
