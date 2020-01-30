@@ -14,9 +14,10 @@ assign_in_dbplyr <- function(name, f) {
 
 
 # x <- c(".a", ".a.b", '.["a b"].[2]')
-jq_index_to_pg_path <- function(x) {
+jq_index_to_pg_path <- function(path) {
+  jq_validate_path(path)
   # \.(\w|\[".+?"\]|\[\d+])
-  matches1 <- stringr::str_match_all(x, '\\.(\\w+|\\[".+?"\\]|\\[\\d+?])')[[1]]
+  matches1 <- stringr::str_match_all(path, '\\.(\\w+|\\[".+?"\\]|\\[\\d+?])')[[1]]
   matches2 <- stringr::str_match(matches1[, 2], '^\\[?\\"?(.+?)\\"?\\]?$')[, 2]
   paste0("{", paste0(matches2, collapse = ","), "}")
 }
@@ -33,8 +34,16 @@ fixed_pq_translator <- function(con) {
     dbplyr::build_sql(!!x, " ? ", key)
   }
 
+  scalar_new$jsonr_has_path = function(x, path) {
+    dbplyr::translate_sql(!is.na(json_extract(x, path)))
+  }
+
+  scalar_new$json_extract = function(x, path) {
+    path <- jq_index_to_pg_path(path)
+    dbplyr::build_sql("(", !!x, "#>", path, ")")
+  }
+
   scalar_new$jsonr_extract_chr = function(x, path) {
-    browser()
     path <- jq_index_to_pg_path(path)
     dbplyr::build_sql("(", !!x, "#>>", path, ")")
   }
@@ -44,7 +53,7 @@ fixed_pq_translator <- function(con) {
   }
 
   scalar_new$jsonr_extract_int = function(x, path) {
-    dbplyr::translate_sql(as.integer(jsonr_extract_chr(!!x, !!path)))
+    dbplyr::translate_sql(as.integer(jsonr_extract_chr(!!x, !!path)), con = con)
   }
 
   scalar_new$jsonr_extract_dbl = function(x, path) {
