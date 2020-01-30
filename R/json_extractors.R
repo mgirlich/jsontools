@@ -38,7 +38,7 @@ json_get <- function(x, path, json2 = TRUE) {
 #'     tidyr::unnest(cols = c(array_parsed))
 #' }
 jsonr_extract <- function(x, ptype, path, ...) {
-  if (!rlang::is_zap(path)) {
+  if (!is_zap(path)) {
     x <- json_get(x, path, json2 = FALSE)
   }
   x_parsed_list <- parse_json_vector(x, .na = NA)
@@ -95,7 +95,7 @@ jsonr_extract_dtt <- function(x, path, format = "%Y-%m-%d %H:%M:%S") {
 #' @rdname jsonr_extract
 #' @export
 jsonr_extract_lst <- function(x, path, ptype = zap()) {
-  if (rlang::is_zap(ptype)) {
+  if (is_zap(ptype)) {
     ptype <- list()
   } else {
     ptype <- vctrs::list_of(.ptype = ptype)
