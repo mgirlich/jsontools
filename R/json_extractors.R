@@ -37,7 +37,7 @@ json_get <- function(x, path, json2 = TRUE) {
 #'     select(-json_array, -json_object) %>%
 #'     tidyr::unnest(cols = c(array_parsed))
 #' }
-jsonr_extract <- function(x, ptype, path = zap()) {
+jsonr_extract <- function(x, ptype, path, ...) {
   if (!rlang::is_zap(path)) {
     x <- json_get(x, path, json2 = FALSE)
   }
@@ -45,54 +45,56 @@ jsonr_extract <- function(x, ptype, path = zap()) {
 
   # NOTE dropping column doesn't work in a mutate verb
   # --> to drop the column one would need another verb :-(
-  vctrs::vec_cast(x_parsed_list, to = ptype)
+  vctrs::vec_cast(x_parsed_list, to = ptype, ...)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_lgl <- function(x, path = zap()) {
+jsonr_extract_lgl <- function(x, path) {
   jsonr_extract(x, ptype = logical(), path = path)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_int <- function(x, path = zap()) {
+jsonr_extract_int <- function(x, path) {
   jsonr_extract(x, ptype = integer(), path = path)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_dbl <- function(x, path = zap()) {
+jsonr_extract_dbl <- function(x, path) {
   jsonr_extract(x, ptype = double(), path = path)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_chr <- function(x, path = zap()) {
+jsonr_extract_chr <- function(x, path) {
   jsonr_extract(x, ptype = character(), path = path)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_fct <- function(x, path = zap()) {
+jsonr_extract_fct <- function(x, path) {
   jsonr_extract(x, ptype = factor(), path = path)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_dat <- function(x, path = zap()) {
-  jsonr_extract(x, ptype = vctrs::new_date(), path = path)
+jsonr_extract_dat <- function(x, path, format = "%Y-%m-%d") {
+  stop("not yet properly supported")
+  jsonr_extract(x, ptype = vctrs::new_date(), path = path, format = format)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_dtt <- function(x, path = zap()) {
-  jsonr_extract(x, ptype = vctrs::new_datetime(), path = path)
+jsonr_extract_dtt <- function(x, path, format = "%Y-%m-%d %H:%M:%S") {
+  stop("not yet properly supported")
+  jsonr_extract(x, ptype = vctrs::new_datetime(), path = path, format = format)
 }
 
 #' @rdname jsonr_extract
 #' @export
-jsonr_extract_lst <- function(x, path = zap(), ptype = zap()) {
+jsonr_extract_lst <- function(x, path, ptype = zap()) {
   if (rlang::is_zap(ptype)) {
     ptype <- list()
   } else {
