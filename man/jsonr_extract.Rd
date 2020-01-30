@@ -12,23 +12,23 @@
 \alias{jsonr_extract_lst}
 \title{Extract from a json}
 \usage{
-jsonr_extract(x, ptype, path = zap())
+jsonr_extract(x, ptype, path, ...)
 
-jsonr_extract_lgl(x, path = zap())
+jsonr_extract_lgl(x, path)
 
-jsonr_extract_int(x, path = zap())
+jsonr_extract_int(x, path)
 
-jsonr_extract_dbl(x, path = zap())
+jsonr_extract_dbl(x, path)
 
-jsonr_extract_chr(x, path = zap())
+jsonr_extract_chr(x, path)
 
-jsonr_extract_fct(x, path = zap())
+jsonr_extract_fct(x, path)
 
-jsonr_extract_dat(x, path = zap())
+jsonr_extract_dat(x, path, format = "\%Y-\%m-\%d")
 
-jsonr_extract_dtt(x, path = zap())
+jsonr_extract_dtt(x, path, format = "\%Y-\%m-\%d \%H:\%M:\%S")
 
-jsonr_extract_lst(x, path = zap(), ptype = zap())
+jsonr_extract_lst(x, path, ptype = zap())
 }
 \description{
 Extract from a json
