@@ -4,7 +4,14 @@
 \alias{jq_do}
 \title{Execute jq command}
 \usage{
-jq_do(x, ..., json2 = TRUE, .na = json_na_error(), slurp = FALSE)
+jq_do(
+  x,
+  ...,
+  json2 = TRUE,
+  .na = json_na_error(),
+  slurp = FALSE,
+  check_length = TRUE
+)
 }
 \description{
 Execute jq command

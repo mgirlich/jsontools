@@ -20,7 +20,9 @@ escape <- function(x) {
 #' jq_do(c('{"a": 1}', '{"a": 2}'), ".a")
 #' jq_do(NA)
 #' jq_do(NA, .na = NA)
-jq_do <- function(x, ..., json2 = TRUE, .na = json_na_error(),
+jq_do <- function(x, ...,
+                  json2 = TRUE,
+                  .na = json_na_error(),
                   slurp = FALSE) {
   # workaround for NA handling of jqr
   # https://github.com/ropensci/jqr/issues/78
@@ -52,6 +54,27 @@ jq_do <- function(x, ..., json2 = TRUE, .na = json_na_error(),
   r[!na_flag] <- vec_data(r_jq)
 
   if (isTRUE(json2)) {
+    r <- new_json2(r)
+  }
+
+  r
+}
+
+jq_do2 <- function(x, ...,
+                   json2 = TRUE,
+                   .na_error = FALSE,
+                   slurp = FALSE) {
+  if (any(is.na(x)) && is_true(.na_error)) {
+    abort("NA discovered")
+  }
+
+  input <- x[!is.na(x)]
+  if (is_true(slurp)) {
+    input <- jq_slurp(input)
+  }
+  r <- vec_data(jqr::jq(input, ...))
+
+  if (is_true(json2)) {
     r <- new_json2(r)
   }
 
@@ -153,6 +176,14 @@ json_merge <- function(x, y) {
   # TODO support length(y) > 1
   check1(y)
   jq_do(x, glue(". + {y}"))
+}
+
+
+#' Unnest a JSON array
+#'
+#' @export
+json_unnest <- function(x, .na_error = FALSE) {
+  jq_do2(x, ".[]", .na_error = .na_error)
 }
 
 
