@@ -82,9 +82,10 @@ jq_do2 <- function(x, ...,
 }
 
 
-check1 <- function(x) {
+check1 <- function(x, arg = ensym(x)) {
+  arg <- as_name(arg)
   if (!length(x) == 1) {
-    abort("length must be one")
+    abort(glue("Length of {arg} must be 1, not {length(x)}."))
   }
 }
 
