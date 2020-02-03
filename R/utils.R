@@ -1,10 +1,14 @@
 prettify <- function(x) {
-  purrr::modify_if(x, ~ !is.na(.x), jsonlite::prettify)
+  purrr::map_if(x, ~ !is.na(.x), jsonlite::prettify) %>%
+    purrr::flatten_chr() %>%
+    new_json2()
 }
 
 
 minify <- function(x) {
-  purrr::modify_if(x, ~ !is.na(.x), jsonlite::minify)
+  purrr::map_if(x, ~ !is.na(.x), jsonlite::minify) %>%
+    purrr::flatten_chr() %>%
+    new_json2()
 }
 
 

@@ -1,5 +1,6 @@
 #' @export
 format.json2 <- function(x, ..., pretty = FALSE) {
+  # TODO by default don't print too many elements?
   if (length(x) == 0) {
     return(character())
   }
@@ -11,7 +12,19 @@ format.json2 <- function(x, ..., pretty = FALSE) {
   vec_data(x)
 }
 
+
 #' @export
+obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
+  cat(x)
+  # if (is_true(pretty)) {
+  #   cat(format(x, pretty = TRUE))
+  # } else {
+  #   out <- stats::setNames(format(x), names(x))
+  #   print(out, quote = FALSE)
+  # }
+
+  invisible(x)
+}
 # obj_print_data.json2 <- function(x, ..., pretty = FALSE) {
 #   if (length(x) == 0) {
 #     return()
