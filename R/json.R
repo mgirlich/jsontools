@@ -13,9 +13,9 @@ NULL
 #' json2('{"abc": 1}')
 json2 <- function(x = character()) {
   x <- vec_cast(x, character())
+  validate_json2(vec_data(x))
   x <- minify(x)
   x <- vec_cast(x, character())
-  validate_json2(vec_data(x))
   new_json2(x)
 }
 
