@@ -9,3 +9,5 @@ expect_invalid_json <- function(object, offsets, locations) {
   expect_equal(err$offsets, offsets)
   expect_equal(err$locations, locations)
 }
+
+tibble <- tibble::tibble

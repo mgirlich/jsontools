@@ -11,14 +11,17 @@
 #
 # vec_cast(x, to) defines the possible sets of casts. It returns x translated to have prototype to, or throws an error if the conversion isn’t possible. The set of possible casts is a superset of possible coercions because they’re requested explicitly.
 
-
 test_that("casting works", {
-  vec_cast(x_valid, json2())
   expect_invalid_json(
-    vec_cast(x_invalid, json2()),
+    as_json2(x_invalid),
     offsets = 1,
     locations = 1
   )
+
+  result <- new_json2(x_valid)
+  expect_equal(as_json2(x_jqson), result)
+  expect_equal(as_json2(x_jsonlite), result)
+  expect_equal(as_json2(x_pq_json), result)
 
   expect_equal(vec_cast(json2(x_valid), character()), x_valid)
   expect_error(
