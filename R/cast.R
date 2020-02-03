@@ -66,30 +66,3 @@ vec_cast.json2.pq_jsonb <- function(x, to, ...) {
 vec_cast.json2.pq_json <- function(x, to, ...) {
   json2(vec_data(x))
 }
-
-
-
-#' @method vec_cast.character jqson
-#' @export
-vec_cast.character.jqson <- function(x, to, ...) {
-  # TODO find better solution than exporting these functions?
-  vec_data(x)
-}
-
-#' @method vec_cast.character json
-#' @export
-vec_cast.character.json <- function(x, to, ...) {
-  vec_data(x)
-}
-
-#' @method vec_cast.character pq_jsonb
-#' @export
-vec_cast.character.pq_jsonb <- function(x, to, ...) {
-  vec_data(x)
-}
-
-#' @method vec_cast.character pq_json
-#' @export
-vec_cast.character.pq_json <- function(x, to, ...) {
-  vec_data(x)
-}
