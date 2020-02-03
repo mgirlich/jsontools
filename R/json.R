@@ -24,7 +24,6 @@ json2 <- function(x = character()) {
 #' @export
 #' @rdname json2
 new_json2 <- function(x = character()) {
-  # TODO really export new_json2?
   vec_assert(x, character())
   new_vctr(x, class = c("json2"), inherit_base_type = TRUE)
 }

@@ -6,11 +6,6 @@ glue_jq <- function(..., .envir = parent.frame()) {
 }
 
 
-jq_slurp <- function(x) {
-  sprintf("[%s]", paste0(x, collapse = ","))
-}
-
-
 #' @importFrom jqr jq
 #' @method jq pq_jsonb
 #' @export
@@ -52,11 +47,11 @@ jq_set_id <- function(id, value) {
     glue_jq("{id} = {value}")
   } else {
     c(
-      glue_jq("{jq_slurp(value)} as $values"),
+      glue_jq("{json_nest(value)} as $values"),
       "[$values, .]",
       "transpose",
-      glue_jq('map((.[0] as $val | .[1] | {id} = $val))'),
-      ".[]"
+      glue_jq('map((.[0] as $val | .[1] | {id} = $val))')
+      # ".[]"
     )
   }
 }

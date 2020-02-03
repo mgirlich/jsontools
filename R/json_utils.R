@@ -36,7 +36,7 @@ jq_do <- function(x, ...,
 
   input <- x[!na_flag]
   if (is_true(slurp)) {
-    input <- jq_slurp(input)
+    input <- json_nest(input)
   }
   r_jq <- jqr::jq(input, ...)
 
@@ -70,7 +70,7 @@ jq_do2 <- function(x, ...,
 
   input <- x[!is.na(x)]
   if (is_true(slurp)) {
-    input <- jq_slurp(input)
+    input <- json_nest(input)
   }
   r <- vec_data(jqr::jq(input, ...))
 
@@ -89,93 +89,14 @@ check1 <- function(x) {
 }
 
 
-#' Update value
-#'
-#' json: [{"f1": 1, "f2": null}, 2]
-#' Postgres:
-#'   jsonb_set(x, '{0,f3}', '3')
-#' jq:
-#'   key: x | (.[0].f3|=3)
-#'   path: setpath([0, "f3"], 3)
+#' Nest a JSON array
 #'
 #' @export
-#' @examples
-#' json_set(x, id = ".abc", value = "new value")
-#' json_set(x, id = ".a.x", value = "new value")
-#' json_set(x, id = '.["new key"]', value = "new value")
-json_set <- function(x, id, value) {
-  if (length(value) > 1 && (length(x) != length(value))) {
-    stop_incompatible_size(
-      x, value,
-      length(x), length(value),
-      x_arg = "x",
-      y_arg = "value"
-    )
+json_nest <- function(x, .na_error = TRUE) {
+  if (is_true(.na_error) && any(is.na(x))) {
+    abort("x contains NA")
   }
-
-  jq_cmd <- jq_set_id(id, value)
-  jq_do(x, jq_cmd, slurp = length(value) > 1, .na = NA_character_)
-}
-
-#' json_set_path(x, path = "abc", value = "new value")
-#' json_set_path(x, path = c("abc", "def"), value = "new value")
-#' json_set_path(x, path = "new_key", value = "new value")
-#' json_set_path(x, path = "new key", value = "new value")
-json_set_path <- function(x, path, value, create = FALSE) {
-  jq_cmd <- jq_set_path(path, value)
-  jq_do(x, jq_cmd)
-}
-
-#' Update values
-#'
-#' @export
-#' @examples
-#' json_modify(
-#'   x,
-#'   abc = list(
-#'     def = 20,
-#'     xyz = 10
-#'   ),
-#'   new_key = "new value"
-#' )
-#' # cannot update array element
-json_modify <- function(x, ...) {
-  # 1) iteratively update via json_set
-  # for (i in seq_along(values)) {
-  #   x <- json_set(x, path = names(values)[i], value = values[[i]])
-  # }
-  # x
-
-  dots_json <- jsonlite::toJSON(list(...), auto_unbox = TRUE)
-  json_merge(x, dots_json)
-}
-
-#' Delete key
-#'
-#' @export
-#' @examples
-#' json_delete_path(x, id = ".abc")
-#' json_delete_path(x, id = ".abc.def")
-#' json_delete_path(x, id = ".not_there.def")
-json_delete_id <- function(x, id) {
-  # TODO support multiple keys via list(key1, key2, ...)?
-  # --> problem: syntax different than for other verbs
-  # --> maybe support via dots?
-  check1(id)
-  jq_cmd <- jq_delete_id(id)
-  jq_do(x, jq_cmd)
-}
-
-#' Merge two jsons
-#'
-#' @export
-#' @examples
-#' # something like list_modify and list_merge?
-#' json_merge('{"a": 1, "c": 3}', '{"a": 11, "b": 2}')
-json_merge <- function(x, y) {
-  # TODO support length(y) > 1
-  check1(y)
-  jq_do(x, glue(". + {y}"))
+  new_json2(sprintf("[%s]", paste0(x, collapse = ",")))
 }
 
 
@@ -183,6 +104,7 @@ json_merge <- function(x, y) {
 #'
 #' @export
 json_unnest <- function(x, .na_error = FALSE) {
+  # TODO add .id argument?
   jq_do2(x, ".[]", .na_error = .na_error)
 }
 

@@ -69,11 +69,10 @@ data_africa_with_closingdate <- data %>%
 
 
 ```{r}
-# multi update with json_set()
 data %>% 
   mutate(
     region = jsonr_extract_chr(body, ".regionname"),
-    body = json_set(body, ".regionname", tolower(region)),
+    body = json_mutate(body, .regionname = tolower(region)),
     region_new = jsonr_extract_chr(body, ".regionname")
   ) %>% 
   select(-body)
@@ -183,8 +182,7 @@ Three kind of function simplify working with JSON:
 
 ## Basic modification of JSON
 
-* `json_set()`: modify the element at a given index.
-* `json_modify()` # mutate
+* `json_mutate()` # mutate
 * `json_merge()`: merge with another JSON.
 * `json_build_object()` # transmute
 * `json_delete_id()`: to delete the element at a given index
