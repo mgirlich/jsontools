@@ -40,23 +40,60 @@
 #' @references Jeroen Ooms (2014). The \code{jsonlite} Package: A Practical and Consistent Mapping Between JSON Data and \R{} Objects. \emph{arXiv:1403.2805}. \url{https://arxiv.org/abs/1403.2805}
 #' @export
 #' @examples
-#' # Stringify some data
-#' cat(format_json(mtcars, pretty = TRUE))
+#' # null
+#' x_null <- list(a = NULL, b = 1)
+#' format_json(x_null)
+#' format_json(x_null, null = "null")
+#'
+#' # na
+#' x_na <- list(a = NA, b = 1)
+#' format_json(x_na)
+#' format_json(x_na, na = "string")
+#'
+#' # auto_unbox
+#' x_autounbox <- list(1, 1:3)
+#' format_json(x_autounbox)
+#' format_json(x_autounbox, auto_unbox = TRUE)
+#'
+#' # dataframe conversion
+#' x_df <- iris[1:2, ]
+#' format_json(x_df, pretty = TRUE)
+#' format_json(x_df, dataframe = "columns", pretty = TRUE)
+#' format_json(x_df, dataframe = "values", pretty = TRUE)
+#'
+#' # json_verbatim
+#' x_json <- json2('["a","b"]')
+#' format_json(x_json)
+#' format_json(x_json, json_verbatim = FALSE)
 #'
 #' # Decimal vs significant digits
-#' format_json(pi, digits = 3)
-#' format_json(pi, digits = I(3))
+#' x <- 10 + pi
+#' format_json(x)
+#' format_json(x, digits = NA)
+#' format_json(x, digits = 2)
+#' format_json(x, digits = I(2))
+#'
+#' # Force decimal representation
+#' format_json(12)
+#' format_json(12, always_decimal = TRUE)
 format_json <- function(x,
                         null = c("list", "null"),
-                        na = c("null", "string"), auto_unbox = FALSE,
+                        na = c("null", "string"),
+                        auto_unbox = FALSE,
                         dataframe = c("rows", "columns", "values"),
                         matrix = c("rowmajor", "columnmajor"),
                         Date = c("ISO8601", "epoch"),
                         POSIXt = c("string", "ISO8601", "epoch", "mongo"),
-                        factor = c("string", "integer"), complex = c("string", "list"),
+                        factor = c("string", "integer"),
+                        complex = c("string", "list"),
                         raw = c("base64", "hex", "mongo"),
-                        digits = 4, json_verbatim = TRUE, force = FALSE,
-                        pretty = FALSE, rownames = FALSE, always_decimal = FALSE, ...) {
+                        digits = 4,
+                        json_verbatim = TRUE,
+                        force = FALSE,
+                        pretty = FALSE,
+                        rownames = FALSE,
+                        always_decimal = FALSE,
+                        ...) {
   # * time_format = "%Y-%m-%dT%H:%M:%SZ" (for UTC)
   #               = "%Y-%m-%dT%H:%M:%S" (for non UTC)
   #               = "" (for POSIXt == "string")
@@ -76,9 +113,6 @@ format_json <- function(x,
     na <- NULL
   }
 
-  # TODO what about documentation? Copy manually from jsonlite::toJSON?
-  # TODO what about new arguments? enough when passed on to ...?
-  # TODO should return json2
   jsonlite::toJSON(
     x,
     null = null, na = na, auto_unbox = auto_unbox,
@@ -89,7 +123,9 @@ format_json <- function(x,
     force = force, pretty = pretty, rownames = rownames,
     always_decimal = always_decimal,
     ...
-  )
+  ) %>%
+    unclass() %>%
+    new_json2()
 }
 
 to_json <- format_json
@@ -107,40 +143,43 @@ write_json <- function(x, path, ...) {
 }
 
 
-#' Convert `R` objects to/from JSON
+#' Convert `R` objects to JSON
 #'
 #' @export
 #' @examples
-#' format_json_vector(letters)
-#' format_json_vector(list(list(a = 1), list(a = 1, b = 2)))
-format_json_vector <- function(x, null = c("list", "null"),
-                               na = c("null", "string"), auto_unbox = TRUE,
-                               dataframe = c("rows", "columns", "values"),
-                               matrix = c("rowmajor", "columnmajor"),
-                               Date = c("ISO8601", "epoch"),
-                               POSIXt = c("string", "ISO8601", "epoch", "mongo"),
-                               factor = c("string", "integer"), complex = c("string", "list"),
-                               raw = c("base64", "hex", "mongo"),
-                               digits = 4, json_verbatim = TRUE, force = FALSE, ...) {
-  if (!is.vector(x)) {
-    abort("only works with vectors or list. Did you want to use `format_json_rowwise()` instead?")
+#' format_json_list(list(list(a = 1), list(a = 1, b = 2), NULL, NA))
+format_json_list <- function(x,
+                             null = c("list", "null"),
+                             na = c("null", "string"),
+                             auto_unbox = FALSE,
+                             dataframe = c("rows", "columns", "values"),
+                             matrix = c("rowmajor", "columnmajor"),
+                             Date = c("ISO8601", "epoch"),
+                             POSIXt = c("string", "ISO8601", "epoch", "mongo"),
+                             factor = c("string", "integer"),
+                             complex = c("string", "list"),
+                             raw = c("base64", "hex", "mongo"),
+                             digits = 4,
+                             json_verbatim = TRUE,
+                             force = FALSE,
+                             pretty = FALSE,
+                             rownames = FALSE,
+                             always_decimal = FALSE,
+                             ...) {
+  if (!is.list(x)) {
+    abort(c(
+      "only works with list.",
+      i = "Did you want to use `format_json_rowwise()` instead?"
+    ))
   }
 
-  dataframe <- match.arg(dataframe)
-  matrix <- match.arg(matrix)
-  Date <- match.arg(Date)
-  POSIXt <- match.arg(POSIXt)
-  factor <- match.arg(factor)
-  complex <- match.arg(complex)
-  raw <- match.arg(raw)
-  null <- match.arg(null)
   if (!missing(na)) {
     na <- match.arg(na)
   } else {
     na <- NULL
   }
 
-  purrr::map_chr(
+  purrr::map(
     x,
     function(elt) {
       format_json(
@@ -154,5 +193,6 @@ format_json_vector <- function(x, null = c("list", "null"),
       )
     }
   ) %>%
-    as_json2()
+    purrr::flatten_chr() %>%
+    new_json2()
 }

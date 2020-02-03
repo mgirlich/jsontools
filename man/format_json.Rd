@@ -81,12 +81,42 @@ will parse such escape sequences but it is usually preferable to encode unicode 
 \code{UTF-8} rather than escape sequences.
 }
 \examples{
-# Stringify some data
-cat(format_json(mtcars, pretty = TRUE))
+# null
+x_null <- list(a = NULL, b = 1)
+format_json(x_null)
+format_json(x_null, null = "null")
+
+# na
+x_na <- list(a = NA, b = 1)
+format_json(x_na)
+format_json(x_na, na = "string")
+
+# auto_unbox
+x_autounbox <- list(1, 1:3)
+format_json(x_autounbox)
+format_json(x_autounbox, auto_unbox = TRUE)
+
+# dataframe conversion
+x_df <- iris[1:2, ]
+format_json(x_df, pretty = TRUE)
+format_json(x_df, dataframe = "columns", pretty = TRUE)
+format_json(x_df, dataframe = "values", pretty = TRUE)
+
+# json_verbatim
+x_json <- json2('["a","b"]')
+format_json(x_json)
+format_json(x_json, json_verbatim = FALSE)
 
 # Decimal vs significant digits
-format_json(pi, digits = 3)
-format_json(pi, digits = I(3))
+x <- 10 + pi
+format_json(x)
+format_json(x, digits = NA)
+format_json(x, digits = 2)
+format_json(x, digits = I(2))
+
+# Force decimal representation
+format_json(12)
+format_json(12, always_decimal = TRUE)
 }
 \references{
 Jeroen Ooms (2014). The \code{jsonlite} Package: A Practical and Consistent Mapping Between JSON Data and \R{} Objects. \emph{arXiv:1403.2805}. \url{https://arxiv.org/abs/1403.2805}
