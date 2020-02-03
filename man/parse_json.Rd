@@ -50,7 +50,7 @@ as.character(parse_json(big_num, bigint_as_char = FALSE))
 as.character(parse_json(big_num, bigint_as_char = TRUE))
 
 # NA error by default
-parse_json(NA)
+try(parse_json(NA))
 # ... but one can specify a default value
 parse_json(NA, .na = data.frame(a = 1, b = 2))
 

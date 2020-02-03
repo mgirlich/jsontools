@@ -23,16 +23,20 @@
 #' as.character(parse_json(big_num, bigint_as_char = TRUE))
 #'
 #' # NA error by default
-#' parse_json(NA)
+#' try(parse_json(NA))
 #' # ... but one can specify a default value
 #' parse_json(NA, .na = data.frame(a = 1, b = 2))
 #'
 #' # input of size 0
 #' parse_json(NULL)
 #' parse_json(character(), .null = data.frame(a = 1, b = 2))
-parse_json <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
-                       simplifyMatrix = FALSE, flatten = FALSE,
-                       bigint_as_char = TRUE, .na = json_na_error(),
+parse_json <- function(x,
+                       simplifyVector = TRUE,
+                       simplifyDataFrame = FALSE,
+                       simplifyMatrix = FALSE,
+                       flatten = FALSE,
+                       bigint_as_char = TRUE,
+                       .na = json_na_error(),
                        .null = NULL,
                        ...) {
   if (is_null(x) || (is_character(x) && vec_size(x) == 0)) {
@@ -98,9 +102,13 @@ read_json <- function(path, ...) {
 #' parse_json_vector(x = c('"a"', '"b"'))
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 #' parse_json_vector(x = c('"a"', NA), .na = 1)
-parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALSE,
-                              simplifyMatrix = FALSE, flatten = FALSE,
-                              bigint_as_char = TRUE, .na = json_na_error(),
+parse_json_vector <- function(x,
+                              simplifyVector = TRUE,
+                              simplifyDataFrame = FALSE,
+                              simplifyMatrix = FALSE,
+                              flatten = FALSE,
+                              bigint_as_char = TRUE,
+                              .na = json_na_error(),
                               .null = NULL,
                               ...) {
   lapply(
@@ -119,5 +127,8 @@ parse_json_vector <- function(x, simplifyVector = TRUE, simplifyDataFrame = FALS
 
 
 json_na_error <- function() {
-  stop_jsontools("na_json", message = "input is NA.\nTo use a default value use the argument .na.")
+  stop_jsontools(
+    "na_json",
+    message = "input is NA.\nTo use a default value use the argument .na."
+  )
 }
