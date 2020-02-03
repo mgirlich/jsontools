@@ -1,14 +1,21 @@
-prettify <- function(x) {
-  purrr::map_if(x, ~ !is.na(.x), jsonlite::prettify) %>%
-    purrr::flatten_chr() %>%
-    new_json2()
+json2_do <- function(x, f, json2 = TRUE) {
+  r <- purrr::map_if(x, ~ !is.na(.x), f) %>%
+    purrr::flatten_chr()
+
+  if (is_true(json2)) {
+    new_json2(r)
+  } else {
+    r
+  }
+}
+
+prettify <- function(x, json2 = TRUE) {
+  json2_do(x, jsonlite::prettify, json2 = json2)
 }
 
 
-minify <- function(x) {
-  purrr::map_if(x, ~ !is.na(.x), jsonlite::minify) %>%
-    purrr::flatten_chr() %>%
-    new_json2()
+minify <- function(x, json2 = TRUE) {
+  json2_do(x, jsonlite::minify, json2 = json2)
 }
 
 
