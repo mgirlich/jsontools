@@ -25,7 +25,7 @@ json2 <- function(x = character()) {
 #' @rdname json2
 new_json2 <- function(x = character()) {
   vec_assert(x, character())
-  new_vctr(x, class = c("json2"), inherit_base_type = TRUE)
+  new_vctr(x, class = c("json2", "json"), inherit_base_type = TRUE)
 }
 
 #' @export
