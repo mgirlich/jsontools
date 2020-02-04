@@ -1,16 +1,46 @@
 #' Update values
 #'
 #' @export
+#' @examples
+#' x_na <- c('{"a": 11, "b": {"x": 12}}', NA, '{"a": 21, "b": {"x": 22}}')
+#' # update with different values
+#' json_mutate(x_na, .a = 1:3)
+#'
+#' # NA is translated to null
+#' json_mutate(x_na, .a = 1:3, .b.x = NA)
+#'
+#' # create new keys
+#' json_mutate(x_na, .c = 0, .d.x = c("a", "b", "c"))
 json_mutate <- function(x, ...) {
   dots <- list(...)
-
   na_flag <- is.na(x)
 
-  jq_cmd <- purrr::imap_chr(
-    dots,
-    ~ paste(jq_set_id(.y, .x[!na_flag]), collapse = " |\n")
-  )
-  jq_do(x, c(jq_cmd, ".[]"), slurp = any(lengths(dots) > 1), .na = NA_character_)
+  if (all(lengths(dots) == 1)) {
+    values <- purrr::map(dots, escape_value) %>%
+      purrr::flatten_chr()
+
+    jq_cmd <- glue_jq("{names(dots)} = {values}")
+    jq_do(x, jq_cmd, slurp = FALSE, .na = NA_character_)
+  } else {
+    values <- vec_recycle_common(!!!dots, .size = length(x)) %>%
+      purrr::map(escape_value) %>%
+      purrr::map(~ .x[!na_flag]) %>%
+      purrr::map(json_nest)
+
+    updates <- glue_jq(
+      "{names(dots)} = $values[{seq_along(dots) - 1}]",
+      combine = TRUE
+    )
+
+    jq_cmd <- new_jqquery(
+      glue_jq("[({json_nest(values)} | transpose), .]"),
+      "transpose",
+      glue_jq('map(.[0] as $values | .[1] | {updates})'),
+      ".[]"
+    )
+
+    jq_do(x, jq_cmd, slurp = TRUE, .na = NA_character_)
+  }
 }
 
 #' Delete key

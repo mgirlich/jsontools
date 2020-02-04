@@ -9,3 +9,14 @@ json_mutate(x, ...)
 \description{
 Update values
 }
+\examples{
+x_na <- c('{"a": 11, "b": {"x": 12}}', NA, '{"a": 21, "b": {"x": 22}}')
+# update with different values
+json_mutate(x_na, .a = 1:3)
+
+# NA is translated to null
+json_mutate(x_na, .a = 1:3, .b.x = NA)
+
+# create new keys
+json_mutate(x_na, .c = 0, .d.x = c("a", "b", "c"))
+}

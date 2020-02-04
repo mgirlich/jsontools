@@ -94,23 +94,6 @@ jq_has_keys <- function(keys, object = FALSE) {
 }
 
 
-jq_set_id <- function(id, value) {
-  value <- escape(value)
-
-  if (length(value) == 1) {
-    glue_jq("{id} = {value}")
-  } else {
-    c(
-      glue_jq("{json_nest(value)} as $values"),
-      "[$values, .]",
-      "transpose",
-      glue_jq('map((.[0] as $val | .[1] | {id} = $val))')
-      # ".[]"
-    )
-  }
-}
-
-
 jq_delete_id <- function(id) {
   glue_jq("del({id})")
 }
