@@ -18,93 +18,118 @@ knitr::opts_chunk$set(
 library(jsontools)
 ```
 
-## Goals
-This package has three goals:
-1. easy parsing from JSON and easy conversion to JSON
-2. extract a subset of data from JSON without having to parse everything
-3. basic modification of JSON
+## Overview
 
-The second and third goals are motivated by how one can work with JSON in a Postgres database.
+With the increasing support of JSON in databases and since 2016 even support 
+in the SQL standard, JSON data in vectors become more common. With jsontools
+one can easily work with JSON vectors in R. 
+The three main parts are:
+1. parsing from JSON and converting to JSON
+2. direct manipulation of JSON without parsing and conversion over R
+3. extract data from JSON without parsing everything
 
 
-## Case Study
+## Getting to know the data
 
-
-```{r}
-# json_string <- c(tidyjson::worldbank[1:4], NA_character_)
-json_string <- tidyjson::worldbank[1:4]
-```
-
-First, we create a JSON vector
+We work with a JSON of GitHub commits to dplyr. Printing the first two elements
+looks quite messy
 
 ```{r}
-(json <- json2(json_string))
+gh_commits_vec[1:2]
+class(gh_commits_vec)
 ```
 
-and it also prints nicely in a tibble
+because this is still a character vector. So, we first convert it into a JSON
+vector
+
+```{r}
+gh_commits_vec <- as_json2(gh_commits_vec)
+gh_commits_vec
+```
+
+This looks better but is still a bit messy. To get a quick overview we use
+`json_glimpse()`
+
+```{r}
+json_glimpse(gh_commits_vec[2])
+```
+
+## Extract data
+
+TODO: example for using `jsonr_has_key()`
+
+To extract data from the JSON vector we need to know about the JSON path syntax
+used here. It comes from the command line tool [jq](https://stedolan.github.io/jq/)
+and is very similar to the SQL standard.
+The path to the key of an object is simply a dot followed by the key ".key".
+And for nested objects one simply concatenates this syntax ".key1.key2". For
+example to get the message in the commit one uses the path ".commit.message".
+
+To find out who commited we use `jsonr_extract_chr()`
+
+```{r}
+jsonr_extract_chr(gh_commits_vec, ".commit.committer.name")
+```
+
+Now, we can easily use dplyr to work with JSON data
 
 ```{r}
 library(dplyr)
-# TODO problem printing in Rmd??
-data <- tibble(
-  i = seq_along(json),
-  body = json
+
+commits_df <- tibble(json = gh_commits_vec)
+commits_df <- commits_df %>% 
+  mutate(
+    sha = jsonr_extract_chr(json, ".sha"),
+    committer_name = jsonr_extract_chr(gh_commits_vec, ".commit.committer.name"),
+    message = jsonr_extract_chr(gh_commits_vec, ".commit.message")
+  ) %>% 
+  select(-json, everything())
+commits_df
+```
+
+## Modify JSON
+
+Romain and Hadley actually wanted to use their rstudio email address instead
+of the ones they used. With `jsonr_extract_*()` we can extract data, manipulate
+it in R and with `json_mutate()` mutate the data in our JSON
+
+```{r}
+emails <- jsonr_extract_chr(gh_commits_vec, ".commit.committer.email")
+emails[emails == "romain@r-enthusiasts.com"] <- "romain.francois@rstudio.com"
+emails[emails == "h.wickham@gmail.com"] <- "hadley.wickham@rstudio.com"
+
+gh_commits_vec <- json_mutate(
+  gh_commits_vec,
+  .commit.committer.email = emails,
+  .commit.author.email = emails
 )
-```
-
-Let's first have a look at what keys are typically in our JSON objects
-
-```{r}
-jsonr_keys(json[1:3])
+gh_commits_vec
 ```
 
 
+TODO better example with `json_build_object()`
+
 ```{r}
-data_africa_with_closingdate <- data %>% 
-  filter(
-    jsonr_has_key(body, "closingdate"),
-    jsonr_extract_chr(body, ".regionname") == "Africa"
+gh_commits_vec %>% 
+  json_build_object(
+    sha,
+    committer_name = ".commit.committer.name",
+    committer_mail = ".commit.committer.email",
+    dates = "[.commit.committer.date, .commit.author.date]"
   )
 ```
 
 
-```{r}
-data %>% 
-  mutate(
-    region = jsonr_extract_chr(body, ".regionname"),
-    body = json_mutate(body, .regionname = tolower(region)),
-    region_new = jsonr_extract_chr(body, ".regionname")
-  ) %>% 
-  select(-body)
-```
+## Comparing JSON vectors
 
-or creating a new structure
+Checking if two JSONs are equal can be done with `json_equal()`. In the
+comparison
 
-```{r}
-json_build_object(
-  data$body,
-  regionname,
-  totalamt,
-  first_major_sector = `.majorsector_percent[0].name`,
-  country = .countryshortname,
-  major_sectors = `[.majorsector_percent[].Name]`
-)
-```
-
-
-## JSON vectors
-
-Create JSON vectors
-
-```{r}
-x <- c('{"def": 1, "abc": 2}', '{"def": 2}', '[2, 1, 3]')
-json2(x)
-json2(c(x, NA))
-
-json_sort(x)
-```
-
-comparing
+* the formatting is ignored, i.e. it doesn't matter whether one JSON is minified
+while the other is not
+* and the order of keys doesn't matter. This is useful for example when
+comparing a locally constructed JSON with one Postgres because Postgres sorts
+the JSON when storing it.
 
 ```{r}
 x <- new_json2('{"a": {"x": 1, "y": 2}}')
@@ -153,7 +178,7 @@ jsonlite::fromJSON(NULL)
 To control what is returned on `NA` resp. `NULL` as input there are the arguments `.na` and `.null`.
 
 
-## Conversion to JSON
+## Converting to JSON
 
 drawbacks:
 
@@ -166,23 +191,3 @@ For conversion there are the following functions:
 * `format_json()`: convert an R object to JSON.
 * `format_json_vector()`: convert each element of an R object to JSON and return them as a JSON vector.
 * `format_json_rowwise()`:
-
-
-## Index
-
-
-## Extract JSON data
-
-Three kind of function simplify working with JSON:
-
-* `json_extract()` and variants to extract data from a JSON vector.
-* `json_has_key()`, `json_has_path()` and variants to check whether a certain element exists.
-* `json_keys()` to get the keys of an object.
-
-
-## Basic modification of JSON
-
-* `json_mutate()` # mutate
-* `json_merge()`: merge with another JSON.
-* `json_build_object()` # transmute
-* `json_delete_id()`: to delete the element at a given index
