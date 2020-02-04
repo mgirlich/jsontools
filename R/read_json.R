@@ -103,6 +103,7 @@ read_json <- function(path, ...) {
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 #' parse_json_vector(x = c('"a"', NA), .na = 1)
 parse_json_vector <- function(x,
+                              simplify_result = FALSE,
                               simplifyVector = TRUE,
                               simplifyDataFrame = FALSE,
                               simplifyMatrix = FALSE,
@@ -111,7 +112,7 @@ parse_json_vector <- function(x,
                               .na = json_na_error(),
                               .null = NULL,
                               ...) {
-  lapply(
+  r <- lapply(
     x,
     parse_json,
     simplifyVector = simplifyVector,
@@ -123,6 +124,20 @@ parse_json_vector <- function(x,
     .null = .null,
     ...
   )
+
+  if (is_true(simplify_result) &&
+      any(is_true(simplifyVector), is_true(simplifyDataFrame), is_true(simplifyMatrix))) {
+    jsonlite:::simplify(
+      r,
+      simplifyVector = simplifyVector,
+      simplifyDataFrame = simplifyDataFrame,
+      simplifyMatrix = simplifyMatrix,
+      flatten = flatten,
+      ...
+    )
+  } else {
+    r
+  }
 }
 
 
