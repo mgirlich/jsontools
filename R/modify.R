@@ -47,15 +47,18 @@ json_mutate <- function(x, ...) {
 #'
 #' @export
 #' @examples
-#' json_delete_path(x, id = ".abc")
-#' json_delete_path(x, id = ".abc.def")
-#' json_delete_path(x, id = ".not_there.def")
-json_delete_id <- function(x, id) {
+#' x <- c('{"a": 11, "b": {"x": 12}}')
+#'
+#' json_delete(x, ".a")
+#' json_delete(x, .a, .b)
+#'
+#' json_delete(x, ".abc")
+json_delete <- function(x, ...) {
   # TODO support multiple keys via list(key1, key2, ...)?
   # --> problem: syntax different than for other verbs
   # --> maybe support via dots?
-  check1(id)
-  jq_cmd <- jq_delete_id(id)
+  dots <- exprs(...)
+  jq_cmd <- jq_delete_id(dots)
   jq_do(x, jq_cmd)
 }
 
