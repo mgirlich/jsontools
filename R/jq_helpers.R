@@ -1,8 +1,60 @@
 # jq help:
 # Merge two arrays: https://github.com/stedolan/jq/issues/680
 
-glue_jq <- function(..., .envir = parent.frame()) {
-  noquote(glue::glue(..., .envir = .envir))
+# jqquery class -----------------------------------------------------------
+
+new_jqquery <- function(...) {
+  new_vctr(c(...), class = c("jqquery"), inherit_base_type = TRUE)
+}
+
+print.jqquery <- function(x, ...) {
+  x <- vec_data(x)
+  cat(noquote(jq_query_combine(x, sep = "\n")))
+}
+
+vec_ptype2.jqquery <- function(x, y, ..., x_arg = "", y_arg = "") {
+  UseMethod("vec_ptype2.jqquery", y)
+}
+
+vec_ptype2.jqquery.jqquery <- function(x, y, ...) new_jqquery()
+
+vec_ptype2.jqquery.character <- function(x, y, ...) {
+  character()
+}
+
+vec_ptype2.character.jqquery <- function(x, y, ...) {
+  character()
+}
+
+vec_cast.jqquery <- function(x, to, ...) UseMethod("vec_cast.jqquery")
+
+vec_cast.jqquery.default <- function(x, to, ...) vec_default_cast(x, to, ...)
+
+vec_cast.jqquery.jqquery <- function(x, to, ...) x
+
+vec_cast.jqquery.character <- function(x, to, ...) {
+  new_jqquery(vec_data(x))
+}
+
+vec_cast.character.jqquery <- function(x, to, ...) {
+  vec_data(x)
+}
+
+
+# jq helpers --------------------------------------------------------------
+
+jq_query_combine <- function(x, sep = " ") {
+  sep <- paste0(" |", sep)
+  new_jqquery(paste0(x, collapse = sep))
+}
+
+glue_jq <- function(..., .envir = parent.frame(), combine = FALSE) {
+  r <- new_jqquery(glue::glue(..., .envir = .envir))
+  if (is_true(combine)) {
+    r <- jq_query_combine(r)
+  }
+
+  r
 }
 
 
@@ -33,10 +85,12 @@ jq_has_keys <- function(keys, object = FALSE) {
   array_elts <- lapply(keys, jq_has_key)
   if (is_true(object)) {
     values <- paste0(escape(keys), ": ", array_elts, collapse = ", ")
-    paste0("{", values, "}")
+    jq_query <- paste0("{", values, "}")
   } else {
-    paste0("[", paste0(array_elts, collapse = ", "), "]")
+    jq_query <- paste0("[", paste0(array_elts, collapse = ", "), "]")
   }
+
+  new_jqquery(jq_query)
 }
 
 
