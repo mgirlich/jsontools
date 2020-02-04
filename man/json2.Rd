@@ -5,8 +5,7 @@
 \alias{new_json2}
 \alias{as_json2}
 \alias{is_json2}
-\title{importFrom methods setOldClass
-Construct a json2 object}
+\title{Construct a json2 object}
 \usage{
 json2(x = character())
 
@@ -17,7 +16,6 @@ as_json2(x)
 is_json2(x)
 }
 \description{
-importFrom methods setOldClass
 Construct a json2 object
 
 new_json2()

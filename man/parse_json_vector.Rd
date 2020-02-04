@@ -6,6 +6,7 @@
 \usage{
 parse_json_vector(
   x,
+  simplify_result = FALSE,
   simplifyVector = TRUE,
   simplifyDataFrame = FALSE,
   simplifyMatrix = FALSE,
