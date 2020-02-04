@@ -14,8 +14,7 @@ NULL
 json2 <- function(x = character()) {
   x <- vec_cast(x, character())
   validate_json2(vec_data(x))
-  x <- minify(x)
-  x <- vec_cast(x, character())
+  x <- minify(x, json2 = FALSE)
   new_json2(x)
 }
 
