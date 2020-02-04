@@ -13,6 +13,49 @@ escape <- function(x) {
 }
 
 
+escape_value <- function(x) {
+  x_escaped <- escape_value_(x)
+  x_escaped[is.na(x)] <- "null"
+  x_escaped
+}
+
+escape_value_ <- function(x) {
+  UseMethod("escape_value_")
+}
+
+escape_value_.AsIs <- function(x) {
+  vec_data(x)
+}
+
+escape_value_.json2 <- function(x) {
+  vec_data(x)
+}
+
+escape_value_.logical <- function(x) {
+  ifelse(x, "true", "false")
+}
+
+escape_value_.integer <- function(x) {
+  as.character(x)
+}
+
+escape_value_.numeric <- function(x) {
+  as.character(x)
+}
+
+escape_value_.character <- function(x) {
+  paste0('"', x, '"')
+}
+
+escape_value_.factor <- function(x) {
+  paste0('"', x, '"')
+}
+
+escape_value_.default <- function(x) {
+  abort("not defined how to convert")
+}
+
+
 #' Execute jq command
 #'
 #' @examples
