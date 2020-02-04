@@ -17,17 +17,25 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/json2tools)](https://CRAN.R-project.org/package=json2tools)
+[![CRAN status](https://www.r-pkg.org/badges/version/jsontools)](https://CRAN.R-project.org/package=jsontools)
 <!-- badges: end -->
 
-The goal of json2tools is to ...
+## Overview
+With the increasing support of JSON in databases and since 2016 even support 
+in the SQL standard, JSON data in vectors become more common. With jsontools
+one can easily work with JSON vectors in R. 
+The three main parts are:
+1. parsing from JSON and converting to JSON
+2. direct manipulation of JSON without parsing and conversion over R
+3. extract data from JSON without parsing everything
 
 ## Installation
 
-You can install the released version of json2tools from [CRAN](https://CRAN.R-project.org) with:
+jsontools is not yet release on CRAN. You can install it from GitHub with
 
 ``` r
-install.packages("json2tools")
+# install.packages("devtools")
+devtools::install_github("tidyverse/dplyr")
 ```
 
 ## Example
@@ -35,22 +43,22 @@ install.packages("json2tools")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(json2tools)
-## basic example code
+library(jsontools)
+
+gh_orgs[1]
+
+gh_orgs <- prettify(gh_orgs)
+gh_orgs[1]
+
+json_glimpse(gh_orgs[1])
+
+gh_orgs_small <- gh_orgs %>% 
+  json_build_object(login, id, description)
+
+parse_json_vector(gh_orgs_small, simplifyDataFrame = TRUE)
+
+(logins <- jsonr_extract_chr(gh_orgs_small, ".login"))
+
+json_mutate(gh_orgs, .login = paste0("new-", logins))[1:2] %>% 
+  prettify()
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
