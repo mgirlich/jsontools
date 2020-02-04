@@ -1,13 +1,13 @@
 Package: jsontools
-Title: What the Package Does (One Line, Title Case)
+Title: Working with JSON vectors
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Maximilian",
+           family = "Girlich",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "maximilian.girlich@outlook.com")
+Description: A toolbox for working with JSON vectors similar to the functions
+    Postgres provides to work with JSON columns.
 License: GPL-3
 Suggests: 
     testthat (>= 2.1.0),
