@@ -21,16 +21,14 @@ vec_cast.json2.json2 <- function(x, to, ...) x
 #' @method vec_cast.json2 character
 #' @export
 vec_cast.json2.character <- function(x, to, ...) {
-  attributes(x) <- NULL
-  json2(unclass(x))
-  # json2(vec_data(x))
+  # workaround for problem with rendering in markdown
+  x <- ifelse(x == "__NA__", NA, x)
+  json2(vec_data(x))
 }
 
 #' @method vec_cast.character json2
 #' @export
 vec_cast.character.json2 <- function(x, to, ...) {
-  # attributes(x) <- NULL
-  # as_json2(unclass(x))
   vec_data(x)
 }
 
