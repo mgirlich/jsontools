@@ -23,5 +23,6 @@ Imports:
     glue,
     jqr,
     rlang,
-    pillar
+    pillar,
+    magrittr
 VignetteBuilder: knitr
