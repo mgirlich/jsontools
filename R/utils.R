@@ -9,15 +9,15 @@ json2_do <- function(x, f, json2 = TRUE) {
   }
 }
 
+#' @export
 prettify <- function(x, json2 = TRUE) {
   json2_do(x, jsonlite::prettify, json2 = json2)
 }
 
-
+#' @export
 minify <- function(x, json2 = TRUE) {
   json2_do(x, jsonlite::minify, json2 = json2)
 }
-
 
 #' @export
 json_u <- function(x) {
