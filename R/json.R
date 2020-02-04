@@ -1,9 +1,5 @@
-#' @import vctrs
-#' @import rlang
-NULL
-
-#' importFrom methods setOldClass
-# methods::setOldClass(c("json2", "vctrs_vctr"))
+#' @importFrom methods setOldClass
+methods::setOldClass(c("json2", "vctrs_vctr"))
 
 #' Construct a json2 object
 #'

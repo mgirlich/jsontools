@@ -166,10 +166,6 @@ json_glimpse2 <- function(x) {
   jq_cmd <- jq_paste(jq_f_summarise_array_of_objects, jq_summarise, jq_main)
   parsed <- jq_do(x, jq_cmd) %>%
     parse_json()
-
-    unclass() %>%
-    prettify() %>%
-    cat()
 }
 
 
@@ -297,6 +293,7 @@ print_it <- function() {
 # }
 
 
+#' @export
 json_glimpse <- function(x) {
   # TODO handle json of length > 1
   # --> maybe by applying a slurp operation? or show a shorter summary?

@@ -1,5 +1,6 @@
 #' Build a JSON object
 #'
+#' @export
 #' @examples
 #' json_build_object(
 #'   '{"foo": 5, "bar": {"foo": [1, 2, 3], "bar": 3}}',

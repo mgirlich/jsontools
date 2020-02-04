@@ -1,2 +1,4 @@
+#' @import vctrs
+#' @import rlang
 #' @importFrom glue glue
-NULL
+"_PACKAGE"
