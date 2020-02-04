@@ -3,9 +3,12 @@
 #' @export
 json_mutate <- function(x, ...) {
   dots <- list(...)
+
+  na_flag <- is.na(x)
+
   jq_cmd <- purrr::imap_chr(
     dots,
-    ~ paste(jq_set_id(.y, .x), collapse = " |\n")
+    ~ paste(jq_set_id(.y, .x[!na_flag]), collapse = " |\n")
   )
   jq_do(x, c(jq_cmd, ".[]"), slurp = any(lengths(dots) > 1), .na = NA_character_)
 }
