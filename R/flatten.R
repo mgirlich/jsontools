@@ -65,8 +65,7 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
      FROM
       my_tbl,
       {each_tbl}
-    ", .con = con
-    )
+    ", .con = con)
   )
 
   x_nms <- names2(x)
@@ -89,7 +88,7 @@ json_flatten_query <- function(x) {
   x_each <- x_each[x_each$type != "null", ]
 
   if (!all(x_each$type %in% c("object")) &&
-      !all(x_each$type %in% c("array"))) {
+    !all(x_each$type %in% c("array"))) {
     stop_jsontools("`x` must be an array of objects or an array of arrays")
   }
 

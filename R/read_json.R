@@ -138,7 +138,7 @@ parse_json_vector <- function(x,
   )
 
   if (is_true(simplify_result) &&
-      any(is_true(simplifyVector), is_true(simplifyDataFrame), is_true(simplifyMatrix))) {
+    any(is_true(simplifyVector), is_true(simplifyDataFrame), is_true(simplifyMatrix))) {
     # jsonlite:::simplify(
     #   r,
     #   simplifyVector = simplifyVector,

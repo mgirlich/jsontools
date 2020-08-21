@@ -36,7 +36,7 @@ test_that("factor work", {
 
 test_that("json2 work", {
   expect_equal(
-    json_mutate(x, .a = json2('[1, 2, 3]')),
+    json_mutate(x, .a = json2("[1, 2, 3]")),
     json2('{"a":[1,2,3]}')
   )
 })

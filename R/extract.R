@@ -67,8 +67,7 @@ json_get_value <- function(x, path, ptype = NULL, default = NULL, na = NA, bigin
       JSON_TYPE(data, {path}) AS type
     FROM
       my_tbl
-  ", .con = con
-  )
+  ", .con = con)
 
   result_df <- exec_sqlite_json(x, sql)
 
@@ -139,7 +138,8 @@ json_get_query <- function(x, path, wrap_scalars = FALSE, default = NULL, na = N
       "CASE JSON_TYPE(data, {path}) in ('array', 'object', 'null')
         WHEN true THEN {extract_sql}
         ELSE JSON_ARRAY(JSON_QUOTE({extract_sql}))
-      END", .con = con
+      END",
+      .con = con
     )
   } else {
     value_sql <- extract_sql
@@ -151,8 +151,7 @@ json_get_query <- function(x, path, wrap_scalars = FALSE, default = NULL, na = N
       JSON_TYPE(data, {path}) AS type
     FROM
       my_tbl
-    ", .con = con
-  )
+    ", .con = con)
 
   result <- exec_sqlite_json(x, sql)
 

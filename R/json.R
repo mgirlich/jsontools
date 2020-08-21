@@ -32,7 +32,7 @@ json2 <- function(x = character()) {
 #'
 #' new_json2()
 #' new_json2('{"abc": 1}')
-#' new_json2(c('{"abc": 1}', '{"def": 2}', '[1, 2, 3]', NA))
+#' new_json2(c('{"abc": 1}', '{"def": 2}', "[1, 2, 3]", NA))
 new_json2 <- function(x = character()) {
   if (!is.character(x)) {
     stop_jsontools("`x` must be a character vector")

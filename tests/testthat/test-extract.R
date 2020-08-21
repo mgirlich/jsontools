@@ -221,7 +221,7 @@ test_that("json_get_query handles NA", {
   )
 
   expect_equal(
-    json_get_query(c(x, NA), "$.b", na = '{}'),
+    json_get_query(c(x, NA), "$.b", na = "{}"),
     json2(c(
       '{"x":2}',
       '{"x":3}',

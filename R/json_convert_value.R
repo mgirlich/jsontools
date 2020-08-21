@@ -48,7 +48,7 @@ json_convert_value <- function(x, json_types, ptype, bigint_as_char = TRUE) {
   }
 
   if (inherits(json_ptype, "jsontools_json_object") ||
-      inherits(json_ptype, "jsontools_json_array")) {
+    inherits(json_ptype, "jsontools_json_array")) {
     ptype <- vec_ptype2(ptype, character())
     new_json2(vec_c(!!!x_parsed, .ptype = ptype))
   } else {
@@ -130,7 +130,7 @@ json_vec_c <- function(x, types, ptype = NULL) {
   json_ptype <- json_ptype_common(types)
 
   if (inherits(json_ptype, "jsontools_json_object") ||
-      inherits(json_ptype, "jsontools_json_array")) {
+    inherits(json_ptype, "jsontools_json_array")) {
     ptype <- vec_ptype2(ptype, character())
     new_json2(vec_c(!!!x, .ptype = ptype))
   } else {

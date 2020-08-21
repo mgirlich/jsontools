@@ -3,7 +3,7 @@ test_that("json_keys works", {
     json_keys(c(
       '{"a": 1, "b": 2}',
       '{"x": 1, "y": 2}',
-      '[1, 2]'
+      "[1, 2]"
     )),
     list(
       c("a", "b"),
@@ -20,7 +20,7 @@ test_that("json_path_exists works", {
       c(
         '{"a": 1}',
         '{"b": 2}',
-        '[1, 2]',
+        "[1, 2]",
         NA_character_
       ),
       "$.a"

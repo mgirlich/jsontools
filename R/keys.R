@@ -9,7 +9,7 @@
 #' json_keys(c(
 #'   '{"a": 1, "b": 2}',
 #'   '{"x": 1, "y": 2}',
-#'   '[1, 2]'
+#'   "[1, 2]"
 #' ))
 json_keys <- function(x) {
   df <- json_each(x)
@@ -44,7 +44,7 @@ json_keys <- function(x) {
 #'   c(
 #'     '{"a": 1}',
 #'     '{"b": 2}',
-#'     '[1, 2]',
+#'     "[1, 2]",
 #'     NA_character_
 #'   ),
 #'   "$.a"
@@ -56,8 +56,7 @@ json_path_exists <- function(x, path) {
       SELECT
         JSON_TYPE(my_tbl.data, {path}) AS result
       FROM my_tbl
-    ", .con = con
-    )
+    ", .con = con)
   )
 
   ifelse(
@@ -82,8 +81,7 @@ json_keys_exist <- function(x, keys) {
       SELECT
        {exists_clauses}
       FROM my_tbl
-    ", .con = con
-    )
+    ", .con = con)
   )
 
   tibble::as_tibble(lapply(df, function(y) !is.na(y)))
@@ -103,8 +101,7 @@ json_paths_exist <- function(x, paths) {
       SELECT
        {exists_clauses}
       FROM my_tbl
-    ", .con = con
-    )
+    ", .con = con)
   )
 
   ifelse(

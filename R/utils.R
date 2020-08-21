@@ -13,7 +13,7 @@ check_present <- function(x) {
 #' @export
 #'
 #' @examples
-#' x <- c('[1,2,   3]', '{"a": 1, "b": 2}')
+#' x <- c("[1,2,   3]", '{"a": 1, "b": 2}')
 #' json_prettify(x)
 #' json_minify(x)
 json_prettify <- function(x) {
@@ -57,7 +57,7 @@ escape_paths <- function(..., collapse = FALSE) {
 #' @export
 #'
 #' @examples
-#' json_array_length(c(NA, '[1, 2, 3]', '[1, 2]'))
+#' json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
 json_array_length <- function(x, path = NULL) {
   # TODO parameter so that scalars have length 1 instead of zero?
   # * and warn about scalar elements?
@@ -72,8 +72,7 @@ json_array_length <- function(x, path = NULL) {
     x,
     glue_sql("
       SELECT {query} AS result
-      FROM my_tbl", .con = con
-    )
+      FROM my_tbl", .con = con)
   )$result
 
   as.integer(array_lengths)
@@ -87,7 +86,7 @@ json_array_length <- function(x, path = NULL) {
 #' @export
 #'
 #' @examples
-#' json_type(c(NA, '1', 'null', '[1,2]', '{"a": 1}'))
+#' json_type(c(NA, "1", "null", "[1,2]", '{"a": 1}'))
 json_type <- function(x) {
   exec_sqlite_json(
     x,
