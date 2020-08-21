@@ -41,13 +41,16 @@ format_json_rowwise <- function(df, null = c("list", "null"),
   }
 
   # necessary until vctrs is fixed
-  df <- dplyr::mutate_if(df, ~ inherits(.x, "vctrs_list_of"), as.list)
+  list_of_flag <- vapply(df, inherits, "vctrs_list_of", FUN.VALUE = logical(1))
+
+  df[list_of_flag] <- lapply(df[list_of_flag], as.list)
 
   # needed for input from jsonlite::toJSON so that it stays a json after subsetting
   `[.json` <- function(x, i) {
     structure(NextMethod("["), class = c("json", "character"))
   }
 
+  tmp_file <- NULL
   withr::local_tempfile("tmp_file")
   textcon <- withr::local_connection(file(tmp_file, "a+"))
   jsonlite::stream_out(

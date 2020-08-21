@@ -48,7 +48,7 @@ parse_json <- function(x,
   }
 
   if (length(x) > 1 || !is_character(x)) {
-    abort("x must be a scalar character")
+    stop_jsontools("`x` must be a scalar character")
   }
 
   jsonlite::parse_json(
@@ -70,11 +70,11 @@ from_json <- parse_json
 #' @param ... arguments passed on to [`parse_json`]
 read_json <- function(path, ...) {
   if (!is.character(txt) && !inherits(txt, "connection")) {
-    stop("Argument 'path' must be a path, URL or file.")
+    stop_jsontools("Argument 'path' must be a path, URL or file.")
   }
 
   if (is.character(txt) && length(txt) == 1 && nchar(txt, type = "bytes") <
-    2084 && !validate(txt)) {
+    2084 && !json_is_valid(txt)) {
     if (grepl("^https?://", txt, useBytes = TRUE)) {
       loadpkg("curl")
       h <- curl::new_handle(useragent = paste(
@@ -88,10 +88,22 @@ read_json <- function(path, ...) {
       txt <- file(txt)
     }
   } else {
-    stop("not a path")
+    stop_jsontools("not a path")
   }
 
   parse_json(txt, ...)
+}
+
+
+loadpkg <- function(pkg) {
+  if (!requireNamespace("curl", quietly = TRUE)) {
+    message <- paste0(
+      "Required package ", pkg,
+      " not found. Please run: install.packages('", pkg, "')"
+    )
+
+    stop_jsontools(message)
+  }
 }
 
 
@@ -127,14 +139,15 @@ parse_json_vector <- function(x,
 
   if (is_true(simplify_result) &&
       any(is_true(simplifyVector), is_true(simplifyDataFrame), is_true(simplifyMatrix))) {
-    jsonlite:::simplify(
-      r,
-      simplifyVector = simplifyVector,
-      simplifyDataFrame = simplifyDataFrame,
-      simplifyMatrix = simplifyMatrix,
-      flatten = flatten,
-      ...
-    )
+    # jsonlite:::simplify(
+    #   r,
+    #   simplifyVector = simplifyVector,
+    #   simplifyDataFrame = simplifyDataFrame,
+    #   simplifyMatrix = simplifyMatrix,
+    #   flatten = flatten,
+    #   ...
+    # )
+    stop_jsontools("not yet supported")
   } else {
     r
   }
@@ -143,7 +156,7 @@ parse_json_vector <- function(x,
 
 json_na_error <- function() {
   stop_jsontools(
-    "na_json",
-    message = "input is NA.\nTo use a default value use the argument .na."
+    message = "input is NA.\nTo use a default value use the argument `.na`.",
+    error_type = "na_json"
   )
 }

@@ -1,4 +1,5 @@
 library(testthat)
-library(json2tools)
+library(jsontools)
 
-test_check("json2tools")
+local_edition(3)
+test_check("jsontools")

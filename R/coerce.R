@@ -34,8 +34,3 @@ vec_ptype2.character.json2 <- function(x, y, ...) {
   # new_json2()
   character()
 }
-
-#' #' @method vec_ptype2.json2 vctrs_unspecified
-#' #' @export
-#' vec_ptype2.json2.vctrs_unspecified <- function(x, y, ...) vec_ptype(x)
-#' # TODO is this needed?

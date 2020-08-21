@@ -1,0 +1,84 @@
+---
+title: "GoT Characters"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GoT Characters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(jsontools)
+got_json <- json2(readr::read_file(repurrrsive::got_chars_json()))
+```
+
+## Overview
+TODO a summary/glimpse function would be nice
+
+```{r}
+json_type(got_json)
+json_array_length(got_json)
+```
+
+```{r}
+got_chars <- json_flatten_query(got_json)
+json_prettify(got_chars[1])
+```
+
+## Extract Data
+
+```{r}
+tibble::tibble(
+  id = json_get_value(got_chars, "$.id"),
+  name = json_get_value(got_chars, "$.name"),
+  gender = json_get_value(got_chars, "$.gender"),
+  alive = json_get_value(got_chars, "$.alive")
+)
+```
+
+the books are an array, we cannot extract them with `json_get_value()`
+
+```{r error=TRUE}
+json_get_value(got_chars, "$.books")
+```
+
+Instead we need to use `json_get_query()`
+
+```{r error=TRUE}
+json_get_query(got_chars, "$.books")
+```
+
+```{r}
+books <- json_get_query(got_chars, "$.books", wrap_scalars = TRUE)
+books
+```
+
+## Modify Data
+
+```{r}
+got_chars_small <- got_chars[1:3] %>% 
+  json_build_object(
+    id = 1:3,
+    name = .name,
+    gender = .gender
+  )
+
+got_chars_small
+```
+
+```{r}
+gender <- json_get_value(got_chars_small, "$.gender")
+
+json_mutate(
+  got_chars_small,
+  .gender = tolower(gender)
+)
+```
+

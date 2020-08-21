@@ -35,7 +35,7 @@ parse_json(
 \item{.null}{Return the prototype of \code{.null} if \code{x} is \code{NULL}
 or a zero length character}
 
-\item{...}{arguments passed on to \code{\link[jsonlite:parse_json]{jsonlite::parse_json}}}
+\item{...}{arguments passed on to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}}
 }
 \description{
 Convert JSON to an \R{} object

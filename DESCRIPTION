@@ -12,11 +12,15 @@ License: GPL-3
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    curl,
+    dplyr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
+Depends: 
+    R (>= 3.2.0)
 Imports: 
     vctrs,
     jsonlite,
@@ -24,5 +28,14 @@ Imports:
     jqr,
     rlang,
     pillar,
-    magrittr
+    magrittr,
+    DBI,
+    RSQLite,
+    tibble,
+    methods,
+    bit64,
+    withr,
+    tidyselect,
+    purrr
 VignetteBuilder: knitr
+Config/testthat/edition: 3

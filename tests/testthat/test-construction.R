@@ -7,19 +7,39 @@ test_that("low-level constructor", {
   expect_length(new_json2(x_valid), 1)
   expect_length(new_json2(c(x_valid, NA_character_)), 2)
 
-  skip("not yet decided whether they should work")
-  new_json2(NA)
-  new_json2(x_jqson)
-  new_json2(x_jsonlite)
-  new_json2(x_pq_json)
-  new_json2(x_invalid)
+  result <- new_json2('{"a":1}')
+  expect_equal(
+    new_json2(x_jqson),
+    result
+  )
+
+  expect_equal(
+    new_json2(x_jsonlite),
+    result
+  )
+
+  expect_equal(
+    new_json2(x_pq_json),
+    result
+  )
 })
 
 
 test_that("construction works", {
-  expect_equal(json2(x_valid), new_json2(x_valid))
-  expect_equal(json2(c(x_valid, NA)), new_json2(c(x_valid, NA)))
-  expect_equal(json2(c(NA, NA)), new_json2(c(NA_character_, NA_character_)))
+  expect_equal(
+    json2(x_valid),
+    new_json2(x_valid)
+  )
+
+  expect_equal(
+    json2(c(x_valid, NA)),
+    new_json2(c(x_valid, NA))
+  )
+
+  expect_equal(
+    json2(c(NA, NA)),
+    new_json2(c(NA_character_, NA_character_))
+  )
 })
 
 

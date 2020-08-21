@@ -26,6 +26,6 @@ test_that("casting works", {
   expect_equal(vec_cast(json2(x_valid), character()), x_valid)
   expect_error(
     vec_cast(1, json2()),
-    class = "vctrs_error_incompatible_cast"
+    class = "vctrs_error_incompatible_type"
   )
 })

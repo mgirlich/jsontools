@@ -2,7 +2,7 @@
 #' @rdname format_json
 #'
 #' @description
-#' These functions are used to convert between JSON data and \R{} objects. The [`jsonlite::toJSON`] and [`jsonlite::fromJSON`] functions use a class based mapping, which follows conventions outlined in this paper: [https://arxiv.org/abs/1403.2805] (also available as vignette).
+#' These functions are used to convert between JSON data and \R{} objects. The [`jsonlite::toJSON`] and [`jsonlite::fromJSON`] functions use a class based mapping, which follows conventions outlined in this [paper](https://arxiv.org/abs/1403.2805) (also available as vignette).
 #'
 #' @details
 #' The \code{\link{toJSON}} and \code{\link{fromJSON}} functions are drop-in replacements for the identically named functions
@@ -99,6 +99,8 @@ format_json <- function(x,
   #               = "" (for POSIXt == "string")
   # * UTC
 
+  # TODO this should warn/error for partially named lists
+
   dataframe <- match.arg(dataframe)
   matrix <- match.arg(matrix)
   Date <- match.arg(Date)
@@ -143,11 +145,8 @@ write_json <- function(x, path, ...) {
 }
 
 
-#' Convert `R` objects to JSON
-#'
 #' @export
-#' @examples
-#' format_json_list(list(list(a = 1), list(a = 1, b = 2), NULL, NA))
+#' @rdname format_json
 format_json_list <- function(x,
                              null = c("list", "null"),
                              na = c("null", "string"),

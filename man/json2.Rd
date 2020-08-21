@@ -15,14 +15,20 @@ as_json2(x)
 
 is_json2(x)
 }
+\arguments{
+\item{x}{A character vector.}
+}
 \description{
-Construct a json2 object
-
-new_json2()
-new_json2('{"abc": 1}')
-new_json2(c('{"abc": 1}', '{"def": 2}', '\link{1, 2, 3}', NA))
+\code{new_json2()} is a fast, low-level constructor that takes a character vector.
+\code{json2()} checks the input for validity.
+\code{as_json2()} and \code{is_json2()} are simple forwarders to \code{vctrs::vec_cast()}
+and \code{vctrs::vec_is()} respectively.
 }
 \examples{
 json2()
 json2('{"abc": 1}')
+
+new_json2()
+new_json2('{"abc": 1}')
+new_json2(c('{"abc": 1}', '{"def": 2}', '[1, 2, 3]', NA))
 }

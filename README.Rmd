@@ -57,7 +57,8 @@ gh_orgs_small <- gh_orgs %>%
 
 parse_json_vector(gh_orgs_small, simplifyDataFrame = TRUE)
 
-(logins <- jsonr_extract_chr(gh_orgs_small, ".login"))
+(logins <- jsonr_extract_lst(gh_orgs_small, ".login") %>% 
+    purrr::flatten_chr())
 
 json_mutate(gh_orgs, .login = paste0("new-", logins))[1:2] %>% 
   prettify()

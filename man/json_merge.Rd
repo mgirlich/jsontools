@@ -6,6 +6,11 @@
 \usage{
 json_merge(x, y)
 }
+\arguments{
+\item{x}{A JSON vector to update.}
+
+\item{y}{A JSON vector with updated values.}
+}
 \description{
 Merge two jsons
 }

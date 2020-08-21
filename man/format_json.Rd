@@ -2,9 +2,31 @@
 % Please edit documentation in R/format_json.R
 \name{format_json}
 \alias{format_json}
+\alias{format_json_list}
 \title{Convert \R{} objects to JSON}
 \usage{
 format_json(
+  x,
+  null = c("list", "null"),
+  na = c("null", "string"),
+  auto_unbox = FALSE,
+  dataframe = c("rows", "columns", "values"),
+  matrix = c("rowmajor", "columnmajor"),
+  Date = c("ISO8601", "epoch"),
+  POSIXt = c("string", "ISO8601", "epoch", "mongo"),
+  factor = c("string", "integer"),
+  complex = c("string", "list"),
+  raw = c("base64", "hex", "mongo"),
+  digits = 4,
+  json_verbatim = TRUE,
+  force = FALSE,
+  pretty = FALSE,
+  rownames = FALSE,
+  always_decimal = FALSE,
+  ...
+)
+
+format_json_list(
   x,
   null = c("list", "null"),
   na = c("null", "string"),
@@ -64,7 +86,7 @@ An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) a
 \item{...}{arguments passed on to class specific \code{print} methods}
 }
 \description{
-These functions are used to convert between JSON data and \R{} objects. The \code{\link[jsonlite:toJSON]{jsonlite::toJSON}} and \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON}} functions use a class based mapping, which follows conventions outlined in this paper: \link{https://arxiv.org/abs/1403.2805} (also available as vignette).
+These functions are used to convert between JSON data and \R{} objects. The \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}} and \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON}} functions use a class based mapping, which follows conventions outlined in this \href{https://arxiv.org/abs/1403.2805}{paper} (also available as vignette).
 }
 \details{
 The \code{\link{toJSON}} and \code{\link{fromJSON}} functions are drop-in replacements for the identically named functions

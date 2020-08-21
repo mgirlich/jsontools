@@ -13,63 +13,90 @@
 #' json_mutate(x_na, .c = 0, .d.x = c("a", "b", "c"))
 json_mutate <- function(x, ...) {
   dots <- list(...)
-  na_flag <- is.na(x)
+  dots <- lapply(dots, escape_value)
 
-  if (all(lengths(dots) == 1)) {
-    values <- purrr::map(dots, escape_value) %>%
-      purrr::flatten_chr()
+  paths <- paste0("$", names(dots))
+  val_cols <- paste0("val", seq_along(dots))
 
-    jq_cmd <- glue_jq("{names(dots)} = {values}")
-    jq_do(x, jq_cmd, slurp = FALSE, .na = NA_character_)
-  } else {
-    values <- vec_recycle_common(!!!dots, .size = length(x)) %>%
-      purrr::map(escape_value) %>%
-      purrr::map(~ .x[!na_flag]) %>%
-      purrr::map(json_nest)
+  input <- tibble::tibble(
+    row_id = seq_along(x),
+    data = x,
+    !!!set_names(dots, val_cols)
+  )
 
-    updates <- glue_jq(
-      "{names(dots)} = $values[{seq_along(dots) - 1}]",
-      combine = TRUE
-    )
+  DBI::dbWriteTable(
+    con,
+    "my_tbl",
+    input,
+    overwrite = TRUE
+  )
 
-    jq_cmd <- new_jqquery(
-      glue_jq("[({json_nest(values)} | transpose), .]"),
-      "transpose",
-      glue_jq('map(.[0] as $values | .[1] | {updates})'),
-      ".[]"
-    )
+  query <- DBI::SQL("data")
+  for (i in seq_along(dots)) {
+    if (is_json2(dots[[i]])) {
+      value_query <- glue_sql("JSON({`val_cols[[i]]`})", .con = con)
+    } else {
+      value_query <- glue_sql("{`val_cols[[i]]`}", .con = con)
+    }
 
-    jq_do(x, jq_cmd, slurp = TRUE, .na = NA_character_)
+    query <- glue_sql("
+      JSON_SET(
+        {query},
+        {paths[[i]]},
+        {value_query}
+      )", .con = con)
   }
-}
 
-#' Delete key
-#'
-#' @export
-#' @examples
-#' x <- c('{"a": 11, "b": {"x": 12}}')
-#'
-#' json_delete(x, ".a")
-#' json_delete(x, .a, .b)
-#'
-#' json_delete(x, ".abc")
-json_delete <- function(x, ...) {
-  # TODO support multiple keys via list(key1, key2, ...)?
-  # --> problem: syntax different than for other verbs
-  # --> maybe support via dots?
-  dots <- exprs(...)
-  jq_cmd <- jq_delete_id(dots)
-  jq_do(x, jq_cmd)
+  sql <- glue_sql("
+    SELECT
+      {query} AS result
+    FROM my_tbl
+  ")
+
+  result <- suppressWarnings(DBI::dbGetQuery(con, sql)$result)
+
+  new_json2(result)
 }
 
 #' Merge two jsons
+#'
+#' @param x A JSON vector to update.
+#' @param y A JSON vector with updated values.
 #'
 #' @export
 #' @examples
 #' # something like list_modify and list_merge?
 #' json_merge('{"a": 1, "c": 3}', '{"a": 11, "b": 2}')
 json_merge <- function(x, y) {
-  # TODO support length(y) > 1
-  check1(y)
-  jq_do(x, glue(". + {y}"))
+  DBI::dbWriteTable(
+    con,
+    "my_tbl",
+    tibble::tibble(x, y),
+    overwrite = TRUE
+  )
+
+  sql <- "SELECT JSON_PATCH(x, y) AS result FROM my_tbl"
+
+  new_json2(DBI::dbGetQuery(con, sql)$result)
+}
+
+
+escape_value <- function(x) {
+  UseMethod("escape_value")
+}
+
+#' @export
+escape_value.list <- function(x) {
+  # format_json()
+  stop_jsontools("list is not supported")
+}
+
+#' @export
+escape_value.logical <- function(x) {
+  new_json2(as.character(ifelse(x, "true", "false")))
+}
+
+#' @export
+escape_value.default <- function(x) {
+  x
 }

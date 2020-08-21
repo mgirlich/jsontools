@@ -1,105 +1,115 @@
-#' Get keys
+#' Get keys of JSON object resp. array
 #'
-#' Postgres: `jsonb_object_keys(x)`
-#' jq: `keys(x)`
+#' @param x A JSON vector
 #'
+#' @return A list of keys.
 #' @export
+#'
 #' @examples
-#' x1 <- c('{"a": {"x": 1}, "b": 2, "c": 3}')
-#' x2 <- c('{"a": {"x": 11, "y": 22}, "s": 12, "t": [1, 2, 3]}')
-#' x <- c(x1, x2)
-#' jsonr_keys(x)
-#' jsonr_keys(c(x, NA), .na = c("a", "b"))
-#' jsonr_keys1(x1)
-jsonr_keys <- function(x, .na = json_na_error()) {
-  r_jq <- jq_do(x, "keys", .na = NA_character_)
-  r <- parse_json_vector(r_jq, .na = .na)
-  as_list_of(r, .ptype = character())
+#' json_keys(c(
+#'   '{"a": 1, "b": 2}',
+#'   '{"x": 1, "y": 2}',
+#'   '[1, 2]'
+#' ))
+json_keys <- function(x) {
+  df <- json_each(x)
+  types <- json_type(x)
+  df_split <- vec_split(df$key, df$row_id)
+
+  purrr::map2(
+    df_split$val,
+    types,
+    function(keys, type) {
+      if (type == "array") {
+        as.integer(keys)
+      } else {
+        keys
+      }
+    }
+  )
 }
 
+#' Does the path exist?
+#'
+#' @section SQL 2016:
+#' Equivalent of `json_exists(<json>, <path>)`.
+#'
+#' Tests whether a specific path exists in JSON document. It evaluates to true, false or unknown.
+#'
+#' @return A logical vector.
 #' @export
-jsonr_keys1 <- function(x, .na = json_na_error()) {
-  check1(x)
-  jsonr_keys(x, .na = .na)[[1]]
-}
-
-
-#' Does key exists?
 #'
-#' Postgres
-#' * single string: '{"a":1, "b":2}'::jsonb ? 'b'
-#' * multiple strings (and): '{"a":1, "b":2, "c":3}'::jsonb ?| array['b', 'c']
-#' * multiple strings (or): '{"a":1, "b":2, "c":3}'::jsonb ?| array['b', 'c']
-#'
-#' jq
-#' * single string: jq '{"a":1, "b":2}' | 'has("b")'
-#' * multiple strings (and): combine single strings with all OR
-#' * multiple strings (or): combine single strings with any
-#'
-#' @export
 #' @examples
-#' jsonr_has_key(x, "b")
-#'
-#' jsonr_has_keys(x, c("a", "b"))
-#' jsonr_has_all_keys(x, c("a", "b"))
-#' jsonr_has_any_keys(x, c("a", "b"))
-#'
-#' jsonr_has_key1(x1, "b")
-#'
-#' jsonr_has_keys1(x1, c("a", "b"))
-#' jsonr_has_all_keys1(x1, c("a", "b"))
-#' jsonr_has_any_keys1(x1, c("a", "b"))
-jsonr_has_keys <- function(x, keys) {
-  jq_cmd <- jq_has_keys(keys, object = TRUE)
-  template <- as.list(set_names(rep_along(keys, NA), keys))
-  r_jq <- jq_do(x, jq_cmd, .na = NA_character_)
-  r <- parse_json_vector(r_jq, .na = template)
-  dplyr::bind_rows(r)
+#' json_path_exists(
+#'   c(
+#'     '{"a": 1}',
+#'     '{"b": 2}',
+#'     '[1, 2]',
+#'     NA_character_
+#'   ),
+#'   "$.a"
+#' )
+json_path_exists <- function(x, path) {
+  df <- exec_sqlite_json(
+    x,
+    glue_sql("
+      SELECT
+        JSON_TYPE(my_tbl.data, {path}) AS result
+      FROM my_tbl
+    ", .con = con
+    )
+  )
+
+  ifelse(
+    is.na(x),
+    NA,
+    !is.na(df$result)
+  )
 }
 
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_key <- function(x, key) {
-  check1(key)
-  jsonr_has_keys(x, key)[[key]]
+json_keys_exist <- function(x, keys) {
+  paths <- json_path(keys)
+  exists_clauses <- glue_sql(
+    "JSON_TYPE(my_tbl.data, {paths}) AS {`keys`}",
+    .con = con
+  ) %>%
+    paste0(collapse = ",\n") %>%
+    DBI::SQL()
+
+  df <- exec_sqlite_json(
+    x,
+    glue_sql("
+      SELECT
+       {exists_clauses}
+      FROM my_tbl
+    ", .con = con
+    )
+  )
+
+  tibble::as_tibble(lapply(df, function(y) !is.na(y)))
 }
 
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_all_keys <- function(x, keys) {
-  row_all(jsonr_has_keys(x, keys))
-}
+json_paths_exist <- function(x, paths) {
+  exists_clauses <- glue_sql(
+    "JSON_TYPE(my_tbl.data, {paths}) AS {`paths`}",
+    .con = con
+  ) %>%
+    paste0(collapse = ",\n") %>%
+    DBI::SQL()
 
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_any_keys <- function(x, keys) {
-  row_any(jsonr_has_keys(x, keys))
-}
+  df <- exec_sqlite_json(
+    x,
+    glue_sql("
+      SELECT
+       {exists_clauses}
+      FROM my_tbl
+    ", .con = con
+    )
+  )
 
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_key1 <- function(x, key) {
-  check1(x)
-  jsonr_has_key(x, key)
-}
-
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_keys1 <- function(x, keys) {
-  check1(x)
-  unlist(jsonr_has_keys(x, keys))
-}
-
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_all_keys1 <- function(x, keys) {
-  check1(x)
-  jsonr_has_all_keys(x, keys)
-}
-
-#' @rdname jsonr_has_keys
-#' @export
-jsonr_has_any_keys1 <- function(x, keys) {
-  check1(x)
-  jsonr_has_any_keys(x, keys)
+  ifelse(
+    is.na(x),
+    NA,
+    !is.na(df$result)
+  )
 }
