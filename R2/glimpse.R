@@ -363,3 +363,160 @@
 #'   #   body <- glue("$ {justify(names(summary_list), right = FALSE)}: {summary_list}")
 #'   # }
 #' }
+
+
+#' try out with this stuff
+#' library(tidyverse)
+#' dplyr::glimpse(mtcars)
+#'
+#' #' TODO
+#' #' * treat vector of length > 1 like an array?
+#' #' * better value/type summary for mixed
+#'
+#' got_chars_array <- new_json2(sprintf("[%s]", paste0(got_chars[1:3], collapse = ",")))
+#'
+#' got_char <- json_get_query(got_chars_array, "$[0]")
+#' json_glimpse_object(x = got_char)
+#'
+#' got_titles <- json_get_query(got_chars_array, "$[0].titles")
+#' json_glimpse_array(x = got_titles)
+#'
+#' # array of objects
+#' json_glimpse_array(x = got_chars_array)
+#'
+#' # array of ints
+#' json_glimpse_array(x = format_json(1:5))
+#' # mixed array
+#' json_glimpse_array(x = format_json(list(json_u(1), "a")))
+#' # array of arrays
+#' json_glimpse_array(x = format_json(list(1:5, 1:3)))
+#' json_glimpse_array(x = format_json(list(a = 1, b = 2)))
+#'
+#' # single object
+#' json_glimpse_object(x = '{"a": 1, "b": 2}')
+#' json_glimpse_object(x = '{"a": 1, "b": {"x": 1}}')
+#' json_glimpse_object(x = '{"a": 1, "b": {"x": 1}, "c": [1, 2, 3]}')
+#'
+#'
+#' x = '{
+#'   "a": 1,
+#'   "b": {
+#'     "x": 1
+#'   },
+#'   "c": [
+#'     1,
+#'     2,
+#'     3
+#'   ],
+#'   "d": [
+#'     1,
+#'     "x"
+#'   ],
+#'   "e": [
+#'     {
+#'       "a": 1,
+#'       "b": 2
+#'     },
+#'     {
+#'       "a": 2,
+#'       "c": "z"
+#'     }
+#'   ]
+#' }'
+#' list(
+#'   a = list(
+#'     type = "integer",
+#'     value = 1
+#'   ),
+#'   b = list(
+#'     type = "object",
+#'     summary = list(
+#'       x = list(
+#'         type = "integer",
+#'         value = 1
+#'       )
+#'     )
+#'   ),
+#'   c = list(
+#'     type = "array_of",
+#'     ptype = "integer",
+#'     value = "[1, 2, 3]"
+#'   ),
+#'   d = list(
+#'     type = "mixed_array",
+#'     value = "[1, 2]"
+#'   ),
+#'   e = list(
+#'     type = "array_of",
+#'     ptype = "object",
+#'     summary = list(
+#'       a = list(
+#'         type = "integer",
+#'         value = c(1, 2)
+#'       ),
+#'       b = list(
+#'         type = "integer",
+#'         value = c(2)
+#'       ),
+#'       c = list(
+#'         type = "text",
+#'         value = "z"
+#'       )
+#'     )
+#'   )
+#' )
+#'
+#'
+#' # vector of objects
+#' json_glimpse_object(
+#'   c(
+#'     '{"a": 1, "b": 2}',
+#'     '{"x": 1, "y": 2}'
+#'   )
+#' )
+#'
+#' # mixed vector
+#' json_glimpse_object(
+#'   c(
+#'     '{"a": 1, "b": 2}',
+#'     '[1, 2, 3]'
+#'   )
+#' )
+#'
+#' # single array
+#' # of ints
+#' json_glimpse_array('[1, 2, 3]')
+#' # of arrays
+#' json_glimpse_array('[[1, 2, 3], ["a", "b"]]')
+#' # of objects
+#' json_glimpse_array('[{"a": 1}, {"b": 2}]')
+#'
+#'
+#' x <- readr::read_file(repurrrsive::discog_json())
+#' json_glimpse_array(x)
+#'
+#' debugonce(json_flatten_array)
+#' x <- readr::read_file(repurrrsive::discog_json()) %>%
+#'   json_flatten_array() %>%
+#'   json_get_query("$.basic_information") %>%
+#'   json_agg_array()
+#'
+#' json_glimpse_array(x)
+#'
+#' y <- json_flatten_array(x) %>%
+#'   json_get_query("$.basic_information")
+#'
+#' json_glimpse_array(y)
+#'
+#' y[1]
+#' y[2]
+#'
+#' json_flatten_array(x) %>%
+#'   json_get_value("$.basic_information.master_url")
+#'
+#' debugonce(json_get_query)
+#' json_flatten_array(x) %>%
+#'   json_get_query("$.basic_information.master_url")
+#'
+#' json_glimpse_array(readr::read_file(repurrrsive::discog_json()))
+

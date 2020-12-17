@@ -18,5 +18,5 @@ An integer vector of array lengths
 Get array length of JSON arrays
 }
 \examples{
-json_array_length(c(NA, '[1, 2, 3]', '[1, 2]'))
+json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
 }

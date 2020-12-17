@@ -1,5 +1,8 @@
 #' Update values
 #'
+#' @param x A JSON vector.
+#' @param ... Name-value pairs. The name is the JSON path (without leading "$").
+#'
 #' @export
 #' @examples
 #' x_na <- c('{"a": 11, "b": {"x": 12}}', NA, '{"a": 21, "b": {"x": 22}}')

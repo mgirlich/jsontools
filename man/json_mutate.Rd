@@ -6,6 +6,11 @@
 \usage{
 json_mutate(x, ...)
 }
+\arguments{
+\item{x}{A JSON vector.}
+
+\item{...}{Name-value pairs. The name is the JSON path (without leading "$").}
+}
 \description{
 Update values
 }

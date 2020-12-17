@@ -6,9 +6,6 @@
 \usage{
 parse_json(
   x,
-  simplifyVector = TRUE,
-  simplifyDataFrame = FALSE,
-  simplifyMatrix = FALSE,
   flatten = FALSE,
   bigint_as_char = TRUE,
   .na = json_na_error(),
@@ -18,12 +15,6 @@ parse_json(
 }
 \arguments{
 \item{x}{a scalar JSON character}
-
-\item{simplifyVector}{coerce JSON arrays containing only primitives into an atomic vector}
-
-\item{simplifyDataFrame}{coerce JSON arrays containing only records (JSON objects) into a data frame}
-
-\item{simplifyMatrix}{coerce JSON arrays containing vectors of equal mode and dimension into matrix or array}
 
 \item{flatten}{automatically \code{\link{flatten}} nested data frames into a single non-nested data frame}
 

@@ -31,6 +31,9 @@ json_keys <- function(x) {
 
 #' Does the path exist?
 #'
+#' @param x A JSON vector.
+#' @param path A JSON path.
+#'
 #' @section SQL 2016:
 #' Equivalent of `json_exists(<json>, <path>)`.
 #'

@@ -1,0 +1,255 @@
+---
+title: "Untitled"
+author: "Maximilian Girlich"
+date: "8/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+gh_repos_json <- readr::read_file(repurrrsive::gh_repos_json())
+gh_first_repo_json <- json_get_query(gh_repos_json, "$[0]")
+
+gh_repos_vec <- json_flatten_array(gh_first_repo_json)[1:3]
+
+discog_json <- readr::read_file(repurrrsive::discog_json())
+discog_vec <- unclass(json_flatten_array(discog_json)[c(1, 4)])
+
+got_json <- readr::read_file(repurrrsive::got_chars_json())
+got_vec <- unclass(json_flatten_array(got_json)[c(29, 30)])
+```
+
+## Format
+
+```{r}
+discog_vec
+```
+
+```{r}
+discog_vec <- json2(discog_vec)
+```
+
+```{r}
+prettify(discog_vec[1])
+```
+
+## Get Value
+now, we can extract values from it
+
+```{r}
+json_get_value(discog_vec, "$.instance_id")
+```
+
+```{r}
+json_get_value(discog_vec, "$.basic_information.year")
+```
+
+Error if path doesn't exist
+
+```{r}
+json_get_value(discog_vec, "$.basic_information.year2")
+```
+
+or use default value
+
+```{r}
+json_get_value(discog_vec, "$.basic_information.year2", default = 2020)
+```
+
+
+Cannot extract objects and arrays
+
+```{r}
+json_get_value(discog_vec, "$.basic_information")
+```
+
+## Get Query
+
+```{r}
+labels_vec <- json_get_query(discog_vec, "$.basic_information.labels")
+labels_vec
+```
+
+```{r}
+parse_json_vector(labels_vec)
+```
+
+TODO default 
+
+```{r}
+got_vec %>% 
+  json_get_query("$.books", wrap_scalars = TRUE) %>% 
+  json_flatten_vec()
+```
+
+```{r}
+# got_vec %>% 
+#   json_get_query("$.tvSeries") %>% 
+#   json_flatten_vec(wrap_scalars = TRUE)
+```
+
+
+## Flatten & Unnest
+
+```{r}
+json_flatten_array(labels_vec)
+```
+
+```{r}
+json_get_query(discog_vec, "$.basic_information.formats")
+```
+
+
+
+### Case Overview
+
+```{r}
+# flatten array of objects -> vector of json-objects
+json_flatten('[{"a":1,"b":2}, {"a":3,"b":4}]') %>% 
+  json2()
+
+json_flatten(
+  c(
+    '[{"a":1,"b":2}, {"a":3,"b":4}]',
+    '[{"a":11}, {"a":13,"b":14}]'
+  )
+) %>% 
+  json2()
+
+# flatten json-object of objects -> named? vector of json-objects
+json_flatten('{"a": {"x": 1}, "b": {"y": 2}}') %>% 
+  json2()
+
+
+
+# flatten array of values
+# -> error?
+# -> r vector of values?
+json_flatten("[1, 2, 3]")
+
+
+# flatten object of values
+# -> error?
+# -> named r vector of values? --> what about duplicate names? :-/
+json_flatten('{"a":1,"b":2}')
+
+json_flatten(c('{"a":1,"b":2}', '{"a":3,"b":4}'))
+
+
+# mixed arrays/objects
+json_flatten("[1, 2, 3]")
+```
+
+### Thoughts
+
+* compare to `purrr::flatten_chr()`
+```{r}
+library(purrr)
+
+expect_equal(
+  flatten_chr(list("a", NULL, c("b", "c"))),
+  c("a", "b", "c")
+)
+
+expect_equal(
+  flatten_chr(list("a", list())),
+  c("a")
+)
+
+expect_error(
+  flatten_chr(list("a", list("a"))),
+  c("a")
+)
+```
+  * `list()` <-> array
+  * flatten every element of list by one hierarchy then combine
+  * elements of list: scalars or vectors <-> scalars or arrays
+  * `["a", ["b", "c"]]`
+    * -> `["a", "b", "c"]`
+    * sqlite: -> `c("a", '["b", "c"]')`, i.e. sqlite doesn't iterate over the elements. other result is quite difficult to achieve in sqlite
+```{r}
+exec_sqlite_json(
+  '["a", ["b", "c"]]',
+  "SELECT *
+     FROM my_tbl,
+          JSON_EACH(my_tbl.data)"
+)
+
+exec_sqlite_json(
+  c("a", '["b", "c"]'),
+  "SELECT *
+     FROM my_tbl,
+          JSON_EACH(my_tbl.data)"
+)
+
+exec_sqlite_json(
+  c('["a"]', '["b", "c"]'),
+  "SELECT *
+     FROM my_tbl,
+          JSON_EACH(my_tbl.data)"
+)
+
+exec_sqlite_json(
+  c('a', '["b", "c"]'),
+  "SELECT CASE json_type(json_quote(data))
+              WHEN 'array' THEN data
+              ELSE json_array(data)
+            END AS tmp
+   FROM my_tbl"
+)$tmp %>% cat()
+```
+    
+  * `["a", "b", "c"]`
+    * -> `["a", "b", "c"]`
+    * or -> `c("a", "b", "c")`
+  * `["a", null]` -> `["a"]`
+  * `["a", {}]` -> `["a"]`??
+
+* approach here: `list()` <-> json-vector
+  * flatten every of json-vector by one hierarchy then combine
+  * `c(["a", "b"], ["x", "y"])` -> `c("a", "b", "x", "y")`
+  * `c("a", ["x", "y"])`
+    * -> error?
+    * -> `c("a", "x", "y")`
+  * `c([{obj1}, {obj2}], [{obj3}])` -> `c("{obj1}", "{obj2}", "{obj3}")`
+
+
+* `json_flatten*()` family
+  * returns a vector
+
+* `json_flatten_array()`
+  * flattens array of json-objects
+  * errors otherwise
+* `json_flatten_vec(ptype)`
+  * flattens array of values
+  * errors if array contains object or array
+
+* `json_each_df()`
+  * generates a tibble with `key`, `value`, `json_type`, `index`
+
+* `json_unnest()`
+  * wrapper around `json_flatten*()`
+
+## General Thoughts
+
+* `json_extract_*(x, path)`
+  * extract path
+  * `json_extract`
+    * return json
+    * no type check?
+  * `json_extract_lgl/int/dbl/chr`
+    * return corresponding type
+    * check type in json
+
+* might make sense to have an `unknown` argument, e.g. in `sw_vehicles` the field `length` should be an integer but is text because of `unknown`
+
+```{r}
+json_extract('{"a": true}', "$.a")
+
+
+repurrrsive::sw_vehicles[c(1, 2, 27)] %>% 
+  purrr::map("length")
+```
+
+

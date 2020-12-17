@@ -25,13 +25,13 @@ json_unnest_longer(
 \item{indices_to}{A string giving the name of column which will contain the
 inner names or position (if not named) of the values.}
 
-\item{.na_error}{Error on NA value?}
+\item{wrap_scalars}{Should scalars be wrapped?}
 }
 \description{
 Rectangle a JSON array column
 }
 \examples{
-df <- tibble::tibble(json = readr::read_file(repurrrsive::discog_json()))
+df <- tibble::tibble(json = discog_json)
 df
 
 item_df <- df \%>\%

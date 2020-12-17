@@ -162,12 +162,12 @@ json_each_df <- function(x) {
 #' @param values_to Name of column to store vector values. Defaults to `col`.
 #' @param indices_to A string giving the name of column which will contain the
 #'   inner names or position (if not named) of the values.
-#' @param .na_error Error on NA value?
+#' @inheritParams json_flatten_value
 #'
 #' @export
 #'
 #' @examples
-#' df <- tibble::tibble(json = readr::read_file(repurrrsive::discog_json()))
+#' df <- tibble::tibble(json = discog_json)
 #' df
 #'
 #' item_df <- df %>%

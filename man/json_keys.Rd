@@ -19,6 +19,6 @@ Get keys of JSON object resp. array
 json_keys(c(
   '{"a": 1, "b": 2}',
   '{"x": 1, "y": 2}',
-  '[1, 2]'
+  "[1, 2]"
 ))
 }

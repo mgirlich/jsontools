@@ -6,6 +6,11 @@
 \usage{
 json_path_exists(x, path)
 }
+\arguments{
+\item{x}{A JSON vector.}
+
+\item{path}{A JSON path.}
+}
 \value{
 A logical vector.
 }
@@ -24,7 +29,7 @@ json_path_exists(
   c(
     '{"a": 1}',
     '{"b": 2}',
-    '[1, 2]',
+    "[1, 2]",
     NA_character_
   ),
   "$.a"

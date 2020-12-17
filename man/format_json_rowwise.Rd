@@ -22,6 +22,38 @@ format_json_rowwise(
   ...
 )
 }
+\arguments{
+\item{df}{A dataframe.}
+
+\item{null}{how to encode NULL values within a list: must be one of 'null' or 'list'}
+
+\item{na}{how to print NA values: must be one of 'null' or 'string'. Defaults are class specific}
+
+\item{auto_unbox}{automatically \code{\link{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link{unbox}} function to unbox individual elements.
+An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
+
+\item{matrix}{how to encode matrices and higher dimensional arrays: must be one of 'rowmajor' or 'columnmajor'.}
+
+\item{Date}{how to encode Date objects: must be one of 'ISO8601' or 'epoch'}
+
+\item{POSIXt}{how to encode POSIXt (datetime) objects: must be one of 'string', 'ISO8601', 'epoch' or 'mongo'}
+
+\item{factor}{how to encode factor objects: must be one of 'string' or 'integer'}
+
+\item{complex}{how to encode complex numbers: must be one of 'string' or 'list'}
+
+\item{raw}{how to encode raw objects: must be one of 'base64', 'hex' or 'mongo'}
+
+\item{digits}{max number of decimal digits to print for numeric values. Use \code{I()} to specify significant digits. Use \code{NA} for max precision.}
+
+\item{json_verbatim}{Leave json as it is and do not encode it again?}
+
+\item{force}{unclass/skip objects of classes with no defined JSON mapping}
+
+\item{rownames}{For data.frames add a field \verb{_row} with the row name?}
+
+\item{...}{arguments passed on to class specific \code{print} methods}
+}
 \description{
 Convert each tbl row to JSON
 }

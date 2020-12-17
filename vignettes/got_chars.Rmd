@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(jsontools)
-got_json <- json2(readr::read_file(repurrrsive::got_chars_json()))
+got_json <- json2(got_chars_json)
 ```
 
 ## Overview

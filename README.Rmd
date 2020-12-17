@@ -38,6 +38,9 @@ jsontools is not yet release on CRAN. You can install it from GitHub with
 devtools::install_github("tidyverse/dplyr")
 ```
 
+```{r child='vignettes/jsontools.Rmd'} 
+```
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
@@ -55,7 +58,7 @@ json_glimpse(gh_orgs[1])
 gh_orgs_small <- gh_orgs %>% 
   json_build_object(login, id, description)
 
-parse_json_vector(gh_orgs_small, simplifyDataFrame = TRUE)
+parse_json_vector(gh_orgs_small)
 
 (logins <- jsonr_extract_lst(gh_orgs_small, ".login") %>% 
     purrr::flatten_chr())

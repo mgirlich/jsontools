@@ -152,27 +152,17 @@ gh_commits_vec %>%
 
 There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`). But for me they all had some drawbacks when working with JSON columns from Postgres:
 
-```{r error=TRUE}
-x <- tidyjson::worldbank
-RJSONIO::fromJSON(x)
-rjson::fromJSON(x)
-jsonlite::fromJSON(x)
-
-RJSONIO::fromJSON(NA_character_)
-rjson::fromJSON(NA_character_)
-jsonlite::fromJSON(NA_character_)
-
-RJSONIO::fromJSON(NULL)
-rjson::fromJSON(NULL)
-jsonlite::fromJSON(NULL)
-```
+|  | `RJSONIO` | `rjson` | `jsonlite` |
+|------:|:-----|---------|:------:|
+| JSON vector | silently takes first element | silently takes first element | collapses to single string, then parser error | 
+| `NA` input | unclear error | unclear error | unclear error |
+| `NULL` input | unclear error | unclear error | unclear error |
 
 
-* they are not vectorized. `rjson` simply uses the first element of the input, `RJSONIO` throws an error, and `jsonlite` pastes the input together and then complains about trailing garbage.
-* one cannot control what happens with `NA` as input.
-* one cannot control what happens with `NULL` as input.
-* the automatic conversion of `jsonlite` is great but cannot be controlled very well.
+* they are not vectorized. `RJSONIO` and `rjson` silently use only the first element of the input; `jsonlite` collapses the input and then complains about trailing garbage.
+* `NA` and `NULL` input produce unclear errors and one cannot control how to handle them.
 * the camel case syntax doesn't fit to the rest of the tidyverse.
+* converting a dataframe row by row to a vector of JSON is difficult.
 
 `jsontools` relies on `jsonlite` for parsing from JSON and conversion to JSON. For parsing it has the following functions:
 

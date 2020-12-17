@@ -1,9 +1,6 @@
 #' Convert JSON to an \R{} object
 #'
 #' @param x a scalar JSON character
-#' @param simplifyVector coerce JSON arrays containing only primitives into an atomic vector
-#' @param simplifyDataFrame coerce JSON arrays containing only records (JSON objects) into a data frame
-#' @param simplifyMatrix coerce JSON arrays containing vectors of equal mode and dimension into matrix or array
 #' @param flatten automatically \code{\link{flatten}} nested data frames into a single non-nested data frame
 #' @param bigint_as_char Parse big ints as character?
 #' @param .na Value to return if `x` is `NA`. By default an error of class
@@ -31,9 +28,6 @@
 #' parse_json(NULL)
 #' parse_json(character(), .null = data.frame(a = 1, b = 2))
 parse_json <- function(x,
-                       simplifyVector = TRUE,
-                       simplifyDataFrame = FALSE,
-                       simplifyMatrix = FALSE,
                        flatten = FALSE,
                        bigint_as_char = TRUE,
                        .na = json_na_error(),
@@ -53,9 +47,9 @@ parse_json <- function(x,
 
   jsonlite::parse_json(
     x,
-    simplifyVector = simplifyVector,
-    simplifyDataFrame = simplifyDataFrame,
-    simplifyMatrix = simplifyMatrix,
+    simplifyVector = TRUE,
+    simplifyDataFrame = FALSE,
+    simplifyMatrix = FALSE,
     flatten = flatten,
     bigint_as_char = bigint_as_char,
     ...
@@ -109,16 +103,14 @@ loadpkg <- function(pkg) {
 
 #' Parse a vector of jsons into a list
 #'
+#' @inheritParams parse_json
+#'
 #' @export
 #' @examples
 #' parse_json_vector(x = c('"a"', '"b"'))
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 #' parse_json_vector(x = c('"a"', NA), .na = 1)
 parse_json_vector <- function(x,
-                              simplify_result = FALSE,
-                              simplifyVector = TRUE,
-                              simplifyDataFrame = FALSE,
-                              simplifyMatrix = FALSE,
                               flatten = FALSE,
                               bigint_as_char = TRUE,
                               .na = json_na_error(),
@@ -127,9 +119,9 @@ parse_json_vector <- function(x,
   r <- lapply(
     x,
     parse_json,
-    simplifyVector = simplifyVector,
-    simplifyDataFrame = simplifyDataFrame,
-    simplifyMatrix = simplifyMatrix,
+    simplifyVector = TRUE,
+    simplifyDataFrame = FALSE,
+    simplifyMatrix = FALSE,
     flatten = flatten,
     bigint_as_char = bigint_as_char,
     .na = .na,
@@ -137,20 +129,7 @@ parse_json_vector <- function(x,
     ...
   )
 
-  if (is_true(simplify_result) &&
-    any(is_true(simplifyVector), is_true(simplifyDataFrame), is_true(simplifyMatrix))) {
-    # jsonlite:::simplify(
-    #   r,
-    #   simplifyVector = simplifyVector,
-    #   simplifyDataFrame = simplifyDataFrame,
-    #   simplifyMatrix = simplifyMatrix,
-    #   flatten = flatten,
-    #   ...
-    # )
-    stop_jsontools("not yet supported")
-  } else {
-    r
-  }
+  r
 }
 
 

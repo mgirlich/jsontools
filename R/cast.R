@@ -65,10 +65,10 @@ vec_cast.json2.pq_json <- function(x, to, ...) {
   json2(vec_data(x))
 }
 
-#' workaround so that `json_verbatim = TRUE` works for json2 objects
-#'
 #' @method vec_cast.character json
 #' @export
 vec_cast.character.json <- function(x, to, ...) {
+  # implemented as a workaround so that `json_verbatim = TRUE`
+  # works for json2 objects
   vec_data(x)
 }

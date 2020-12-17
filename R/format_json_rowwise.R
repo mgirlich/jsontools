@@ -1,5 +1,8 @@
 #' Convert each tbl row to JSON
 #'
+#' @param df A dataframe.
+#' @inheritParams format_json
+#'
 #' @export
 #' @examples
 #' format_json_rowwise(mtcars[1:3, ])
@@ -14,15 +17,21 @@
 #'   mtcars %>%
 #'     transmute(json = format_json_rowwise(tibble(mpg, cyl, extra = tibble(disp, hp))))
 #' }
-format_json_rowwise <- function(df, null = c("list", "null"),
-                                na = c("null", "string"), auto_unbox = TRUE,
+format_json_rowwise <- function(df,
+                                null = c("list", "null"),
+                                na = c("null", "string"),
+                                auto_unbox = TRUE,
                                 matrix = c("rowmajor", "columnmajor"),
                                 Date = c("ISO8601", "epoch"),
                                 POSIXt = c("string", "ISO8601", "epoch", "mongo"),
-                                factor = c("string", "integer"), complex = c("string", "list"),
+                                factor = c("string", "integer"),
+                                complex = c("string", "list"),
                                 raw = c("base64", "hex", "mongo"),
-                                digits = 4, json_verbatim = TRUE, force = FALSE,
-                                rownames = FALSE, ...) {
+                                digits = 4,
+                                json_verbatim = TRUE,
+                                force = FALSE,
+                                rownames = FALSE,
+                                ...) {
   if (!is.data.frame(df)) {
     abort("x must be a tbl")
   }

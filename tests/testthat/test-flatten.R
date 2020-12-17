@@ -280,7 +280,7 @@ test_that("json_unnest_longer works", {
 })
 
 test_that("json_unnest_longer with discog_json", {
-  df <- tibble(json = readr::read_file(repurrrsive::discog_json()))
+  df <- tibble(json = discog_json)
 
   item_df <- json_unnest_longer(
     df,

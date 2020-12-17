@@ -19,7 +19,7 @@ A json2 vector
 Prettify/Minify a JSON vector
 }
 \examples{
-x <- c('[1,2,   3]', '{"a": 1, "b": 2}')
+x <- c("[1,2,   3]", '{"a": 1, "b": 2}')
 json_prettify(x)
 json_minify(x)
 }

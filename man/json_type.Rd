@@ -16,5 +16,5 @@ A character vector of JSON types
 Query the JSON type
 }
 \examples{
-json_type(c(NA, '1', 'null', '[1,2]', '{"a": 1}'))
+json_type(c(NA, "1", "null", "[1,2]", '{"a": 1}'))
 }
