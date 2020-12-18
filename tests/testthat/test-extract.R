@@ -230,14 +230,6 @@ test_that("json_get_query handles NA", {
   )
 })
 
-test_that("json_get_query only extracts scalars", {
-  expect_error(
-    json_get_query(x, "$.a"),
-    class = "jsontools_error"
-  )
-})
-
-
 test_that("json_get_query checks input", {
   expect_error(
     json_get_query(x, NA)
