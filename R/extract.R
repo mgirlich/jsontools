@@ -171,10 +171,11 @@ json_get_query <- function(x, path, wrap_scalars = FALSE, default = NULL, na = N
     ptype = character()
   )
 
+  # TODO replace NA earlier on?
   x_result <- replace_na(x_result, is.na(x), na)
 
   path_not_found <- is.na(result$type) & !is.na(x)
-  replace_not_found(x_result, path_not_found, default)
+  new_json2(replace_not_found(x_result, path_not_found, default))
 }
 
 replace_not_found <- function(x, not_found_flag, default) {
