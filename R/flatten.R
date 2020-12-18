@@ -83,6 +83,8 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
 #'
 #' @export
 json_flatten_query <- function(x) {
+  # TODO for objects use keys as name?
+
   # TODO add parameter `path`?
   x <- x[!is.na(x)]
   x_each <- json_each(x[!is.na(x)])
@@ -113,6 +115,7 @@ json_flatten_query <- function(x) {
 #'
 #' @export
 json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
+  # TODO should it be possible to flatten objects?
   if (!is_bool(wrap_scalars)) {
     stop_jsontools("`wrap_scalars` must be a bool.")
   }
@@ -191,10 +194,13 @@ json_unnest_longer <- function(data, col,
                                path = NULL,
                                values_to = NULL,
                                indices_to = NULL,
+                               keys_to = NULL,
                                wrap_scalars = TRUE) {
   # TODO think about array vs object -> index: number vs name
   # TODO ptype, transform?
   # TODO handle NA
+  # TODO drop empty?
+  # TODO drop empty strings?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -214,6 +220,10 @@ json_unnest_longer <- function(data, col,
 
   if (!is.null(indices_to)) {
     data[[indices_to]] <- x_each$row_id
+  }
+
+  if (!is.null(keys_to)) {
+    data[[keys_to]] <- x_each$key
   }
 
   data
