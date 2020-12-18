@@ -51,6 +51,7 @@ Working with Arrays and Objects
 `json_each_df()`
 
 `json_unnest_longer()`
+`json_unnest_wider()`
 
 `json_build_object)`
 

@@ -16,7 +16,7 @@ json_delete <- function(x, ...) {
   paths <- escape_paths(..., collapse = TRUE)
 
   sql <- glue("
-    SELECT json_remove(data, {paths}) AS result
+    SELECT JSON_REMOVE(data, {paths}) AS result
       FROM my_tbl
   ")
 
