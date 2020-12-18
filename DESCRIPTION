@@ -14,7 +14,8 @@ Suggests:
     knitr,
     rmarkdown,
     curl,
-    dplyr
+    dplyr,
+    repurrrsive
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -25,7 +26,6 @@ Imports:
     vctrs,
     jsonlite,
     glue,
-    jqr,
     rlang,
     pillar,
     magrittr,
