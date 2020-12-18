@@ -50,8 +50,10 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
 
   if (is_empty(path)) {
     each_tbl <- glue_sql("JSON_EACH({data_col}) AS tmp1", .con = con)
+    data_col_type <- glue_sql("JSON_TYPE({data_col})", .con = con)
   } else {
     each_tbl <- glue_sql("JSON_EACH({data_col}, {path}) AS tmp1", .con = con)
+    data_col_type <- glue_sql("JSON_TYPE({data_col}, {path})", .con = con)
   }
 
   result <- exec_sqlite_json(
@@ -61,7 +63,8 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
        row_id,
        CAST(value AS text) AS value,
        type,
-       key
+       key,
+       {data_col_type} AS col_type
      FROM
       my_tbl,
       {each_tbl}
