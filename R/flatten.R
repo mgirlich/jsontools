@@ -229,6 +229,41 @@ json_unnest_longer <- function(data, col,
   data
 }
 
+#' @export
+json_unnest_wider <- function(data,
+                              col,
+                              path = NULL,
+                              wrap_scalars = TRUE) {
+  check_present(col)
+  col <- tidyselect::vars_pull(names(data), !!enquo(col))
+
+  x_each <- json_each(
+    data[[col]],
+    path = path,
+    wrap_scalars = wrap_scalars
+  )
+  x_each <- x_each[x_each$type != "null", ]
+  x_each$value <- convert_json_type(x_each$value, x_each$type)
+
+  x_each_split <- vec_split(
+    x_each[c("row_id", "value")],
+    x_each$key
+  )
+
+  data[[col]] <- NULL
+  for (i in vec_seq_along(x_each_split)) {
+    key <- x_each_split$key[[i]]
+    val <- x_each_split$val[[i]]
+
+    indices <- vec_seq_along(data)
+    indices[!indices %in% val$row_id] <- NA
+
+    data[[key]] <- vec_slice(vec_c(!!!val$value), indices)
+  }
+
+  data
+}
+
 maybe_name <- function(x, nms) {
   if (any(nms != "")) {
     names(x) <- nms
