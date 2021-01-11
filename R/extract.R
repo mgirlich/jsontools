@@ -50,7 +50,7 @@
 json_get_value <- function(x, path, ptype = NULL, default = NULL, na = NA, bigint_as_char = TRUE) {
   # TODO should arrays/objects be allowed and parsed?
   if (!is_string(path)) {
-    abort("`path` must be a character vector of length 1")
+    stop_jsontools("`path` must be a character vector of length 1")
   }
 
   if (!is_scalar_atomic(na)) {

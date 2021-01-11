@@ -83,9 +83,12 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
 #'
 #' @export
 json_flatten_query <- function(x) {
-  # TODO for objects use keys as name?
+  # thoughts:
+  # * no parameter `path` (for now) because then one should also add the other
+  #   parameters from `json_get_query`
+  # TODO for objects use keys as name instead of recycling names of `x`?
 
-  # TODO add parameter `path`?
+  # drop `NA` as after flattening it is not clear where they came from anyway
   x <- x[!is.na(x)]
   x_each <- json_each(x[!is.na(x)])
 
@@ -120,15 +123,16 @@ json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
     stop_jsontools("`wrap_scalars` must be a bool.")
   }
 
-  x <- x[!is.na(x)]
-
   if (is_false(wrap_scalars)) {
     if (!all(startsWith(x, "[") & endsWith(x, "]"), na.rm = TRUE)) {
       stop_jsontools("`x` must be an array of atoms")
     }
   }
 
+  # drop `NA` as after flattening it is not clear where they came from anyway
+  x <- x[!is.na(x)]
   x_each <- json_each(x, wrap_scalars = wrap_scalars)
+
   # drop nulls as after flattening it is not clear where they came from anyway
   x_each <- x_each[x_each$type != "null", ]
 
