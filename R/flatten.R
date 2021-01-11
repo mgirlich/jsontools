@@ -39,8 +39,9 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
 
   if (is_true(wrap_scalars)) {
     data_col <- glue_sql("
-      CASE JSON_VALID(my_tbl.data)
-        WHEN true THEN my_tbl.data
+      CASE
+        WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
+        WHEN my_tbl.data IS NULL THEN 'null'
         ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
       END
     ", .con = con)
@@ -63,7 +64,7 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
        row_id,
        CAST(value AS text) AS value,
        type,
-       key,
+       CAST(key AS text) AS key,
        {data_col_type} AS col_type
      FROM
       my_tbl,
