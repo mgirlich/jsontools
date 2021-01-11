@@ -248,16 +248,31 @@ json_unnest_longer <- function(data, col,
 json_unnest_wider <- function(data,
                               col,
                               path = NULL,
-                              wrap_scalars = TRUE) {
+                              ptype = list(),
+                              names_sort = FALSE,
+                              names_sep = NULL,
+                              names_repair = "check_unique") {
+  # TODO argument how to handle `NA`?
+  # TODO keeping rows where json type is null but dropping NA is inconsistent
+  # --> `drop_na` to drop `NA`, `null`, and `[null]`?
+  # TODO transform?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
+  # drop na
+  data <- data[!is.na(data[[col]]), ]
+  col_values <- data[[col]]
+
   x_each <- json_each(
-    data[[col]],
-    path = path,
-    wrap_scalars = wrap_scalars
+    col_values,
+    path = path
   )
-  x_each <- x_each[x_each$type != "null", ]
+
+  if (!all(x_each$col_type == "object")) {
+    stop_jsontools("every element of `col` must be a json object")
+  }
+
+  x_each <- x_each[!x_each$type == "null", ]
   x_each$value <- convert_json_type(x_each$value, x_each$type)
 
   x_each_split <- vec_split(
@@ -266,17 +281,46 @@ json_unnest_wider <- function(data,
   )
 
   data[[col]] <- NULL
-  for (i in vec_seq_along(x_each_split)) {
+
+  if (!is_null(names_sep)) {
+    x_each_split$key <- paste(col, x_each_split$key, sep = names_sep)
+  }
+
+  x_each_split$key <- vec_as_names(x_each_split$key, repair = names_repair)
+  if (is_true(names_sort)) {
+    idx <- vec_order(x_each_split$key)
+  } else {
+    idx <- vec_seq_along(x_each_split)
+  }
+
+  if (is_scalar(ptype)) {
+    ptype <- rep_named(unique(spec$.value), x_each_split$key)
+  }
+
+  for (i in idx) {
     key <- x_each_split$key[[i]]
     val <- x_each_split$val[[i]]
 
-    indices <- vec_seq_along(data)
-    indices[!indices %in% val$row_id] <- NA
-
-    data[[key]] <- vec_slice(vec_c(!!!val$value), indices)
+    # TODO less hacky solution?
+    out <- vec_init_along(NA, col_values)
+    empty_flag <- lengths(val$value) == 0
+    out[val$row_id[!empty_flag]] <- vec_c(!!!val$value, .ptype = ptype[[key]])
+    data[[key]] <- out
   }
 
   data
+}
+
+is_scalar <- function(x) {
+  if (is.null(x)) {
+    return(FALSE)
+  }
+
+  if (is.list(x)) {
+    (length(x) == 1) && !have_name(x)
+  } else {
+    length(x) == 1
+  }
 }
 
 maybe_name <- function(x, nms) {
