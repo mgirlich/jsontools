@@ -118,7 +118,10 @@ json_flatten_query <- function(x) {
 #'
 #' @export
 json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
-  # TODO should it be possible to flatten objects?
+  # thoughts:
+  # * flattening objects should not be allowed here as usually the keys are
+  #   important and the types not the same. One should use `json_each_df()` or
+  #   `json_unnest_wider/longer()` instead.
   if (!is_bool(wrap_scalars)) {
     stop_jsontools("`wrap_scalars` must be a bool.")
   }
@@ -199,28 +202,35 @@ json_unnest_longer <- function(data, col,
                                values_to = NULL,
                                indices_to = NULL,
                                keys_to = NULL,
+                               ptype = NULL,
                                wrap_scalars = TRUE) {
-  # TODO think about array vs object -> index: number vs name
-  # TODO ptype, transform?
-  # TODO handle NA
-  # TODO drop empty?
-  # TODO drop empty strings?
+  # TODO transform?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
   values_to <- values_to %||% col
+  # drop empty strings
+  data <- data[nchar(data[[col]]) > 0 | is.na(data[[col]]), ]
 
   x_each <- json_each(
     data[[col]],
     path = path,
     wrap_scalars = wrap_scalars
   )
-  x_each <- x_each[x_each$type != "null", ]
-  x_each$value <- convert_json_type(x_each$value, x_each$type)
+  x_each <- x_each[
+    # drop json NULL
+    x_each$type != "null" |
+      # but keep NA
+      vec_slice(is.na(data[[col]]), x_each$row_id),
+  ]
 
   data[[col]] <- NULL
   data <- vec_slice(data, x_each$row_id)
-  data[[values_to]] <- json_vec_c(x_each$value, x_each$type)
+  data[[values_to]] <- json_convert_value(
+    x_each$value,
+    x_each$type,
+    ptype = ptype
+  )
 
   if (!is.null(indices_to)) {
     data[[indices_to]] <- x_each$row_id
