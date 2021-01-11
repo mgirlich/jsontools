@@ -262,7 +262,6 @@ test_that("json_unnest_longer works", {
     )
   )
 
-  skip("not yet decided how to handle")
   df <- tibble(
     id = 1:2,
     json = c(
@@ -274,8 +273,8 @@ test_that("json_unnest_longer works", {
   expect_equal(
     json_unnest_longer(df, "json"),
     tibble(
-      id = c(2, 2, 3),
-      json = c("a", "b", "c")
+      id = c(1, 2, 2),
+      json = c(NA, "a", "b")
     )
   )
 })
@@ -287,7 +286,7 @@ test_that("json_unnest_longer with discog_json", {
     df,
     "json",
     values_to = "item"
-  )
+  )[1:3, ]
 
   expect_snapshot_value(
     item_df,
