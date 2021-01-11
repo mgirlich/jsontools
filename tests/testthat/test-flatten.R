@@ -202,7 +202,8 @@ test_that("json_each_df works", {
       index = c(rep(1, 4), rep(2, 4)),
       value = list(1, 2, "a", TRUE, FALSE, NULL, "[1,2]", '{"x":1}'),
       type = c("integer", "integer", "text", "true", "false", "null", "array", "object"),
-      key = c(0:3, 0:3),
+      key = as.character(c(0:3, 0:3)),
+      col_type = "array",
       name = c(rep("x", 4), rep("", 4))
     )
   )
