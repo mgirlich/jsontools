@@ -43,26 +43,7 @@ json_agg_array.character <- function(x) {
 #' json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
 #' json_array_length(1, wrap_scalars = TRUE)
 json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
-  # TODO parameter so that scalars have length 1 instead of zero?
-  # * and warn about scalar elements?
   path <- path %||% "$"
-
-  # if (is_true(wrap_scalars)) {
-  #   query <- glue_sql(
-  #     "CASE JSON_TYPE(data, {path}) in ('array', 'object', 'null')
-  #       WHEN true THEN JSON_ARRAY_LENGTH(data, {path})
-  #       ELSE JSON_ARRAY_LENGTH(data, JSON_ARRAY(JSON_QUOTE({path})))
-  #     END",
-  #     .con = con
-  #   )
-  # } else {
-  #   array_flag <- startsWith(x, "[") & endsWith(x, "]")
-  #   if (!all(array_flag, na.rm = TRUE)) {
-  #     stop_jsontools()
-  #   }
-  #
-  #   query <- glue_sql("JSON_ARRAY_LENGTH(data, {path})", .con = con)
-  # }
 
   array_info_df <- exec_sqlite_json(
     x,
@@ -76,7 +57,12 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   if (is_true(wrap_scalars)) {
     array_lengths <- array_info_df$result + !array_info_df$type %in% c("array", "null")
   } else {
-    array_lengths <- array_info_df$result
+    stop_jsontools(
+      c(
+        x = "`x` has scalar elements.",
+        i = "use `wrap_scalars = TRUE` to consider scalars as length 1 array."
+      )
+    )
   }
 
   as.integer(array_lengths)
@@ -86,3 +72,4 @@ is_json_array <- function(x, null = TRUE, na = TRUE) {
   (startsWith(x, "[") & endsWith(x, "]") & !is.na(x)) |
     (null & x == "null" & !is.na(x)) |
     (na & is.na(x))
+}
