@@ -6,7 +6,7 @@ exec_sqlite_json <- function(x, sql, ...) {
     overwrite = TRUE
   )
 
-  suppressWarnings(df <- DBI::dbGetQuery(con, sql))
+  df <- DBI::dbGetQuery(con, sql)
 
   tibble::as_tibble(df)
 }

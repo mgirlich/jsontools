@@ -56,7 +56,7 @@ json_mutate <- function(x, ...) {
     FROM my_tbl
   ")
 
-  result <- suppressWarnings(DBI::dbGetQuery(con, sql)$result)
+  result <- DBI::dbGetQuery(con, sql)$result
 
   new_json2(result)
 }
