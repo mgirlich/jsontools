@@ -71,6 +71,10 @@ json_mutate <- function(x, ...) {
 #' # something like list_modify and list_merge?
 #' json_merge('{"a": 1, "c": 3}', '{"a": 11, "b": 2}')
 json_merge <- function(x, y) {
+  if (any(is.na(y) & !is.na(x))) {
+    stop_jsontools("`y` can only be NA where `x` is as well.")
+  }
+
   DBI::dbWriteTable(
     con,
     "my_tbl",
@@ -80,7 +84,7 @@ json_merge <- function(x, y) {
 
   sql <- "SELECT JSON_PATCH(x, y) AS result FROM my_tbl"
 
-  new_json2(DBI::dbGetQuery(con, sql)$result)
+  new_json2(as.character(DBI::dbGetQuery(con, sql)$result))
 }
 
 

@@ -105,15 +105,9 @@ test_that("NA work", {
 })
 
 
-test_that("json_merge works", {
-  expect_equal(
-    json_merge(
-      '{"a": 1, "c": 3}',
-      '{"a": 11, "b": 2}'
-    ),
-    new_json2('{"a":11,"c":3,"b":2}')
-  )
+# json_merge --------------------------------------------------------------
 
+test_that("json_merge works", {
   expect_equal(
     json_merge(
       c('{"a": 1, "c": 3}', '{"a": 1, "c": 4}'),
@@ -128,5 +122,27 @@ test_that("json_merge works", {
       c('{"a": 11}', '{"a": 12}')
     ),
     new_json2(c('{"a":11,"c":3}', '{"a":12,"c":4}'))
+  )
+})
+
+test_that("json_merge handles NA", {
+  expect_snapshot_error(json_merge('{"a": 1, "c": 3}', NA))
+
+  # doesn't error if `x` is NA at the same position
+  expect_equal(
+    json_merge(
+      c('{"a": 1}', NA),
+      c('{"a": 2}', NA)
+    ),
+    json2(c('{"a":2}', NA))
+  )
+
+  # NA stay NA
+  expect_equal(
+    json_merge(
+      c('{"a": 1}', NA),
+      '{"a": 2}'
+    ),
+    json2(c('{"a":2}', NA))
   )
 })
