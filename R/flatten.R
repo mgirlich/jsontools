@@ -146,11 +146,6 @@ json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
   maybe_name(result, x_each$name)
 }
 
-#' Flatten an array
-#'
-#' @param x A JSON vector.
-#'
-#' @export
 json_each_df <- function(x) {
   result <- json_each(x)
   result$value <- convert_json_type(result$value, result$type)
