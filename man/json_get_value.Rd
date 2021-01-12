@@ -2,8 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{json_get_value}
 \alias{json_get_value}
-\alias{json_get_query}
-\title{Extracts a value from JSON}
+\title{Extract a value from JSON}
 \usage{
 json_get_value(
   x,
@@ -13,8 +12,6 @@ json_get_value(
   na = NA,
   bigint_as_char = TRUE
 )
-
-json_get_query(x, path, wrap_scalars = FALSE, default = NULL, na = NA)
 }
 \arguments{
 \item{x}{A JSON vector.}
@@ -30,90 +27,14 @@ empty.}
 \item{na}{Default value if element of \code{x} is \code{NA}.}
 
 \item{bigint_as_char}{Convert big integers to character?}
-
-\item{wrap_scalars}{Should scalars be wrapped?}
 }
 \value{
 A vector with class given by \code{.ptype} and length equal to \code{x}.
-
-A \code{json2} vector.
 }
 \description{
-\itemize{
-\item extracts a scalar JSON value at the given path.
-\item errors if value at path is in object or an array
-\item tries to simplify
+Extract a scalar JSON value at a given path. To extract a JSON object
+or array use \code{\link[=json_get_query]{json_get_query()}}.
 }
-}
-\section{SQL 2016 - \code{json_value()}}{
-
-\verb{json_value(<json>, <path> [returning <type>])}
-
-JSON_VALUE is an operator to extract an SQL scalar from a JSON value.
-\itemize{
-\item it can only extract scalars
-\item it errors when the value at the path is an array or an object
-}
-
-Arguments
-\itemize{
-\item RETURNING: specifies the return type <-> ptype
-\item ON EMPTY: specifies what to do if the path expression is empty <-> default
-\itemize{
-\item triggers if
-\itemize{
-\item value is NULL
-\item (lax mode): path does not exist
-}
-\item NULL: return NULL
-\item ERROR: raise exception
-\item DEFAULT \<expression\>: evaluate expression
-}
-\item ON ERROR: Unhandled errors can arise if there is -> no equivalent
-\itemize{
-\item an input conversion error (for example, if the context item cannot be parsed),
-\item an error returned by the SQL/JSON path engine,
-\item or an output conversion error.
-\item choices as in \verb{ON EMPTY}
-}
-}
-}
-
-\section{SQL 2016 - \code{json_query()}}{
-
-\verb{json_query(<json>, <path>, ...)}
-
-JSON_QUERY is an operator to extract SQL/JSON values from a JSON value.
-\itemize{
-\item it can extract any JSON type;
-\item it always returns a string;
-\item it can extract multiple elements from a JSON document.
-}
-
-Arguments
-\itemize{
-\item WRAPPER:
-\itemize{
-\item WITHOUT ARRAY:
-\item WITH CONDITIONAL ARRAY: -> ON EMPTY disallowed
-\item WITH UNCONDITIONAL ARRAY: -> ON EMPTY disallowed
-}
-\item QUOTES
-\itemize{
-\item KEEP:
-\item OMIT
-}
-\item ON EMPTY:
-\itemize{
-\item ERROR
-\item NULL
-\item EMPTY ARRAY
-\item EMPTY OBJECT
-}
-\item ON ERROR: same choices as in ON EMPTY
-}
-}
-
 \examples{
 x1 <- '{"a": 1, "b": 2}'
 json_get_value(x1, "$.a")

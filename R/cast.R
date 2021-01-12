@@ -10,10 +10,6 @@
 #' @export vec_cast.json2
 vec_cast.json2 <- function(x, to, ...) UseMethod("vec_cast.json2")
 
-#' @method vec_cast.json2 default
-#' @export
-vec_cast.json2.default <- function(x, to, ...) vec_default_cast(x, to, ...)
-
 #' @method vec_cast.json2 json2
 #' @export
 vec_cast.json2.json2 <- function(x, to, ...) x

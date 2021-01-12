@@ -1,13 +1,24 @@
 #' Convert JSON to an \R{} object
 #'
+#' A wrapper around the great [`jsonlite::parse_json`]. The differences are:
+#' * expose argument `bigint_as_char` with default `TRUE`.
+#' * control how to handle `NA` and `NULL`.
+#' * `simplifyDataFrame`, `simplifyMatrix`, and `flatten` default to `FALSE` as
+#'   they are not very stable in many real world APIs. Use the
+#'   [tibblify package](https://cran.rstudio.com/web/packages/tibblify/index.html)
+#'   for a more robust conversion to a dataframe.
+#' * don't collapse strings but error instead if they have more than one element.
+#'
+#' To parse a vector of JSON use [`parse_json_vector`].
+#'
 #' @param x a scalar JSON character
-#' @param flatten automatically \code{\link{flatten}} nested data frames into a single non-nested data frame
+#' @param simplifyVector,simplifyDataFrame,simplifyMatrix,flatten,... passed on
+#'   to [`jsonlite::parse_json`].
 #' @param bigint_as_char Parse big ints as character?
 #' @param .na Value to return if `x` is `NA`. By default an error of class
 #' `jsontools_error_na_json` is thrown.
 #' @param .null Return the prototype of `.null` if `x` is `NULL`
 #'   or a zero length character
-#' @param ... arguments passed on to [`jsonlite::parse_json`]
 #'
 #' @export
 #' @examples
@@ -28,10 +39,13 @@
 #' parse_json(NULL)
 #' parse_json(character(), .null = data.frame(a = 1, b = 2))
 parse_json <- function(x,
-                       flatten = FALSE,
-                       bigint_as_char = TRUE,
                        .na = json_na_error(),
                        .null = NULL,
+                       simplifyVector = TRUE,
+                       simplifyDataFrame = FALSE,
+                       simplifyMatrix = FALSE,
+                       flatten = FALSE,
+                       bigint_as_char = TRUE,
                        ...) {
   if (is_null(x) || (is_character(x) && vec_size(x) == 0)) {
     return(vec_ptype(.null))
@@ -47,9 +61,9 @@ parse_json <- function(x,
 
   jsonlite::parse_json(
     x,
-    simplifyVector = TRUE,
-    simplifyDataFrame = FALSE,
-    simplifyMatrix = FALSE,
+    simplifyVector = simplifyVector,
+    simplifyDataFrame = simplifyDataFrame,
+    simplifyMatrix = simplifyMatrix,
     flatten = flatten,
     bigint_as_char = bigint_as_char,
     ...
@@ -90,7 +104,7 @@ read_json <- function(path, ...) {
 
 
 loadpkg <- function(pkg) {
-  if (!requireNamespace("curl", quietly = TRUE)) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
     message <- paste0(
       "Required package ", pkg,
       " not found. Please run: install.packages('", pkg, "')"
@@ -105,31 +119,34 @@ loadpkg <- function(pkg) {
 #'
 #' @inheritParams parse_json
 #'
+#' @return A list of the same length as `x`.
+#'
 #' @export
 #' @examples
 #' parse_json_vector(x = c('"a"', '"b"'))
 #' parse_json_vector(x = c('"a"', '["b", "c"]'))
 #' parse_json_vector(x = c('"a"', NA), .na = 1)
 parse_json_vector <- function(x,
-                              flatten = FALSE,
-                              bigint_as_char = TRUE,
                               .na = json_na_error(),
                               .null = NULL,
+                              simplifyVector = TRUE,
+                              simplifyDataFrame = FALSE,
+                              simplifyMatrix = FALSE,
+                              flatten = FALSE,
+                              bigint_as_char = TRUE,
                               ...) {
-  r <- lapply(
+  lapply(
     x,
     parse_json,
-    # simplifyVector = TRUE,
-    # simplifyDataFrame = FALSE,
-    # simplifyMatrix = FALSE,
-    flatten = flatten,
-    bigint_as_char = bigint_as_char,
     .na = .na,
     .null = .null,
+    simplifyVector = simplifyVector,
+    simplifyDataFrame = simplifyDataFrame,
+    simplifyMatrix = simplifyMatrix,
+    flatten = flatten,
+    bigint_as_char = bigint_as_char,
     ...
   )
-
-  r
 }
 
 

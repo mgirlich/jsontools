@@ -17,13 +17,6 @@ A logical vector.
 \description{
 Does the path exist?
 }
-\section{SQL 2016}{
-
-Equivalent of \verb{json_exists(<json>, <path>)}.
-
-Tests whether a specific path exists in JSON document. It evaluates to true, false or unknown.
-}
-
 \examples{
 json_path_exists(
   c(

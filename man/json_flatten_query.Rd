@@ -12,3 +12,10 @@ json_flatten_query(x)
 \description{
 Flatten an array of JSON-objects or JSON-arrays
 }
+\examples{
+x <- c(
+  '[{"a":1,"b":2}, {"a": 2}]',
+  '[{"a":3,"b":4}]'
+)
+json_flatten_query(x)
+}

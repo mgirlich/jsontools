@@ -17,3 +17,6 @@ determined by computing the common type across all elements of \code{...}.}
 \description{
 Flatten an array of values
 }
+\examples{
+json_flatten_value(c('[1,2,3]', '[4]'))
+}

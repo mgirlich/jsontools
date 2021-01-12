@@ -1,5 +1,7 @@
 #' Delete key
 #'
+#' Delete the elements at the specified paths.
+#'
 #' @param x A JSON vector.
 #' @param ... Paths to delete.
 #'

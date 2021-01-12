@@ -1,7 +1,14 @@
 #' Convert each tbl row to JSON
 #'
+#' Convert each row of a data frame to a JSON object (this basically produces
+#' [ndjson](http://ndjson.org/)).
+#'
+#' @details Under the hood [`jsonlite::stream_out`] is used for the conversion.
+#'
 #' @param df A dataframe.
 #' @inheritParams format_json
+#'
+#' @return A json2 vector of json objects.
 #'
 #' @export
 #' @examples
@@ -60,7 +67,7 @@ format_json_rowwise <- function(df,
   }
 
   tmp_file <- NULL
-  withr::local_tempfile("tmp_file")
+  tmp_file <- withr::local_tempfile()
   textcon <- withr::local_connection(file(tmp_file, "a+"))
   jsonlite::stream_out(
     df,

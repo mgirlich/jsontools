@@ -1,8 +1,7 @@
-#' Extracts a value from JSON
+#' Extract a value from JSON
 #'
-#' * extracts a scalar JSON value at the given path.
-#' * errors if value at path is in object or an array
-#' * tries to simplify
+#' Extract a scalar JSON value at a given path. To extract a JSON object
+#' or array use [json_get_query()].
 #'
 #' @param x A JSON vector.
 #' @param path Path to element to extract.
@@ -14,28 +13,6 @@
 #' @param bigint_as_char Convert big integers to character?
 #'
 #' @return A vector with class given by `.ptype` and length equal to `x`.
-#'
-#' @section SQL 2016 - `json_value()`:
-#' `json_value(<json>, <path> [returning <type>])`
-#'
-#' JSON_VALUE is an operator to extract an SQL scalar from a JSON value.
-#' * it can only extract scalars
-#' * it errors when the value at the path is an array or an object
-#'
-#' Arguments
-#' * RETURNING: specifies the return type <-> ptype
-#' * ON EMPTY: specifies what to do if the path expression is empty <-> default
-#'   * triggers if
-#'     * value is NULL
-#'     * (lax mode): path does not exist
-#'   * NULL: return NULL
-#'   * ERROR: raise exception
-#'   * DEFAULT \<expression\>: evaluate expression
-#' * ON ERROR: Unhandled errors can arise if there is -> no equivalent
-#'    * an input conversion error (for example, if the context item cannot be parsed),
-#'    * an error returned by the SQL/JSON path engine,
-#'    * or an output conversion error.
-#'   * choices as in `ON EMPTY`
 #'
 #' @export
 #' @examples
@@ -89,35 +66,16 @@ json_get_value <- function(x, path, ptype = NULL, default = NULL, na = NA, bigin
   replace_not_found(x_result, path_not_found, default)
 }
 
-#' Extract a JSON value
+#' Extract an object/array from JSON
 #'
+#' Extract a JSON object or array at a given path. To extract a JSON value
+#' use [json_get_value()].
+#'
+#' @inheritParams json_get_value
 #' @param wrap_scalars Should scalars be wrapped?
 #'
 #' @return A `json2` vector.
 #'
-#' @section SQL 2016 - `json_query()`:
-#' `json_query(<json>, <path>, ...)`
-#'
-#'  JSON_QUERY is an operator to extract SQL/JSON values from a JSON value.
-#'  * it can extract any JSON type;
-#'  * it always returns a string;
-#'  * it can extract multiple elements from a JSON document.
-#'
-#'  Arguments
-#'  * WRAPPER:
-#'    * WITHOUT ARRAY:
-#'    * WITH CONDITIONAL ARRAY: -> ON EMPTY disallowed
-#'    * WITH UNCONDITIONAL ARRAY: -> ON EMPTY disallowed
-#'  * QUOTES
-#'    * KEEP:
-#'    * OMIT
-#'  * ON EMPTY:
-#'    * ERROR
-#'    * NULL
-#'    * EMPTY ARRAY
-#'    * EMPTY OBJECT
-#'  * ON ERROR: same choices as in ON EMPTY
-#' @rdname json_get_value
 #' @export
 json_get_query <- function(x, path, wrap_scalars = FALSE, default = NULL, na = NA) {
   # TODO check default and na are objects/arrays?

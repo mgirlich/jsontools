@@ -16,7 +16,7 @@ format_json(
   POSIXt = c("string", "ISO8601", "epoch", "mongo"),
   factor = c("string", "integer"),
   complex = c("string", "list"),
-  raw = c("base64", "hex", "mongo"),
+  raw = c("base64", "hex", "mongo", "int", "js"),
   digits = 4,
   json_verbatim = TRUE,
   force = FALSE,
@@ -50,57 +50,25 @@ format_json_list(
 \arguments{
 \item{x}{the object to be encoded}
 
-\item{null}{how to encode NULL values within a list: must be one of 'null' or 'list'}
-
-\item{na}{how to print NA values: must be one of 'null' or 'string'. Defaults are class specific}
-
-\item{auto_unbox}{automatically \code{\link{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link{unbox}} function to unbox individual elements.
-An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
-
-\item{dataframe}{how to encode data.frame objects: must be one of 'rows', 'columns' or 'values'}
-
-\item{matrix}{how to encode matrices and higher dimensional arrays: must be one of 'rowmajor' or 'columnmajor'.}
-
-\item{Date}{how to encode Date objects: must be one of 'ISO8601' or 'epoch'}
-
-\item{POSIXt}{how to encode POSIXt (datetime) objects: must be one of 'string', 'ISO8601', 'epoch' or 'mongo'}
-
-\item{factor}{how to encode factor objects: must be one of 'string' or 'integer'}
-
-\item{complex}{how to encode complex numbers: must be one of 'string' or 'list'}
-
-\item{raw}{how to encode raw objects: must be one of 'base64', 'hex' or 'mongo'}
-
-\item{digits}{max number of decimal digits to print for numeric values. Use \code{I()} to specify significant digits. Use \code{NA} for max precision.}
+\item{null, na, auto_unbox, dataframe, matrix, Date, POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{json_verbatim}{Leave json as it is and do not encode it again?}
-
-\item{force}{unclass/skip objects of classes with no defined JSON mapping}
-
-\item{pretty}{adds indentation whitespace to JSON output. Can be TRUE/FALSE or a number specifying the number of spaces to indent. See \code{\link{prettify}}}
 
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
 
 \item{always_decimal}{Use real number notation in whole number doubles?}
-
-\item{...}{arguments passed on to class specific \code{print} methods}
 }
 \description{
-These functions are used to convert between JSON data and \R{} objects. The \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}} and \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON}} functions use a class based mapping, which follows conventions outlined in this \href{https://arxiv.org/abs/1403.2805}{paper} (also available as vignette).
+\code{format_json} is only a wrapper around the great \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.
+The differences are
+\itemize{
+\item expose argument \code{json_verbatim}, \code{rownames}, and \code{always_decimal}.
+\item use \code{json_verbatim = TRUE} by default so that JSON isn't escaped again.
+\item return a \code{json2} object.
 }
-\details{
-The \code{\link{toJSON}} and \code{\link{fromJSON}} functions are drop-in replacements for the identically named functions
-in packages \code{rjson} and \code{RJSONIO}. Our implementation uses an alternative, somewhat more consistent mapping
-between \R{} objects and JSON strings.
 
-The \code{\link{serializeJSON}} and \code{\link{unserializeJSON}} functions in this package use an
-alternative system to convert between \R{} objects and JSON, which supports more classes but is much more verbose.
-
-A JSON string is always unicode, using \code{UTF-8} by default, hence there is usually no need to escape any characters.
-However, the JSON format does support escaping of unicode characters, which are encoded using a backslash followed by
-a lower case \code{"u"} and 4 hex characters, for example: \code{"Z\\u00FCrich"}. The \code{fromJSON} function
-will parse such escape sequences but it is usually preferable to encode unicode characters in JSON using native
-\code{UTF-8} rather than escape sequences.
+\code{format_json_list()} converts each element of a list to JSON.
 }
 \examples{
 # null
@@ -139,7 +107,4 @@ format_json(x, digits = I(2))
 # Force decimal representation
 format_json(12)
 format_json(12, always_decimal = TRUE)
-}
-\references{
-Jeroen Ooms (2014). The \code{jsonlite} Package: A Practical and Consistent Mapping Between JSON Data and \R{} Objects. \emph{arXiv:1403.2805}. \url{https://arxiv.org/abs/1403.2805}
 }

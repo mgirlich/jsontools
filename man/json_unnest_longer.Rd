@@ -2,7 +2,7 @@
 % Please edit documentation in R/flatten.R
 \name{json_unnest_longer}
 \alias{json_unnest_longer}
-\title{Rectangle a JSON array column}
+\title{Unnest a JSON array column}
 \usage{
 json_unnest_longer(
   data,
@@ -10,25 +10,33 @@ json_unnest_longer(
   path = NULL,
   values_to = NULL,
   indices_to = NULL,
+  keys_to = NULL,
+  ptype = NULL,
   wrap_scalars = TRUE
 )
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{col}{JSON-column to extract components from.}
+\item{col}{JSON-column of arrays to extract components from.}
 
 \item{path}{Path where to extract from.}
 
 \item{values_to}{Name of column to store vector values. Defaults to \code{col}.}
 
 \item{indices_to}{A string giving the name of column which will contain the
-inner names or position (if not named) of the values.}
+rownumber before unnesting.}
+
+\item{keys_to}{A string giving the name of column which will contain the
+object keys resp. the array indices.}
+
+\item{ptype}{Output type. If \code{NULL}, the default, the output type is
+determined by computing the common type across all elements of \code{...}.}
 
 \item{wrap_scalars}{Should scalars be wrapped?}
 }
 \description{
-Rectangle a JSON array column
+Unnest a JSON array column
 }
 \examples{
 df <- tibble::tibble(json = discog_json)

@@ -25,37 +25,55 @@ format_json_rowwise(
 \arguments{
 \item{df}{A dataframe.}
 
-\item{null}{how to encode NULL values within a list: must be one of 'null' or 'list'}
+\item{null}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{na}{how to print NA values: must be one of 'null' or 'string'. Defaults are class specific}
+\item{na}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{auto_unbox}{automatically \code{\link{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link{unbox}} function to unbox individual elements.
-An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
+\item{auto_unbox}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{matrix}{how to encode matrices and higher dimensional arrays: must be one of 'rowmajor' or 'columnmajor'.}
+\item{matrix}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{Date}{how to encode Date objects: must be one of 'ISO8601' or 'epoch'}
+\item{Date}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{POSIXt}{how to encode POSIXt (datetime) objects: must be one of 'string', 'ISO8601', 'epoch' or 'mongo'}
+\item{POSIXt}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{factor}{how to encode factor objects: must be one of 'string' or 'integer'}
+\item{factor}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{complex}{how to encode complex numbers: must be one of 'string' or 'list'}
+\item{complex}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{raw}{how to encode raw objects: must be one of 'base64', 'hex' or 'mongo'}
+\item{raw}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{digits}{max number of decimal digits to print for numeric values. Use \code{I()} to specify significant digits. Use \code{NA} for max precision.}
+\item{digits}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{json_verbatim}{Leave json as it is and do not encode it again?}
 
-\item{force}{unclass/skip objects of classes with no defined JSON mapping}
+\item{force}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
 
-\item{...}{arguments passed on to class specific \code{print} methods}
+\item{...}{passed
+on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+}
+\value{
+A json2 vector of json objects.
 }
 \description{
-Convert each tbl row to JSON
+Convert each row of a data frame to a JSON object (this basically produces
+\href{http://ndjson.org/}{ndjson}).
+}
+\details{
+Under the hood \code{\link[jsonlite:stream_in]{jsonlite::stream_out}} is used for the conversion.
 }
 \examples{
 format_json_rowwise(mtcars[1:3, ])

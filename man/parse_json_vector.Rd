@@ -6,19 +6,18 @@
 \usage{
 parse_json_vector(
   x,
-  flatten = FALSE,
-  bigint_as_char = TRUE,
   .na = json_na_error(),
   .null = NULL,
+  simplifyVector = TRUE,
+  simplifyDataFrame = FALSE,
+  simplifyMatrix = FALSE,
+  flatten = FALSE,
+  bigint_as_char = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{a scalar JSON character}
-
-\item{flatten}{automatically \code{\link{flatten}} nested data frames into a single non-nested data frame}
-
-\item{bigint_as_char}{Parse big ints as character?}
 
 \item{.na}{Value to return if \code{x} is \code{NA}. By default an error of class
 \code{jsontools_error_na_json} is thrown.}
@@ -26,7 +25,25 @@ parse_json_vector(
 \item{.null}{Return the prototype of \code{.null} if \code{x} is \code{NULL}
 or a zero length character}
 
-\item{...}{arguments passed on to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}}
+\item{simplifyVector}{passed on
+to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
+
+\item{simplifyDataFrame}{passed on
+to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
+
+\item{simplifyMatrix}{passed on
+to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
+
+\item{flatten}{passed on
+to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
+
+\item{bigint_as_char}{Parse big ints as character?}
+
+\item{...}{passed on
+to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
+}
+\value{
+A list of the same length as \code{x}.
 }
 \description{
 Parse a vector of jsons into a list

@@ -70,6 +70,7 @@ agg_array <- function(x) {
 #'
 #' @param x Vector with JSON.
 #' @param path Path
+#' @param wrap_scalars Consider scalars as length one array?
 #'
 #' @return An integer vector of array lengths
 #' @export
@@ -110,7 +111,7 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
 is_json_array <- function(x, null = TRUE, na = TRUE) {
   x <- as.character(x)
 
-  (startsWith(x, "[") & endsWith(x, "]") & !is.na(x)) |
+  (grepl("^\\s*\\[", x) & grepl("]\\s*$", x) & !is.na(x)) |
     (null & x == "null" & !is.na(x)) |
     (na & is.na(x))
 }

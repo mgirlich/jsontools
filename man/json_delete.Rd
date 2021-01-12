@@ -12,7 +12,7 @@ json_delete(x, ...)
 \item{...}{Paths to delete.}
 }
 \description{
-Delete key
+Delete the elements at the specified paths.
 }
 \examples{
 x <- c('{"a": 11, "b": {"x": 12}}', NA)

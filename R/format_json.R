@@ -2,42 +2,21 @@
 #' @rdname format_json
 #'
 #' @description
-#' These functions are used to convert between JSON data and \R{} objects. The [`jsonlite::toJSON`] and [`jsonlite::fromJSON`] functions use a class based mapping, which follows conventions outlined in this [paper](https://arxiv.org/abs/1403.2805) (also available as vignette).
+#' `format_json` is only a wrapper around the great [`jsonlite::toJSON`].
+#' The differences are
+#' * expose argument `json_verbatim`, `rownames`, and `always_decimal`.
+#' * use `json_verbatim = TRUE` by default so that JSON isn't escaped again.
+#' * return a `json2` object.
 #'
-#' @details
-#' The \code{\link{toJSON}} and \code{\link{fromJSON}} functions are drop-in replacements for the identically named functions
-#' in packages \code{rjson} and \code{RJSONIO}. Our implementation uses an alternative, somewhat more consistent mapping
-#' between \R{} objects and JSON strings.
+#' `format_json_list()` converts each element of a list to JSON.
 #'
-#' The \code{\link{serializeJSON}} and \code{\link{unserializeJSON}} functions in this package use an
-#' alternative system to convert between \R{} objects and JSON, which supports more classes but is much more verbose.
-#'
-#' A JSON string is always unicode, using \code{UTF-8} by default, hence there is usually no need to escape any characters.
-#' However, the JSON format does support escaping of unicode characters, which are encoded using a backslash followed by
-#' a lower case \code{"u"} and 4 hex characters, for example: \code{"Z\\u00FCrich"}. The \code{fromJSON} function
-#' will parse such escape sequences but it is usually preferable to encode unicode characters in JSON using native
-#' \code{UTF-8} rather than escape sequences.
-
 #' @param x the object to be encoded
-#' @param null how to encode NULL values within a list: must be one of 'null' or 'list'
-#' @param na how to print NA values: must be one of 'null' or 'string'. Defaults are class specific
-#' @param auto_unbox automatically \code{\link{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link{unbox}} function to unbox individual elements.
-#'   An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.
-#' @param dataframe how to encode data.frame objects: must be one of 'rows', 'columns' or 'values'
-#' @param matrix how to encode matrices and higher dimensional arrays: must be one of 'rowmajor' or 'columnmajor'.
-#' @param Date how to encode Date objects: must be one of 'ISO8601' or 'epoch'
-#' @param POSIXt how to encode POSIXt (datetime) objects: must be one of 'string', 'ISO8601', 'epoch' or 'mongo'
-#' @param factor how to encode factor objects: must be one of 'string' or 'integer'
-#' @param complex how to encode complex numbers: must be one of 'string' or 'list'
-#' @param raw how to encode raw objects: must be one of 'base64', 'hex' or 'mongo'
-#' @param digits max number of decimal digits to print for numeric values. Use \code{I()} to specify significant digits. Use \code{NA} for max precision.
 #' @param json_verbatim Leave json as it is and do not encode it again?
-#' @param force unclass/skip objects of classes with no defined JSON mapping
-#' @param pretty adds indentation whitespace to JSON output. Can be TRUE/FALSE or a number specifying the number of spaces to indent. See \code{\link{prettify}}
 #' @param rownames For data.frames add a field `_row` with the row name?
 #' @param always_decimal Use real number notation in whole number doubles?
-#' @param ... arguments passed on to class specific \code{print} methods
-#' @references Jeroen Ooms (2014). The \code{jsonlite} Package: A Practical and Consistent Mapping Between JSON Data and \R{} Objects. \emph{arXiv:1403.2805}. \url{https://arxiv.org/abs/1403.2805}
+#' @param null,na,auto_unbox,dataframe,matrix,Date,POSIXt,factor,complex,raw,digits,force,pretty,... passed
+#'   on to [`jsonlite::toJSON`].
+#'
 #' @export
 #' @examples
 #' # null
@@ -86,7 +65,7 @@ format_json <- function(x,
                         POSIXt = c("string", "ISO8601", "epoch", "mongo"),
                         factor = c("string", "integer"),
                         complex = c("string", "list"),
-                        raw = c("base64", "hex", "mongo"),
+                        raw = c("base64", "hex", "mongo", "int", "js"),
                         digits = 4,
                         json_verbatim = TRUE,
                         force = FALSE,

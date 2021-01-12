@@ -2,9 +2,21 @@
 % Please edit documentation in R/coerce.R
 \name{vec_ptype2.json2}
 \alias{vec_ptype2.json2}
+\alias{vec_ptype2.json}
+\alias{vec_ptype2.jqson}
+\alias{vec_ptype2.pq_jsonb}
+\alias{vec_ptype2.pq_json}
 \title{Coercion}
 \usage{
 \method{vec_ptype2}{json2}(x, y, ..., x_arg = "", y_arg = "")
+
+\method{vec_ptype2}{json}(x, y, ..., x_arg = "", y_arg = "")
+
+\method{vec_ptype2}{jqson}(x, y, ..., x_arg = "", y_arg = "")
+
+\method{vec_ptype2}{pq_jsonb}(x, y, ..., x_arg = "", y_arg = "")
+
+\method{vec_ptype2}{pq_json}(x, y, ..., x_arg = "", y_arg = "")
 }
 \arguments{
 \item{x}{Vector types.}

@@ -34,3 +34,57 @@ vec_ptype2.character.json2 <- function(x, y, ...) {
   # new_json2()
   character()
 }
+
+# json classes from other packages ----------------------------------------
+
+#' @rdname vec_ptype2.json2
+#'
+#' @method vec_ptype2 json
+#' @export
+#' @export vec_ptype2.json
+vec_ptype2.json <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.json", y)
+#' @method vec_ptype2.json json2
+#' @export
+vec_ptype2.json.json2 <- function(x, y, ...) new_json2()
+#' @method vec_ptype2.json2 json
+#' @export
+vec_ptype2.json2.json <- function(x, y, ...) new_json2()
+
+#' @rdname vec_ptype2.json2
+#'
+#' @method vec_ptype2 jqson
+#' @export
+#' @export vec_ptype2.jqson
+vec_ptype2.jqson <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.jqson", y)
+#' @method vec_ptype2.jqson json2
+#' @export
+vec_ptype2.jqson.json2 <- function(x, y, ...) new_json2()
+#' @method vec_ptype2.json2 jqson
+#' @export
+vec_ptype2.json2.jqson <- function(x, y, ...) new_json2()
+
+#' @rdname vec_ptype2.json2
+#'
+#' @method vec_ptype2 pq_jsonb
+#' @export
+#' @export vec_ptype2.pq_jsonb
+vec_ptype2.pq_jsonb <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.pq_jsonb", y)
+#' @method vec_ptype2.pq_jsonb json2
+#' @export
+vec_ptype2.pq_jsonb.json2 <- function(x, y, ...) new_json2()
+#' @method vec_ptype2.json2 pq_jsonb
+#' @export
+vec_ptype2.json2.pq_jsonb <- function(x, y, ...) new_json2()
+
+#' @rdname vec_ptype2.json2
+#'
+#' @method vec_ptype2 pq_json
+#' @export
+#' @export vec_ptype2.pq_json
+vec_ptype2.pq_json <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.pq_json", y)
+#' @method vec_ptype2.pq_json json2
+#' @export
+vec_ptype2.pq_json.json2 <- function(x, y, ...) new_json2()
+#' @method vec_ptype2.json2 pq_json
+#' @export
+vec_ptype2.json2.pq_json <- function(x, y, ...) new_json2()

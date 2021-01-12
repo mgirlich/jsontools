@@ -5,7 +5,7 @@
 \alias{json_minify}
 \title{Prettify/Minify a JSON vector}
 \usage{
-json_prettify(x)
+json_prettify(x, indent = 3)
 
 json_minify(x)
 }
