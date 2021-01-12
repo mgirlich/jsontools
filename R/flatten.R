@@ -121,7 +121,7 @@ json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
   }
 
   if (is_false(wrap_scalars)) {
-    if (!all(startsWith(x, "[") & endsWith(x, "]"), na.rm = TRUE)) {
+    if (!all(is_json_array(x, null = TRUE, na = TRUE))) {
       stop_jsontools("`x` must be an array of atoms")
     }
   }

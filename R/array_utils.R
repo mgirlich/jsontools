@@ -81,3 +81,8 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
 
   as.integer(array_lengths)
 }
+
+is_json_array <- function(x, null = TRUE, na = TRUE) {
+  (startsWith(x, "[") & endsWith(x, "]") & !is.na(x)) |
+    (null & x == "null" & !is.na(x)) |
+    (na & is.na(x))

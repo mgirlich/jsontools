@@ -160,8 +160,9 @@ test_that("json_flatten_value edge cases", {
     NULL
   )
 
-  expect_snapshot_error(
-    json_flatten_value("null")
+  expect_null(
+    json_flatten_value("null"),
+    NULL
   )
 
   expect_equal(

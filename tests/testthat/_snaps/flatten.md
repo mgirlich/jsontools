@@ -1,7 +1,3 @@
-# json_flatten_value edge cases
-
-    `x` must be an array of atoms
-
 # json_unnest_longer with discog_json
 
     {
