@@ -92,18 +92,24 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   if (is_true(wrap_scalars)) {
     array_lengths <- array_info_df$result + !array_info_df$type %in% c("array", "null")
   } else {
-    stop_jsontools(
-      c(
-        x = "`x` has scalar elements.",
-        i = "use `wrap_scalars = TRUE` to consider scalars as length 1 array."
+    if (!all(is_json_array(x))) {
+      stop_jsontools(
+        c(
+          x = "`x` has scalar elements.",
+          i = "use `wrap_scalars = TRUE` to consider scalars as length 1 array."
+        )
       )
-    )
+    }
+
+    array_lengths <- array_info_df$result
   }
 
   as.integer(array_lengths)
 }
 
 is_json_array <- function(x, null = TRUE, na = TRUE) {
+  x <- as.character(x)
+
   (startsWith(x, "[") & endsWith(x, "]") & !is.na(x)) |
     (null & x == "null" & !is.na(x)) |
     (na & is.na(x))
