@@ -323,35 +323,3 @@ maybe_name <- function(x, nms) {
 
   x
 }
-
-#' Aggregate into a JSON array
-#'
-#' @param x Vector to collapse into JSON array.
-#'
-#' @return A json2 object.
-#' @export
-#'
-#' @examples
-#' json_agg_array(1:3)
-#' json_agg_array(json2(c('{"a": 1}', '{"b": 2}')))
-json_agg_array <- function(x) {
-  UseMethod("json_agg_array")
-}
-
-#' @export
-json_agg_array.json2 <- function(x) {
-  new_json2(sprintf("[%s]", paste0(x, collapse = ",")))
-}
-
-#' @export
-json_agg_array.integer <- function(x) {
-  new_json2(sprintf("[%s]", paste0(x, collapse = ",")))
-}
-
-#' @export
-json_agg_array.character <- function(x) {
-  x_escaped <- gsub(r"{(\n|\f|\b|\r|\t|\"|\\)}", r"{\1}", x)
-  x_escaped_string <- paste0('"', x_escaped, '"')
-
-  new_json2(sprintf("[%s]", paste0(x_escaped_string, collapse = ",")))
-}

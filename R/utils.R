@@ -48,36 +48,6 @@ escape_paths <- function(..., collapse = FALSE) {
   paths
 }
 
-#' Get array length of JSON arrays
-#'
-#' @param x Vector with JSON.
-#' @param path Path
-#'
-#' @return An integer vector of array lengths
-#' @export
-#'
-#' @examples
-#' json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
-json_array_length <- function(x, path = NULL) {
-  # TODO parameter so that scalars have length 1 instead of zero?
-  # * and warn about scalar elements?
-
-  if (is.null(path)) {
-    query <- glue_sql("JSON_ARRAY_LENGTH(data)", .con = con)
-  } else {
-    query <- glue_sql("JSON_ARRAY_LENGTH(data, {path})", .con = con)
-  }
-
-  array_lengths <- exec_sqlite_json(
-    x,
-    glue_sql("
-      SELECT {query} AS result
-      FROM my_tbl", .con = con)
-  )$result
-
-  as.integer(array_lengths)
-}
-
 #' Query the JSON type
 #'
 #' @param x A JSON vector
