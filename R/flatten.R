@@ -32,8 +32,9 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
   # * integers work (b/c they are valid JSON)
   # * character fail (b/c they are not valid JSON)
   # -> check if each element of x is an array
+  path <- path %||% "$"
 
-  if (!is.null(path) && !is_string(path)) {
+  if (!is_string(path)) {
     stop_jsontools("`path` must be `NULL` or a string")
   }
 
@@ -49,14 +50,6 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
     data_col <- DBI::SQL("my_tbl.data")
   }
 
-  if (is_empty(path)) {
-    each_tbl <- glue_sql("JSON_EACH({data_col}) AS tmp1", .con = con)
-    data_col_type <- glue_sql("JSON_TYPE({data_col})", .con = con)
-  } else {
-    each_tbl <- glue_sql("JSON_EACH({data_col}, {path}) AS tmp1", .con = con)
-    data_col_type <- glue_sql("JSON_TYPE({data_col}, {path})", .con = con)
-  }
-
   result <- exec_sqlite_json(
     x,
     glue_sql("
@@ -65,10 +58,10 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
        CAST(value AS text) AS value,
        type,
        CAST(key AS text) AS key,
-       {data_col_type} AS col_type
+       JSON_TYPE({data_col}, {path}) AS col_type
      FROM
       my_tbl,
-      {each_tbl}
+      JSON_EACH({data_col}, {path}) AS tmp1
     ", .con = con)
   )
 
