@@ -24,7 +24,8 @@ json_agg_array.integer <- function(x) {
 
 #' @export
 json_agg_array.character <- function(x) {
-  x_escaped <- gsub(r"{(\n|\f|\b|\r|\t|\"|\\)}", r"{\1}", x)
+  # TODO what about \b?
+  x_escaped <- gsub(r"{(\n|\f|\r|\t|\"|\\)}", r"{\\\1}", x)
   x_escaped_string <- paste0('"', x_escaped, '"')
 
   new_json2(sprintf("[%s]", paste0(x_escaped_string, collapse = ",")))
