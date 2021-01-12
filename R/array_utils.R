@@ -19,16 +19,47 @@ json_agg_array.json2 <- function(x) {
 
 #' @export
 json_agg_array.integer <- function(x) {
-  new_json2(sprintf("[%s]", paste0(x, collapse = ",")))
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.double <- function(x) {
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.logical <- function(x) {
+  jsonlite::toJSON(x)
 }
 
 #' @export
 json_agg_array.character <- function(x) {
-  # TODO what about \b?
-  x_escaped <- gsub(r"{(\n|\f|\r|\t|\"|\\)}", r"{\\\1}", x)
-  x_escaped_string <- paste0('"', x_escaped, '"')
+  jsonlite::toJSON(x)
+}
 
-  new_json2(sprintf("[%s]", paste0(x_escaped_string, collapse = ",")))
+#' @export
+json_agg_array.factor <- function(x) {
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.POSIXct <- function(x) {
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.POSIXlt <- function(x) {
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.Date <- function(x) {
+  jsonlite::toJSON(x)
+}
+
+#' @export
+json_agg_array.complex<- function(x) {
+  jsonlite::toJSON(x)
 }
 
 #' Get array length of JSON arrays

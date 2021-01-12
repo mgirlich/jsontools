@@ -10,16 +10,16 @@ test_that("json_agg_array works", {
   )
 
   expect_equal(
+    json_agg_array(c('a"b', 'a\nb')),
+    json2('["a\\"b","a\\nb"]')
+  )
+})
+
+test_that("json_agg_array works with json2", {
+  expect_equal(
     json_agg_array(json2(c('{"a": 1}', '{"b": 2}'))),
     json2('[{"a": 1},{"b": 2}]')
   )
-
-  skip("not yet tested properly")
-  expect_equal(
-    json_agg_array(c('a"b', 'a\nb')),
-    json2('["a","b","c"]')
-  )
-  jsonlite::toJSON(c('a"b', 'a\nb'))
 })
 
 test_that("is_json_array works", {
