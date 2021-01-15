@@ -16,7 +16,7 @@
 
 \method{vec_ptype2}{pq_jsonb}(x, y, ..., x_arg = "", y_arg = "")
 
-\method{vec_ptype2}{pq_json}(x, y, ..., x_arg = "", y_arg = "")
+vec_ptype2.pq_json(x, y, ..., x_arg = "", y_arg = "")
 }
 \arguments{
 \item{x}{Vector types.}

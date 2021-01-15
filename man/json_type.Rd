@@ -4,7 +4,7 @@
 \alias{json_type}
 \title{Query the JSON type}
 \usage{
-json_type(x)
+json_type(x, path = NULL)
 }
 \arguments{
 \item{x}{A JSON vector}

@@ -11,7 +11,8 @@ json_unnest_wider(
   ptype = list(),
   names_sort = FALSE,
   names_sep = NULL,
-  names_repair = "check_unique"
+  names_repair = "check_unique",
+  wrap_scalars = FALSE
 )
 }
 \arguments{
