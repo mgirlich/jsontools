@@ -25,45 +25,13 @@ format_json_rowwise(
 \arguments{
 \item{df}{A dataframe.}
 
-\item{null}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+\item{null, na, auto_unbox, dataframe, matrix, Date}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{na}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{auto_unbox}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{matrix}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{Date}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{POSIXt}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{factor}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{complex}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{raw}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
-\item{digits}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+\item{POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{json_verbatim}{Leave json as it is and do not encode it again?}
 
-\item{force}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
-
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
-
-\item{...}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 }
 \value{
 A json2 vector of json objects.
@@ -88,4 +56,7 @@ if (require("dplyr", quietly = TRUE, warn.conflicts = FALSE)) {
   mtcars \%>\%
     transmute(json = format_json_rowwise(tibble(mpg, cyl, extra = tibble(disp, hp))))
 }
+}
+\seealso{
+\code{\link[=write_json]{write_json()}}, \code{\link[=format_json]{format_json()}}
 }

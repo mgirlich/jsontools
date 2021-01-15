@@ -6,9 +6,13 @@
 #' @details Under the hood [`jsonlite::stream_out`] is used for the conversion.
 #'
 #' @param df A dataframe.
+#' @param null,na,auto_unbox,dataframe,matrix,Date passed on to [`jsonlite::toJSON`].
+#' @param POSIXt,factor,complex,raw,digits,force,pretty,... passed on to [`jsonlite::toJSON`].
 #' @inheritParams format_json
 #'
 #' @return A json2 vector of json objects.
+#'
+#' @seealso [`write_json()`], [`format_json()`]
 #'
 #' @export
 #' @examples

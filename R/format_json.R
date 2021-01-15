@@ -10,12 +10,17 @@
 #'
 #' `format_json_list()` converts each element of a list to JSON.
 #'
+#' To make sure that a length one vector is not turned into an array use
+#' [`json_u()`] or [`jsonlite::unbox()`].
+#'
 #' @param x the object to be encoded
 #' @param json_verbatim Leave json as it is and do not encode it again?
 #' @param rownames For data.frames add a field `_row` with the row name?
 #' @param always_decimal Use real number notation in whole number doubles?
-#' @param null,na,auto_unbox,dataframe,matrix,Date,POSIXt,factor,complex,raw,digits,force,pretty,... passed
-#'   on to [`jsonlite::toJSON`].
+#' @param null,na,auto_unbox,dataframe,matrix,Date passed on to [`jsonlite::toJSON`].
+#' @param POSIXt,factor,complex,raw,digits,force,pretty,... passed on to [`jsonlite::toJSON`].
+#'
+#' @seealso [`write_json()`], [`format_json_rowwise()`]
 #'
 #' @export
 #' @examples
@@ -116,6 +121,8 @@ to_json <- format_json
 #' @param x An object to write to disk.
 #' @param path Path or connection to write to.
 #' @param ... arguments passed on to [`format_json`]
+#'
+#' @seealso [`format_json()`], [`format_json_rowwise()`]
 #'
 #' @export
 write_json <- function(x, path, ...) {

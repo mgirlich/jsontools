@@ -66,6 +66,8 @@ json_is_valid <- function(x) {
 
 #' Assert vector is valid JSON.
 #'
+#' Uses [`jsonlite::validate()`] under the hood.
+#'
 #' @param x A character vector.
 #'
 #' @return `json_is_valid()` returns a vector of `TRUE` and `FALSE`.

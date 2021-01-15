@@ -18,7 +18,7 @@ json_assert_valid(x)
 elements or returns \code{x} invisibly
 }
 \description{
-Assert vector is valid JSON.
+Uses \code{\link[jsonlite:validate]{jsonlite::validate()}} under the hood.
 }
 \examples{
 json_is_valid("[1, 2]")

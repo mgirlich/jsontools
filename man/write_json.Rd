@@ -16,3 +16,6 @@ write_json(x, path, ...)
 \description{
 Write JSON
 }
+\seealso{
+\code{\link[=format_json]{format_json()}}, \code{\link[=format_json_rowwise]{format_json_rowwise()}}
+}

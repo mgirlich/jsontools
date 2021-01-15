@@ -71,6 +71,7 @@ For conversion there are the following functions:
 * `format_json()`: convert an R object to JSON.
 * `format_json_vector()`: convert each element of an R object to JSON and return them as a JSON vector.
 * `format_json_rowwise()`: convert each row of a data frame to JSON.
+* `write_json()`: convert an R object to JSON and write it to disk.
 
 Let's look at our customer infos from above. Assume we have converted it into a tibble:
 

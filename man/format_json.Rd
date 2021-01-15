@@ -50,8 +50,9 @@ format_json_list(
 \arguments{
 \item{x}{the object to be encoded}
 
-\item{null, na, auto_unbox, dataframe, matrix, Date, POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed
-on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+\item{null, na, auto_unbox, dataframe, matrix, Date}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+
+\item{POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{json_verbatim}{Leave json as it is and do not encode it again?}
 
@@ -69,6 +70,9 @@ The differences are
 }
 
 \code{format_json_list()} converts each element of a list to JSON.
+
+To make sure that a length one vector is not turned into an array use
+\code{\link[=json_u]{json_u()}} or \code{\link[jsonlite:unbox]{jsonlite::unbox()}}.
 }
 \examples{
 # null
@@ -107,4 +111,7 @@ format_json(x, digits = I(2))
 # Force decimal representation
 format_json(12)
 format_json(12, always_decimal = TRUE)
+}
+\seealso{
+\code{\link[=write_json]{write_json()}}, \code{\link[=format_json_rowwise]{format_json_rowwise()}}
 }
