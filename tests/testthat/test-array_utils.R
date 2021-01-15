@@ -1,24 +1,28 @@
 test_that("json_agg_array works", {
   expect_equal(
     json_agg_array(1:3),
-    json2("[1,2,3]")
+    # new_json_array("[1,2,3]")
+    new_json2("[1,2,3]")
   )
 
   expect_equal(
     json_agg_array(c("a", "b", "c")),
-    json2('["a","b","c"]')
+    # new_json_array('["a","b","c"]')
+    new_json2('["a","b","c"]')
   )
 
   expect_equal(
     json_agg_array(c('a"b', 'a\nb')),
-    json2('["a\\"b","a\\nb"]')
+    # new_json_array('["a\\"b","a\\nb"]')
+    new_json2('["a\\"b","a\\nb"]')
   )
 })
 
 test_that("json_agg_array works with json2", {
   expect_equal(
     json_agg_array(json2(c('{"a": 1}', '{"b": 2}'))),
-    json2('[{"a": 1},{"b": 2}]')
+    # new_json_array('[{"a": 1},{"b": 2}]')
+    new_json2('[{"a": 1},{"b": 2}]')
   )
 })
 

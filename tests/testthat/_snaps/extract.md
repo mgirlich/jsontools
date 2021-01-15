@@ -1,27 +1,36 @@
-# json_get_value handles long ints
+# json_extract handles mixed types
 
-    Code
-      expect_equal(json_get_value(y, "$.some_above"), c("1", "9999999999"))
-    Message <message>
-      bigints found; converted to `character()`.
+    Can't combine `integer` <integer> and `text` <character>.
 
----
+# json_extract handles missing and null elements
 
-    Code
-      expect_equal(json_get_value(y, "$.some_above", bigint_as_char = FALSE), bit64::as.integer64(
-        c("1", "9999999999")))
-    Message <message>
-      bigints found; converted to `bit64::integer64()`.
+    `path` does not always exist.
+    i Did you provide an incorrect path?
+    i With `default` you can specify a default value for missing elements.
 
 ---
 
-    `bigint_as_char = TRUE` not allowed with `ptype` = `integer64()`.
+    `path` does not always exist.
+    i Did you provide an incorrect path?
+    i With `default` you can specify a default value for missing elements.
+
+# json_extract checks path
+
+    `path` must be a character vector of length 1
 
 ---
 
-    
+    `path` must be a character vector of length 1
 
 ---
 
-    Can't combine <character> and <integer64>.
+    `path` must be a character vector of length 1
+
+# json_extract handles ptype object and array
+
+    Not all elements are arrays.
+
+---
+
+    Not all elements are objects.
 

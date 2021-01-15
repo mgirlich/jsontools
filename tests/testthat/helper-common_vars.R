@@ -1,5 +1,6 @@
 x_valid <- '{"a":1}'
 x_invalid <- '{"a": 1'
+x_json2 <- json2(x_valid)
 x_pq_json <- structure(x_valid, class = "pq_jsonb")
 x_jqson <- structure(x_valid, class = c("jqson", "character"))
 x_jsonlite <- structure(x_valid, class = "json")

@@ -1,3 +1,15 @@
+# json_flatten errors
+
+    Cannot combine JSON array/object with scalar values.
+
+---
+
+    Cannot combine JSON array/object with scalar values.
+
+---
+
+    Can't combine `integer` <integer> and `text` <character>.
+
 # json_unnest_longer with discog_json
 
     {
@@ -139,7 +151,13 @@
       "value": [
         {
           "type": "character",
-          "attributes": {},
+          "attributes": {
+            "class": {
+              "type": "character",
+              "attributes": {},
+              "value": ["json2", "json", "vctrs_vctr", "character"]
+            }
+          },
           "value": ["[{\"name\":\"Tobi Records (2)\",\"entity_type\":\"1\",\"catno\":\"TOB-013\",\"resource_url\":\"https://api.discogs.com/labels/633407\",\"id\":633407,\"entity_type_name\":\"Label\"}]", "[{\"name\":\"La Vida Es Un Mus\",\"entity_type\":\"1\",\"catno\":\"Mus70\",\"resource_url\":\"https://api.discogs.com/labels/38322\",\"id\":38322,\"entity_type_name\":\"Label\"}]", "[{\"name\":\"La Vida Es Un Mus\",\"entity_type\":\"1\",\"catno\":\"MUS118\",\"resource_url\":\"https://api.discogs.com/labels/38322\",\"id\":38322,\"entity_type_name\":\"Label\"}]"]
         },
         {
@@ -149,7 +167,13 @@
         },
         {
           "type": "character",
-          "attributes": {},
+          "attributes": {
+            "class": {
+              "type": "character",
+              "attributes": {},
+              "value": ["json2", "json", "vctrs_vctr", "character"]
+            }
+          },
           "value": ["[{\"join\":\"\",\"name\":\"Mollot\",\"anv\":\"\",\"tracks\":\"\",\"role\":\"\",\"resource_url\":\"https://api.discogs.com/artists/4619796\",\"id\":4619796}]", "[{\"join\":\"\",\"name\":\"Una Bèstia Incontrolable\",\"anv\":\"\",\"tracks\":\"\",\"role\":\"\",\"resource_url\":\"https://api.discogs.com/artists/3192745\",\"id\":3192745}]", "[{\"join\":\"\",\"name\":\"S.H.I.T. (3)\",\"anv\":\"\",\"tracks\":\"\",\"role\":\"\",\"resource_url\":\"https://api.discogs.com/artists/2769828\",\"id\":2769828}]"]
         },
         {
@@ -169,7 +193,13 @@
         },
         {
           "type": "character",
-          "attributes": {},
+          "attributes": {
+            "class": {
+              "type": "character",
+              "attributes": {},
+              "value": ["json2", "json", "vctrs_vctr", "character"]
+            }
+          },
           "value": ["[{\"descriptions\":[\"Numbered\"],\"text\":\"Black\",\"name\":\"Cassette\",\"qty\":\"1\"}]", "[{\"descriptions\":[\"LP\"],\"name\":\"Vinyl\",\"qty\":\"1\"}]", "[{\"descriptions\":[\"7\\\"\",\"45 RPM\",\"EP\"],\"name\":\"Vinyl\",\"qty\":\"1\"}]"]
         },
         {
