@@ -1,63 +1,56 @@
-json_convert_value <- function(x, json_types, ptype, bigint_as_char = TRUE) {
+json_convert_value <- function(x,
+                               json_types,
+                               ptype,
+                               wrap_scalars = FALSE,
+                               bigint_as_char = TRUE) {
   # TODO replace na
-  # TODO think about json_object and json_array
-
-  stopifnot(is_bool(bigint_as_char))
-  stopifnot(length(x) == length(json_types))
-  # TODO check json_types are valid?
-
-  x_parsed <- convert_json_type(x, json_types, bigint_as_char = bigint_as_char)
-  bigint_found <- is_true(attr(x_parsed, "bigint"))
+  x_parsed <- convert_json_type(x, json_types, bigint_as_char = FALSE)
 
   if (identical(ptype, list())) {
     return(x_parsed)
   }
 
-  # replace NULLs with NA
+  # replace NULLs with NA so that `vec_c(!!!x_parsed)` doesn't remove these elements
   x_parsed[json_types == "null"] <- NA
   # replace missing paths & values from NA with NA
   x_parsed[is.na(json_types)] <- NA
 
-  if (bigint_as_char && bit64::is.integer64(ptype)) {
-    stop_jsontools("`bigint_as_char = TRUE` not allowed with `ptype` = `integer64()`.")
+  if (should_wrap_scalars(wrap_scalars, ptype, json_types)) {
+    # wrap all simple types in an array and change the json_type
+    idx <- !json_types %in% c("null", cplx_json_types) & !is.na(json_types)
+    x_parsed[idx] <- lapply(x_parsed[idx], json_agg_array)
+    json_types[idx] <- "array"
   }
 
-  json_ptype <- json_ptype_common(json_types)
-
-  if (bigint_found) {
-    if (is.null(ptype)) {
-      if (bigint_as_char) {
-        inform("bigints found; converted to `character()`.")
-      } else {
-        inform("bigints found; converted to `bit64::integer64()`.")
-      }
-    }
-
-    # TODO what about json_type real?
-    # -> probably a bad idea anyway...
-    stopifnot(identical(json_ptype, integer()))
-
-    if (bigint_as_char) {
-      # convert logicals manually to integer as they otherwise become "true"/"false"
-      is_lgl <- json_types %in% c("true", "false")
-      x_parsed[is_lgl] <- as.integer(x_parsed[is_lgl])
-      json_ptype <- character()
-    } else {
-      json_ptype <- bit64::integer64()
-    }
-  }
-
-  if (inherits(json_ptype, "jsontools_json_object") ||
-    inherits(json_ptype, "jsontools_json_array")) {
-    ptype <- vec_ptype2(ptype, character())
-    new_json2(vec_c(!!!x_parsed, .ptype = ptype))
-  } else {
-    ptype <- vec_ptype2(ptype, json_ptype)
-    vec_c(!!!x_parsed, .ptype = ptype)
-  }
+  json_vec_c(x_parsed, json_types, ptype = ptype)
 }
 
+should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
+  wrap_scalars &&
+    # only necessary if we encounter arrays or objects
+    any(json_types %in% c("array", "object"), na.rm = TRUE) &&
+    # ptype = NULL -> more user friendly to wrap scalars
+    # ptype = json2 -> necessary
+    (is_null(ptype) || inherits(ptype, "json2"))
+}
+
+#' @noRd
+#' @title Convert characters according to json types
+#'
+#' Convert the values returned by `json_each` according to the types.
+#'
+#' @param x Character values returned from `json_each`.
+#' @param json_types Character vector of json types.
+#'
+#' @return A list of parsed values.
+#'
+#' @examples
+#' convert_json_type(c('1', '[1]'), c('integer', 'array'))
 convert_json_type <- function(x, json_types, bigint_as_char = TRUE) {
+  stopifnot(length(x) == length(json_types))
+  stopifnot(all(json_types %in% all_json_types | is.na(json_types)))
+  stopifnot(is_bool(bigint_as_char))
+
   x_parsed <- as.list(x)
   not_na <- !is.na(json_types)
 
@@ -77,72 +70,101 @@ convert_json_type <- function(x, json_types, bigint_as_char = TRUE) {
   real_idx <- json_types == c("real") & not_na
   x_parsed[real_idx] <- as.numeric(x[real_idx])
 
-  real_idx <- json_types == c("null") & not_na
-  x_parsed[real_idx] <- list(NULL)
+  null_idx <- json_types == c("null") & not_na
+  x_parsed[null_idx] <- list(NULL)
 
   lgl_idx <- json_types %in% c("true", "false") & not_na
   x_parsed[lgl_idx] <- x[lgl_idx] == "1"
 
-  # leave text, object, and array as text
+  json_idx <- json_types %in% c("object", "array") & not_na
+  if (any(json_idx)) {
+    x_parsed[json_idx] <- vec_chop(new_json2(x[json_idx]))
+  }
+  # object_idx <- json_types == "object" & not_na
+  # if (any(object_idx)) {
+  #   x_parsed[object_idx] <- vec_chop(new_json_object(x[object_idx]))
+  # }
+  # array_idx <- json_types == "array" & not_na
+  # if (any(array_idx)) {
+  #   x_parsed[array_idx] <- vec_chop(new_json_array(x[array_idx]))
+  # }
+
   x_parsed
 }
 
-
-json_ptype_common <- function(types) {
+json_ptype_common <- function(types, ptype = NULL) {
   type_map <- list(
     object = new_json_object(),
     array = new_json_array(),
     integer = integer(),
     real = numeric(),
-    true = logical(),
-    false = logical(),
+    logical = logical(),
     null = NULL,
     text = character()
   )
 
   types <- unique(types)
-  types <- types[types != "null" & !is.na(types)]
-  types[types %in% c("true", "false")] <- "logical"
-  types <- unique(types)
+  # types <- types[!is.na(types)]
+  types <- types[!is.na(types) & types != "null"]
+  r_types <- types
+  r_types[r_types %in% c("true", "false")] <- "logical"
 
-  if (length(types) == 1) {
-    ptype <- types
-  } else if (length(types) == 0) {
-    ptype <- "null"
-  } else {
-    if (all(types %in% c("logical", "integer"))) {
-      ptype <- "integer"
-    } else if (all(types %in% c("logical", "integer", "real"))) {
-      ptype <- "real"
+  if (is_null(ptype)) {
+    if (any(types %in% cplx_json_types)) {
+      # array + object => json
+      # array/object + anything else => error
+      if (any(scalar_json_types %in% types)) {
+        # TODO inform about `wrap_scalars` or `ptype = character()`
+        stop_jsontools("Cannot combine JSON array/object with scalar values.")
+      }
+
+      return(new_json2())
     } else {
-      stop_jsontools("incompatible types")
+      # no json => normal coercion rules
+      return(vec_ptype_common(!!!type_map[r_types]))
     }
   }
 
-  # types_mapped <- type_map[types]
-  #
-  # vec_ptype_common(!!!types_mapped)
+  # if ptype is specified as array/object/json => only these are valid
+  if (inherits(ptype, "json2_array")) {
+    if (any(types != "array")) {
+      stop_jsontools("Not all elements are arrays.")
+    }
+    return(new_json2())
+  } else if (inherits(ptype, "json2_object")) {
+    if (any(types != "object")) {
+      stop_jsontools("Not all elements are objects.")
+    }
+    return(new_json2())
+  } else if (inherits(ptype, "json2")) {
+    if (!all(types %in% c(cplx_json_types, "null"))) {
+      stop_jsontools("Not all elements are objects.")
+    }
+    return(new_json2())
+  }
 
-  type_map[[ptype]]
+  ptype
 }
 
 json_vec_c <- function(x, types, ptype = NULL) {
-  json_ptype <- json_ptype_common(types)
+  # call `json_ptype_common()` for its side effect of errors
+  json_ptype_common(types, ptype)
 
-  if (inherits(json_ptype, "jsontools_json_object") ||
-    inherits(json_ptype, "jsontools_json_array")) {
-    ptype <- vec_ptype2(ptype, character())
-    new_json2(vec_c(!!!x, .ptype = ptype))
-  } else {
-    ptype <- vec_ptype2(ptype, json_ptype)
-    vec_c(!!!x, .ptype = ptype)
+  if (inherits(ptype, "json2_object") || inherits(ptype, "json2_array")) {
+    ptype <- new_json2()
   }
+
+  vec_c(!!!x, .ptype = ptype)
 }
 
 new_json_object <- function(x = character()) {
-  new_vctr(x, class = "jsontools_json_object")
+  new_vctr(x, class = c("json2_object", "json2"))
 }
 
 new_json_array <- function(x = character()) {
-  new_vctr(x, class = "jsontools_json_array")
+  new_vctr(x, class = c("json2_array", "json2"))
 }
+
+scalar_json_types <- c("true", "false", "integer", "real", "text")
+cplx_json_types <- c("object", "array")
+all_json_types <- c(scalar_json_types, cplx_json_types, "null")
