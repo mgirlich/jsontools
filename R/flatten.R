@@ -74,7 +74,11 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE) {
 #' @export
 #' @examples
 #' json_flatten(c(x = "[1, 2]", y = "[3]"))
-json_flatten <- function(x, ptype = NULL, allow_scalars = FALSE, bigint_as_char = TRUE) {
+json_flatten <- function(x,
+                         ptype = NULL,
+                         allow_scalars = FALSE,
+                         wrap_scalars = FALSE,
+                         bigint_as_char = TRUE) {
   # thoughts:
   # * no parameter `path` (for now) because then one should also add the other
   #   parameters from `json_get_query`
@@ -82,8 +86,6 @@ json_flatten <- function(x, ptype = NULL, allow_scalars = FALSE, bigint_as_char 
   #   important and the types not the same. One should use `json_each_df()` or
   #   `json_unnest_wider/longer()` instead.
   #   * if allowed: for objects use keys as name instead of recycling names of `x`?
-
-  # add argument `wrap_scalars`?
 
   if (is.list(ptype)) {
     stop_jsontools("`ptype` must not be a list.")
@@ -116,33 +118,23 @@ json_flatten <- function(x, ptype = NULL, allow_scalars = FALSE, bigint_as_char 
     }
   }
 
-  # TODO check type
   result <- json_convert_value(
     x = x_each$value,
     json_types = x_each$type,
     ptype = ptype,
+    wrap_scalars = wrap_scalars,
     bigint_as_char = bigint_as_char
   )
-
-  # TODO remove hack?
-  if (inherits(result, "json2")) {
-    result <- vec_cast(result, new_json2())
-  }
 
   maybe_name(result, x_each$name)
 }
 
 json_each_df <- function(x) {
   result <- json_each(x)
-  result$value <- convert_json_type(result$value, result$type)
+  result$value <- json_convert_value(result$value, result$type, ptype = list())
   nms <- names(result)
   nms[[1]] <- "index"
   names(result) <- nms
-
-  # TODO remove hack
-  if (inherits(result$value, "json2")) {
-    result$value <- vec_cast(result$value, new_json2())
-  }
 
   result
 }
@@ -202,7 +194,6 @@ json_unnest_longer <- function(data,
     path = path,
     # TODO should this be allowed as argument?
     allow_scalars = FALSE
-    # wrap_scalars = allow_scalars
   )
   x_each <- x_each[
     # drop json NULL
@@ -210,10 +201,6 @@ json_unnest_longer <- function(data,
       # but keep NA
       vec_slice(is.na(data[[col]]), x_each$row_id),
   ]
-
-  # if (is_true(wrap_scalars)) {
-  #   x_each <- json_wrap_scalar_afterwards(x_each, ptype)
-  # }
 
   data[[col]] <- NULL
   data <- vec_slice(data, x_each$row_id)
@@ -272,7 +259,6 @@ json_unnest_wider <- function(data,
 
   # TODO argument to only unnest a defined set of values (similar to hoist?)
   # --> add `json_hoist()`?
-  # TODO mix of array and text gives text? add `wrap_scalars` instead??
 
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
@@ -319,25 +305,18 @@ json_unnest_wider <- function(data,
   for (i in idx) {
     key <- x_each_split$key[[i]]
     val <- x_each_split$val[[i]]
+    # TODO improve error message -> inform which key has the issue
+    # message(key)
 
-    if (is_true(wrap_scalars[[key]])) {
-      val <- json_wrap_scalar_afterwards(val, ptype[[key]])
-    }
-
-    val$value <- convert_json_type(val$value, val$type)
+    values <- json_convert_value(
+      val$value,
+      val$type,
+      ptype = ptype[[key]],
+      wrap_scalars = wrap_scalars[[key]]
+    )
 
     # TODO less hacky solution?
-    # out <- vec_init_along(NA, col_values)
-    # empty_flag <- lengths(val$value) == 0
-    # out[val$row_id[!empty_flag]] <- vec_c(!!!val$value, .ptype = ptype[[key]])
-
-    values <- vec_c(!!!val$value, .ptype = ptype[[key]])
     out <- vec_init_along(vec_ptype(values), col_values)
-
-    # TODO remove hack
-    if (inherits(out, "json2")) {
-      out <- vec_cast(out, new_json2())
-    }
 
     empty_flag <- lengths(val$value) == 0
     vec_slice(out, val$row_id[!empty_flag]) <- values
