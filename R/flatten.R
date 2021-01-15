@@ -1,28 +1,17 @@
-exec_sqlite_json <- function(x, sql, ...) {
+write_json_tbl <- function(x, ...) {
   DBI::dbWriteTable(
     con,
     "my_tbl",
     tibble::tibble(row_id = seq_along(x), data = x, ...),
     overwrite = TRUE
   )
-
-  df <- DBI::dbGetQuery(con, sql)
-
-  tibble::as_tibble(df)
 }
 
-# sqlite_json_summarise <- function(x, sql, f = function(df) df$result,
-#                                   .na_error = FALSE) {
-#   if (is_true(.na_error) && any(is.na(x))) {
-#     abort("NA discovered")
-#   }
-#
-#   input <- x[!is.na(x)]
-#   f(exec_sqlite_json(input, sql))
-# }
+exec_sqlite_json <- function(sql) {
+  tibble::as_tibble(DBI::dbGetQuery(con, sql))
+}
 
-
-json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
+json_each <- function(x, path = NULL, allow_scalars = FALSE) {
   # TODO handle NA
   # * error by default
   # * in `json_flatten*()` it probably doesn't make sense to support anything else?
@@ -38,7 +27,7 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
     stop_jsontools("`path` must be `NULL` or a string")
   }
 
-  if (is_true(wrap_scalars)) {
+  if (is_true(allow_scalars)) {
     data_col <- glue_sql("
       CASE
         WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
@@ -48,10 +37,17 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
     ", .con = con)
   } else {
     data_col <- DBI::SQL("my_tbl.data")
+    data_col <- glue_sql("
+      CASE
+        WHEN my_tbl.data IS NULL THEN 'null'
+        ELSE my_tbl.data
+      END
+    ", .con = con)
   }
 
+  write_json_tbl(x)
+
   result <- exec_sqlite_json(
-    x,
     glue_sql("
      SELECT
        row_id,
@@ -71,56 +67,33 @@ json_each <- function(x, path = NULL, wrap_scalars = FALSE) {
   result
 }
 
-#' Flatten an array of JSON-objects or JSON-arrays
+#' Flatten an array of values
 #'
-#' @param x A JSON vector.
+#' @inheritParams json_extract
 #'
 #' @export
-json_flatten_query <- function(x) {
+#' @examples
+#' json_flatten(c(x = "[1, 2]", y = "[3]"))
+json_flatten <- function(x, ptype = NULL, allow_scalars = FALSE, bigint_as_char = TRUE) {
   # thoughts:
   # * no parameter `path` (for now) because then one should also add the other
   #   parameters from `json_get_query`
-  # TODO for objects use keys as name instead of recycling names of `x`?
-
-  # drop `NA` as after flattening it is not clear where they came from anyway
-  x <- x[!is.na(x)]
-  x_each <- json_each(x[!is.na(x)])
-
-  # drop nulls as after flattening it is not clear where they came from anyway
-  x_each <- x_each[x_each$type != "null", ]
-
-  if (!all(x_each$type %in% c("object")) &&
-    !all(x_each$type %in% c("array"))) {
-    stop_jsontools("`x` must be an array of objects or an array of arrays")
-  }
-
-  result <- json_convert_value(
-    x = x_each$value,
-    json_types = x_each$type,
-    ptype = character()
-  )
-
-  json2(maybe_name(result, x_each$name))
-}
-
-#' Flatten an array of values
-#'
-#' @param x A JSON vector.
-#' @param ptype Output type. If `NULL`, the default, the output type is
-#' determined by computing the common type across all elements of `...`.
-#' @param wrap_scalars Should scalars be wrapped?
-#'
-#' @export
-json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
-  # thoughts:
   # * flattening objects should not be allowed here as usually the keys are
   #   important and the types not the same. One should use `json_each_df()` or
   #   `json_unnest_wider/longer()` instead.
-  if (!is_bool(wrap_scalars)) {
-    stop_jsontools("`wrap_scalars` must be a bool.")
+  #   * if allowed: for objects use keys as name instead of recycling names of `x`?
+
+  # add argument `wrap_scalars`?
+
+  if (is.list(ptype)) {
+    stop_jsontools("`ptype` must not be a list.")
   }
 
-  if (is_false(wrap_scalars)) {
+  if (!is_bool(allow_scalars)) {
+    stop_jsontools("`allow_scalars` must be a bool.")
+  }
+
+  if (is_false(allow_scalars)) {
     if (!all(is_json_array(x, null = TRUE, na = TRUE))) {
       stop_jsontools("`x` must be an array of atoms")
     }
@@ -128,20 +101,33 @@ json_flatten_value <- function(x, ptype = NULL, wrap_scalars = FALSE) {
 
   # drop `NA` as after flattening it is not clear where they came from anyway
   x <- x[!is.na(x)]
-  x_each <- json_each(x, wrap_scalars = wrap_scalars)
+  x_each <- json_each(x[!is.na(x)], allow_scalars = allow_scalars)
 
   # drop nulls as after flattening it is not clear where they came from anyway
   x_each <- x_each[x_each$type != "null", ]
 
-  if (any(x_each$type %in% c("object", "array"))) {
-    stop_jsontools("`x` must be an array of atoms")
+  if (is_false(allow_scalars)) {
+    if (!all(x_each$col_type == "array")) {
+      stop_jsontools("`x` must be an array of atoms")
+    }
+
+    if (any(x_each$col_type == "object")) {
+      stop_jsontools("`x` must not be an object")
+    }
   }
 
+  # TODO check type
   result <- json_convert_value(
     x = x_each$value,
     json_types = x_each$type,
-    ptype = ptype
+    ptype = ptype,
+    bigint_as_char = bigint_as_char
   )
+
+  # TODO remove hack?
+  if (inherits(result, "json2")) {
+    result <- vec_cast(result, new_json2())
+  }
 
   maybe_name(result, x_each$name)
 }
@@ -153,21 +139,27 @@ json_each_df <- function(x) {
   nms[[1]] <- "index"
   names(result) <- nms
 
+  # TODO remove hack
+  if (inherits(result$value, "json2")) {
+    result$value <- vec_cast(result$value, new_json2())
+  }
+
   result
 }
 
-#' Rectangle a JSON array column
+#' Unnest a JSON array column
 #'
 #' @param data A data frame.
-#' @param col JSON-column to extract components from.
+#' @param col JSON-column of arrays to extract components from.
 #' @param path Path where to extract from.
 #' @param values_to Name of column to store vector values. Defaults to `col`.
 #' @param indices_to A string giving the name of column which will contain the
-#'   inner names or position (if not named) of the values.
-#' @inheritParams json_flatten_value
+#'   rownumber before unnesting.
+#' @param keys_to A string giving the name of column which will contain the
+#'   object keys resp. the array indices.
+#' @inheritParams json_flatten
 #'
 #' @export
-#'
 #' @examples
 #' df <- tibble::tibble(json = discog_json)
 #' df
@@ -186,14 +178,18 @@ json_each_df <- function(x) {
 #'     values_to = "artist",
 #'     indices_to = "component_id"
 #'   )
-json_unnest_longer <- function(data, col,
+json_unnest_longer <- function(data,
+                               col,
                                path = NULL,
                                values_to = NULL,
                                indices_to = NULL,
                                keys_to = NULL,
                                ptype = NULL,
-                               wrap_scalars = TRUE) {
+                               # allow_scalars = TRUE,
+                               wrap_scalars = FALSE) {
+  # TODO allow to unnest multiple columns at once?
   # TODO transform?
+  # TODO parameter to drop rows of empty arrays? and drop NA?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -204,7 +200,9 @@ json_unnest_longer <- function(data, col,
   x_each <- json_each(
     data[[col]],
     path = path,
-    wrap_scalars = wrap_scalars
+    # TODO should this be allowed as argument?
+    allow_scalars = FALSE
+    # wrap_scalars = allow_scalars
   )
   x_each <- x_each[
     # drop json NULL
@@ -213,12 +211,17 @@ json_unnest_longer <- function(data, col,
       vec_slice(is.na(data[[col]]), x_each$row_id),
   ]
 
+  # if (is_true(wrap_scalars)) {
+  #   x_each <- json_wrap_scalar_afterwards(x_each, ptype)
+  # }
+
   data[[col]] <- NULL
   data <- vec_slice(data, x_each$row_id)
   data[[values_to]] <- json_convert_value(
     x_each$value,
     x_each$type,
-    ptype = ptype
+    ptype = ptype,
+    wrap_scalars = wrap_scalars
   )
 
   if (!is.null(indices_to)) {
@@ -229,21 +232,48 @@ json_unnest_longer <- function(data, col,
     data[[keys_to]] <- x_each$key
   }
 
+  if (inherits(data[[values_to]], "json2")) {
+    data[[values_to]] <- vec_cast(data[[values_to]], new_json2())
+  }
+
   data
 }
 
+#' Unnest a JSON object into columns
+#'
+#' @param data A data frame.
+#' @param col JSON-column of objects to extract components from.
+#' @param path Path where to extract from.
+#' @param names_sort Should the extracted columns be sorted by name? If `FALSE`,
+#'   the default, the columns are sorted by appearance.
+#' @param names_sep If `NULL`, the default, the keys of the objects in `col`
+#'   are used as the column names. If a character it is used to join `col` and
+#'   the object keys.
+#' @param names_repair What happens if the output has invalid column names?
+#' @inheritParams json_flatten
+#'
 #' @export
+#' @examples
+#' # turn all components of item into columns with json_unnest_wider()
+#' item_df %>%
+#'   json_unnest_wider(item)
 json_unnest_wider <- function(data,
                               col,
                               path = NULL,
                               ptype = list(),
                               names_sort = FALSE,
                               names_sep = NULL,
-                              names_repair = "check_unique") {
+                              names_repair = "check_unique",
+                              wrap_scalars = FALSE) {
   # TODO argument how to handle `NA`?
   # TODO keeping rows where json type is null but dropping NA is inconsistent
   # --> `drop_na` to drop `NA`, `null`, and `[null]`?
   # TODO transform?
+
+  # TODO argument to only unnest a defined set of values (similar to hoist?)
+  # --> add `json_hoist()`?
+  # TODO mix of array and text gives text? add `wrap_scalars` instead??
+
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -261,10 +291,8 @@ json_unnest_wider <- function(data,
   }
 
   x_each <- x_each[!x_each$type == "null", ]
-  x_each$value <- convert_json_type(x_each$value, x_each$type)
-
   x_each_split <- vec_split(
-    x_each[c("row_id", "value")],
+    x_each[c("row_id", "value", "type")],
     x_each$key
   )
 
@@ -282,21 +310,57 @@ json_unnest_wider <- function(data,
   }
 
   if (is_scalar(ptype)) {
-    ptype <- rep_named(unique(spec$.value), x_each_split$key)
+    ptype <- rep_named(x_each_split$key, ptype)
+  }
+  if (is_scalar(wrap_scalars)) {
+    wrap_scalars <- rep_named(x_each_split$key, wrap_scalars)
   }
 
   for (i in idx) {
     key <- x_each_split$key[[i]]
     val <- x_each_split$val[[i]]
 
+    if (is_true(wrap_scalars[[key]])) {
+      val <- json_wrap_scalar_afterwards(val, ptype[[key]])
+    }
+
+    val$value <- convert_json_type(val$value, val$type)
+
     # TODO less hacky solution?
-    out <- vec_init_along(NA, col_values)
+    # out <- vec_init_along(NA, col_values)
+    # empty_flag <- lengths(val$value) == 0
+    # out[val$row_id[!empty_flag]] <- vec_c(!!!val$value, .ptype = ptype[[key]])
+
+    values <- vec_c(!!!val$value, .ptype = ptype[[key]])
+    out <- vec_init_along(vec_ptype(values), col_values)
+
+    # TODO remove hack
+    if (inherits(out, "json2")) {
+      out <- vec_cast(out, new_json2())
+    }
+
     empty_flag <- lengths(val$value) == 0
-    out[val$row_id[!empty_flag]] <- vec_c(!!!val$value, .ptype = ptype[[key]])
+    vec_slice(out, val$row_id[!empty_flag]) <- values
     data[[key]] <- out
   }
 
   data
+}
+
+json_wrap_scalars <- function(x) {
+  # TODO without path could do it purely in R
+  # TODO allow wrapping scalars at a path? like a combination of modify and wrap?
+  # json_type(x)
+  write_json_tbl(x)
+
+  exec_sqlite_json(
+    "SELECT
+      CASE
+        WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
+        WHEN my_tbl.data IS NULL THEN 'null'
+        ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
+      END AS result
+    FROM my_tbl")$result %>% json2()
 }
 
 is_scalar <- function(x) {
