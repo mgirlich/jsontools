@@ -81,8 +81,8 @@ agg_array <- function(x) {
 json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   path <- path %||% "$"
 
+  write_json_tbl(x)
   array_info_df <- exec_sqlite_json(
-    x,
     glue_sql("
       SELECT
         JSON_ARRAY_LENGTH(data, {path}) AS result,
@@ -93,7 +93,8 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   if (is_true(wrap_scalars)) {
     array_lengths <- array_info_df$result + !array_info_df$type %in% c("array", "null")
   } else {
-    if (!all(is_json_array(x))) {
+    # if (!all(is_json_array(x))) {
+    if (!all(array_info_df$type %in% c("array", "null"))) {
       stop_jsontools(
         c(
           x = "`x` has scalar elements.",
@@ -106,6 +107,11 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   }
 
   as.integer(array_lengths)
+}
+
+#' @export
+json_array_types <- function(x, path = NULL) {
+  json_each(x, path = path)$type
 }
 
 is_json_array <- function(x, null = TRUE, na = TRUE) {

@@ -22,5 +22,6 @@ json_delete <- function(x, ...) {
       FROM my_tbl
   ")
 
-  json2(exec_sqlite_json(x, sql)$result)
+  write_json_tbl(x)
+  new_json2(exec_sqlite_json(sql)$result)
 }

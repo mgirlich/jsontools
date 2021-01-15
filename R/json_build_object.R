@@ -57,7 +57,8 @@ json_build_object <- function(x, ...) {
       ) AS result
     FROM my_tbl", .con = con)
 
-  exec_sqlite_json(x, sql, !!!tibble_vals)$result %>%
+  write_json_tbl(x, !!!tibble_vals)
+  exec_sqlite_json(sql)$result %>%
     new_json2()
 }
 

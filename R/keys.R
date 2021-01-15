@@ -48,8 +48,8 @@ json_keys <- function(x) {
 #'   "$.a"
 #' )
 json_path_exists <- function(x, path) {
+  write_json_tbl(x)
   df <- exec_sqlite_json(
-    x,
     glue_sql("
       SELECT
         JSON_TYPE(my_tbl.data, {path}) AS result

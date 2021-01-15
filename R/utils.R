@@ -57,16 +57,25 @@ escape_paths <- function(..., collapse = FALSE) {
 #'
 #' @examples
 #' json_type(c(NA, "1", "null", "[1,2]", '{"a": 1}'))
-json_type <- function(x) {
-  exec_sqlite_json(
-    x,
-    "SELECT
-      CASE JSON_VALID(data)
-        WHEN true THEN JSON_TYPE(data)
-        ELSE TYPEOF(data)
-      END AS result
-    FROM my_tbl"
-  )$result
+json_type <- function(x, path = NULL) {
+  write_json_tbl(x)
+
+  if (is_null(path)) {
+    exec_sqlite_json(
+      "SELECT
+        CASE JSON_VALID(data)
+          WHEN true THEN JSON_TYPE(data)
+          ELSE TYPEOF(data)
+        END AS result
+      FROM my_tbl"
+    )$result
+  } else {
+    exec_sqlite_json(
+      glue_sql(
+      "SELECT JSON_TYPE(data, {path}) AS result
+      FROM my_tbl", .con = con)
+    )$result
+  }
 }
 
 #' Unbox a vector or data frame
