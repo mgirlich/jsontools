@@ -32,6 +32,8 @@ object keys resp. the array indices.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
 determined by computing the common type across all elements of \code{...}.}
+
+\item{wrap_scalars}{Should scalars be wrapped?}
 }
 \description{
 Unnest a JSON array column

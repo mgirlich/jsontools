@@ -1,7 +1,6 @@
-#' Extract a value from JSON
+#' Extract an element from JSON
 #'
-#' Extract a scalar JSON value at a given path. To extract a JSON object
-#' or array use [json_get_query()].
+#' Extract an element at a given path.
 #'
 #' @param x A JSON vector.
 #' @param path Path to element to extract.

@@ -4,13 +4,23 @@
 \alias{json_flatten}
 \title{Flatten an array of values}
 \usage{
-json_flatten(x, ptype = NULL, allow_scalars = FALSE, bigint_as_char = TRUE)
+json_flatten(
+  x,
+  ptype = NULL,
+  allow_scalars = FALSE,
+  wrap_scalars = FALSE,
+  bigint_as_char = TRUE
+)
 }
 \arguments{
 \item{x}{A JSON vector.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
 determined by computing the common type across all elements of \code{...}.}
+
+\item{allow_scalars}{Do not error for scalar elements?}
+
+\item{wrap_scalars}{Should scalars be wrapped?}
 
 \item{bigint_as_char}{Convert big integers to character?}
 }
@@ -19,4 +29,7 @@ Flatten an array of values
 }
 \examples{
 json_flatten(c(x = "[1, 2]", y = "[3]"))
+
+try(json_flatten(c(x = "[1, 2]", y = "3")))
+json_flatten(c(x = "[1, 2]", y = "3"), allow_scalars = TRUE)
 }

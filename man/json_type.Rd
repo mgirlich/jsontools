@@ -8,6 +8,8 @@ json_type(x, path = NULL)
 }
 \arguments{
 \item{x}{A JSON vector}
+
+\item{path}{Path to element to extract.}
 }
 \value{
 A character vector of JSON types

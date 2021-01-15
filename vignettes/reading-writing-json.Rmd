@@ -1,0 +1,102 @@
+---
+title: "Reading and Writing JSON"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reading and Writing JSON}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(jsontools)
+```
+
+## Parsing from JSON
+
+There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`). But for me they all had some drawbacks when working with JSON columns from a database:
+
+* **bad/no vectorisation**: `RJSONIO` and `rjson` silently use only the first element of the input; `jsonlite` collapses the input, producing invalid JSON and then complains about trailing garbage.
+* **handling of missing values**: `NA` and `NULL` input produce unclear errors and one cannot control how to handle them.
+* **syntax**: the camel case syntax doesn't fit to the rest of the tidyverse.
+
+`jsontools` relies on [`jsonlite`](https://cran.r-project.org/package=jsonlite) for parsing from JSON and conversion to JSON. For parsing it has the following functions:
+
+* `parse_json()` to parse a character vector of length 1 (i.e. a scalar).
+* `parse_json_vector()` to parse a character vector of any length.
+
+As an example assume we got the following JSON vector
+
+```{r}
+customer_infos <- json2(c(
+  '{"name": "Peter", "age": 19, "premium": true}',
+  '{"name": "Daniel", "age": 41}',
+  NA,
+  '{"name": "Pablo", "age": 27, "premium": false}'
+))
+
+customer_infos
+```
+
+By default the `NA` produces an error
+
+```{r error=TRUE}
+parse_json_vector(customer_infos)
+```
+
+but with the `.na` argument we can specify which value should be used instead:
+
+```{r}
+parse_json_vector(customer_infos, .na = NULL)
+```
+
+Note that the default for `simplifyDataFrame` and `simplifyMatrix` has been changed to `FALSE`.
+While they can be quite nice for interactive parsing of JSON they do not allow you to control how the result should look like.
+For a more controlled conversion of the resulting list to a data frame have a look at the [`tibblify package`](https://cran.r-project.org/package=tibblify).
+
+
+## Conversion to JSON
+
+* **no vectorised version**: One cannot easily convert every element of a vector/list to JSON and get back a JSON vector.
+* **convert every row of a data frame**: it is not so easy and/or slow to convert every row of a data frame into JSON.
+
+For conversion there are the following functions:
+
+* `format_json()`: convert an R object to JSON.
+* `format_json_vector()`: convert each element of an R object to JSON and return them as a JSON vector.
+* `format_json_rowwise()`: convert each row of a data frame to JSON.
+
+Let's look at our customer infos from above. Assume we have converted it into a tibble:
+
+```{r}
+customer_infos_df <- tibble::tibble(
+  name = c("Peter", "Daniel", NA, "Pablo"),
+  age = c(19L, 41L, NA, 27L),
+  premium = c(TRUE, NA, NA, FALSE)
+)
+```
+
+and filled the missing fields:
+
+```{r}
+customer_infos_df[3, ] <- tibble::tibble(
+  name = "Michael",
+  age = 38,
+  premium = FALSE
+)
+customer_infos_df$premium[2] <- TRUE
+
+customer_infos_df
+```
+
+We can now easily convert it back into a JSON vector
+
+```{r}
+format_json_rowwise(customer_infos_df)
+```

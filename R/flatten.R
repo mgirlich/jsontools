@@ -70,10 +70,14 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE) {
 #' Flatten an array of values
 #'
 #' @inheritParams json_extract
+#' @param allow_scalars Do not error for scalar elements?
 #'
 #' @export
 #' @examples
 #' json_flatten(c(x = "[1, 2]", y = "[3]"))
+#'
+#' try(json_flatten(c(x = "[1, 2]", y = "3")))
+#' json_flatten(c(x = "[1, 2]", y = "3"), allow_scalars = TRUE)
 json_flatten <- function(x,
                          ptype = NULL,
                          allow_scalars = FALSE,
@@ -81,7 +85,7 @@ json_flatten <- function(x,
                          bigint_as_char = TRUE) {
   # thoughts:
   # * no parameter `path` (for now) because then one should also add the other
-  #   parameters from `json_get_query`
+  #   parameters from `json_extract`
   # * flattening objects should not be allowed here as usually the keys are
   #   important and the types not the same. One should use `json_each_df()` or
   #   `json_unnest_wider/longer()` instead.
@@ -242,8 +246,31 @@ json_unnest_longer <- function(data,
 #' @export
 #' @examples
 #' # turn all components of item into columns with json_unnest_wider()
-#' item_df %>%
-#'   json_unnest_wider(item)
+#' tibble(
+#'   id = 1:2,
+#'   x = c(
+#'     '{"name": "Peter", "age": 19}',
+#'     '{"age": 37}'
+#'   )
+#' ) %>%
+#'   json_unnest_wider(x)
+#'
+#' tibble(
+#'   id = 1:2,
+#'   x = c(
+#'     '{"name": "Peter", "age": 19, "purchase_ids": [1, 2]}',
+#'     '{"age": 37, "purchase_ids": []}'
+#'   )
+#' ) %>%
+#'   json_unnest_wider(
+#'     x,
+#'     ptype = list(
+#'       age = integer(),
+#'       name = character(),
+#'       purchase_id = new_json_array()
+#'     ),
+#'     names_sort = TRUE
+#'   )
 json_unnest_wider <- function(data,
                               col,
                               path = NULL,

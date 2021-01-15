@@ -33,12 +33,37 @@ are used as the column names. If a character it is used to join \code{col} and
 the object keys.}
 
 \item{names_repair}{What happens if the output has invalid column names?}
+
+\item{wrap_scalars}{Should scalars be wrapped?}
 }
 \description{
 Unnest a JSON object into columns
 }
 \examples{
 # turn all components of item into columns with json_unnest_wider()
-item_df \%>\%
-  json_unnest_wider(item)
+tibble(
+  id = 1:2,
+  x = c(
+    '{"name": "Peter", "age": 19}',
+    '{"age": 37}'
+  )
+) \%>\%
+  json_unnest_wider(x)
+
+tibble(
+  id = 1:2,
+  x = c(
+    '{"name": "Peter", "age": 19, "purchase_ids": [1, 2]}',
+    '{"age": 37, "purchase_ids": []}'
+  )
+) \%>\%
+  json_unnest_wider(
+    x,
+    ptype = list(
+      age = integer(),
+      name = character(),
+      purchase_id = new_json_array()
+    ),
+    names_sort = TRUE
+  )
 }

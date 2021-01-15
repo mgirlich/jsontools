@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{json_extract}
 \alias{json_extract}
-\title{Extract a value from JSON}
+\title{Extract an element from JSON}
 \usage{
 json_extract(
   x,
@@ -35,8 +35,7 @@ empty.}
 A vector with class given by \code{.ptype} and length equal to \code{x}.
 }
 \description{
-Extract a scalar JSON value at a given path. To extract a JSON object
-or array use \code{\link[=json_get_query]{json_get_query()}}.
+Extract an element at a given path.
 }
 \examples{
 x1 <- '{"a": 1, "b": 2}'

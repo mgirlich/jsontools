@@ -7,9 +7,12 @@ check_present <- function(x) {
 
 #' Prettify/Minify a JSON vector
 #'
-#' @param x A JSON vector.
+#' A wrapper around [`jsonlite::prettify()`] resp. [`jsonlite::minify()`].
 #'
-#' @return A json2 vector
+#' @param x A JSON vector.
+#' @param indent number of spaces to indent.
+#'
+#' @return A json2 vector.
 #' @export
 #'
 #' @examples
@@ -51,6 +54,7 @@ escape_paths <- function(..., collapse = FALSE) {
 #' Query the JSON type
 #'
 #' @param x A JSON vector
+#' @inheritParams json_extract
 #'
 #' @return A character vector of JSON types
 #' @export

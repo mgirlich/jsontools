@@ -56,8 +56,6 @@ gh_commits_vec
 
 ## Extract data
 
-TODO: example for using `jsonr_has_key()`
-
 To extract data from the JSON vector we need to know about the JSON path syntax
 used here. It comes from the command line tool [jq](https://stedolan.github.io/jq/)
 and is very similar to the SQL standard.
@@ -65,15 +63,15 @@ The path to the key of an object is simply a dot followed by the key ".key".
 And for nested objects one simply concatenates this syntax ".key1.key2". For
 example to get the message in the commit one uses the path ".commit.message".
 
-To find out who commited we use `json_get_value()`
+To find out who commited we use `json_extract()`
 
 ```{r}
-json_get_value(gh_commits_vec, "$.commit.committer.name")
+json_extract(gh_commits_vec, "$.commit.committer.name")
 ```
 
 ```{r}
-json_get_query(gh_commits_vec, "$.commit.committer") %>% 
-  json_get_value("$.name")
+json_extract(gh_commits_vec, "$.commit.committer") %>% 
+  json_extract("$.name")
 ```
 
 
@@ -85,9 +83,9 @@ library(dplyr)
 commits_df <- tibble(json = gh_commits_vec)
 commits_df <- commits_df %>% 
   dplyr::transmute(
-    sha = json_get_value(json, "$.sha"),
-    committer_name = json_get_value(gh_commits_vec, "$.commit.committer.name"),
-    message = json_get_value(gh_commits_vec, "$.commit.message")
+    sha = json_extract(json, "$.sha"),
+    committer_name = json_extract(gh_commits_vec, "$.commit.committer.name"),
+    message = json_extract(gh_commits_vec, "$.commit.message")
   )
 commits_df
 ```
@@ -99,7 +97,7 @@ of the ones they used. With `jsonr_extract_*()` we can extract data, manipulate
 it in R and with `json_mutate()` mutate the data in our JSON
 
 ```{r}
-emails <- json_get_value(gh_commits_vec, "$.commit.committer.email")
+emails <- json_extract(gh_commits_vec, "$.commit.committer.email")
 emails[emails == "romain@r-enthusiasts.com"] <- "romain.francois@rstudio.com"
 emails[emails == "h.wickham@gmail.com"] <- "hadley.wickham@rstudio.com"
 
@@ -147,44 +145,6 @@ gh_commits_vec %>%
 <!-- json_equal(x, x2) -->
 <!-- ``` -->
 
-
-## Parsing from JSON
-
-There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`). But for me they all had some drawbacks when working with JSON columns from Postgres:
-
-|  | `RJSONIO` | `rjson` | `jsonlite` |
-|------:|:-----|---------|:------:|
-| JSON vector | silently takes first element | silently takes first element | collapses to single string, then parser error | 
-| `NA` input | unclear error | unclear error | unclear error |
-| `NULL` input | unclear error | unclear error | unclear error |
-
-
-* they are not vectorized. `RJSONIO` and `rjson` silently use only the first element of the input; `jsonlite` collapses the input and then complains about trailing garbage.
-* `NA` and `NULL` input produce unclear errors and one cannot control how to handle them.
-* the camel case syntax doesn't fit to the rest of the tidyverse.
-* converting a dataframe row by row to a vector of JSON is difficult.
-
-`jsontools` relies on `jsonlite` for parsing from JSON and conversion to JSON. For parsing it has the following functions:
-
-* `parse_json()` to parse a character vector of length 1 (i.e. a scalar).
-* `parse_json_vector()` to parse a character vector of any length.
-
-To control what is returned on `NA` resp. `NULL` as input there are the arguments `.na` and `.null`.
-
-
-## Converting to JSON
-
-drawbacks:
-
-* not vectorized
-* no JSON vector class --> printing is not so nice
-* converting a data frame rowwise to a vector of JSON is not so easy or slow.
-
-For conversion there are the following functions:
-
-* `format_json()`: convert an R object to JSON.
-* `format_json_vector()`: convert each element of an R object to JSON and return them as a JSON vector.
-* `format_json_rowwise()`:
 
 ## Sources
 

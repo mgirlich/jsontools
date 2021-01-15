@@ -11,12 +11,14 @@ json_minify(x)
 }
 \arguments{
 \item{x}{A JSON vector.}
+
+\item{indent}{number of spaces to indent.}
 }
 \value{
-A json2 vector
+A json2 vector.
 }
 \description{
-Prettify/Minify a JSON vector
+A wrapper around \code{\link[jsonlite:prettify]{jsonlite::prettify()}} resp. \code{\link[jsonlite:prettify]{jsonlite::minify()}}.
 }
 \examples{
 x <- c("[1,2,   3]", '{"a": 1, "b": 2}')

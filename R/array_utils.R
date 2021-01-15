@@ -94,7 +94,7 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
     array_lengths <- array_info_df$result + !array_info_df$type %in% c("array", "null")
   } else {
     # if (!all(is_json_array(x))) {
-    if (!all(array_info_df$type %in% c("array", "null"))) {
+    if (!all(array_info_df$type %in% c("array", "null") | is.na(array_info_df$type))) {
       stop_jsontools(
         c(
           x = "`x` has scalar elements.",
