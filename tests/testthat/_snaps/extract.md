@@ -2,7 +2,7 @@
 
     Can't combine `integer` <integer> and `text` <character>.
 
-# json_extract handles missing and null elements
+# json_extract handles missing elements
 
     `path` does not always exist.
     i Did you provide an incorrect path?
@@ -13,6 +13,28 @@
     `path` does not always exist.
     i Did you provide an incorrect path?
     i With `default` you can specify a default value for missing elements.
+
+# json_extract checks `default`
+
+    invalid JSON at 1 locations:
+      1
+    
+    1: offset 2
+    parse error: trailing garbage
+                                          1]
+                         (right here) ------^
+    
+
+---
+
+    invalid JSON at 1 locations:
+      1
+    
+    1: offset 1
+    lexical error: invalid char in json text.
+                                           a
+                         (right here) ------^
+    
 
 # json_extract checks path
 
@@ -25,12 +47,4 @@
 ---
 
     `path` must be a character vector of length 1
-
-# json_extract handles ptype object and array
-
-    Not all elements are arrays.
-
----
-
-    Not all elements are objects.
 

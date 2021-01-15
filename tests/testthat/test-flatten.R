@@ -1,7 +1,7 @@
 
 # json_flatten ------------------------------------------------------
 
-test_that("json_flatten works", {
+test_that("json_flatten works for json", {
   xo1 <- json2('{"a":1,"b":2}')
   xo2 <- json2('{"a":3,"b":4}')
 
@@ -32,65 +32,7 @@ test_that("json_flatten works", {
   )
 })
 
-test_that("json_flatten edge cases", {
-  skip("not yet decided what to return")
-  # TODO what should this return???
-  expect_equal(
-    json_flatten("[]"),
-    json2()
-  )
-
-  expect_equal(
-    json_flatten(character()),
-    json2()
-  )
-
-  expect_equal(
-    json_flatten("[null]"),
-    json2()
-  )
-
-  expect_equal(
-    json_flatten("null"),
-    json2()
-  )
-
-  expect_equal(
-    json_flatten(NA_character_),
-    json2()
-  )
-})
-
-test_that("json_flatten errors for non-object arrays", {
-  skip("not yet adapted")
-  # only makes sense if ptype is given
-  expect_error(
-    json_flatten("[1, 2]"),
-    class = "jsontools_error"
-  )
-
-  expect_error(
-    json_flatten('[{"a": 1}, 1]'),
-    class = "jsontools_error"
-  )
-
-  expect_error(
-    json_flatten('{"a": 1}'),
-    class = "jsontools_error"
-  )
-})
-
-test_that("json_flatten can wrap scalars", {
-  skip("not yet decided")
-  json_flatten('[[1,2], 2]')
-
-  # TODO
-  debugonce(json_unnest_longer)
-  json_unnest_longer(tibble(x = '[[1,2], 2]'), x)
-  json_flatten('[[1,2], 2]')
-})
-
-test_that("json_flatten works", {
+test_that("json_flatten works for scalars", {
   x_real <- "[1.0, 2.0, null]"
   x_int <- "[1, 2, null]"
   x_lgl <- "[true, false, null]"
@@ -128,6 +70,33 @@ test_that("json_flatten works", {
   )
 })
 
+test_that("json_flatten empty output", {
+  expect_null(json_flatten("[]"))
+  expect_null(json_flatten(character()))
+  expect_null(json_flatten("[null]"))
+
+  expect_null(json_flatten("null"))
+  expect_null(json_flatten(NA_character_))
+
+  expect_equal(
+    json_flatten("[]", ptype = integer()),
+    integer()
+  )
+})
+
+test_that("json_flatten errors for mix of array/object and scalars", {
+  expect_error(
+    json_flatten('[{"a": 1}, 1]'),
+    class = "jsontools_error"
+  )
+})
+
+test_that("json_flatten can wrap scalars", {
+  skip("not yet decided")
+  json_flatten('[[1,2], 2]')
+  # NOTE json_unnest_longer(tibble(x = '[[1,2], 2]'), x) can wrap them...
+})
+
 test_that("json_flatten handles scalars correctly", {
   expect_error(
     json_flatten(c("[1, 2]", 3)),
@@ -147,38 +116,6 @@ test_that("json_flatten handles scalars correctly", {
   expect_equal(
     json_flatten(c('["a", "b"]', "c"), allow_scalars = TRUE),
     c("a", "b", "c")
-  )
-})
-
-test_that("json_flatten edge cases", {
-  expect_equal(
-    json_flatten("[]"),
-    NULL
-  )
-
-  expect_equal(
-    json_flatten("[]", ptype = integer()),
-    integer()
-  )
-
-  expect_equal(
-    json_flatten("[null]"),
-    NULL
-  )
-
-  expect_equal(
-    json_flatten(character()),
-    NULL
-  )
-
-  expect_null(
-    json_flatten("null"),
-    NULL
-  )
-
-  expect_equal(
-    json_flatten(NA_character_),
-    NULL
   )
 })
 
@@ -436,3 +373,25 @@ test_that("json_unnest_wider with discog_json", {
     style = "json2"
   )
 })
+
+# TODO wrap scalars
+# tibble::tibble(chars_json = got_chars) %>%
+#   json_unnest_wider(
+#     chars_json,
+#     wrap_scalars = FALSE,
+#     ptype = list(
+#       titles = character(),
+#       aliases = character(),
+#       allegiances = character(),
+#       povBooks = character(),
+#       tvSeries = character(),
+#       playedBy = character(),
+#       books = character()
+#     )
+#   )
+
+# tibble::tibble(chars_json = got_chars) %>%
+#   json_unnest_wider(
+#     chars_json,
+#     wrap_scalars = TRUE
+#   )

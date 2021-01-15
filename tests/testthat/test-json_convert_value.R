@@ -1,56 +1,77 @@
-#
-# # json_ptype_common -------------------------------------------------------
-#
-# test_that("json_ptype_common works", {
-#   expect_equal(
-#     json_ptype_common(c("true", "false", "null")),
-#     logical()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("integer", "true", "false", "null")),
-#     integer()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("real", "integer", "true", "false", "null")),
-#     numeric()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("text", "null")),
-#     character()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("array", "null")),
-#     new_json_array()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("object", "null")),
-#     new_json_object()
-#   )
-#
-#   expect_equal(
-#     json_ptype_common(c("object", "array", "null")),
-#     new_json2()
-#   )
-# })
-#
-# test_that("json_ptype_common incompatible types", {
-#   # incompatible with text
-#   expect_snapshot_error(json_ptype_common(c("true", "text")))
-#   expect_snapshot_error(json_ptype_common(c("false", "text")))
-#   expect_snapshot_error(json_ptype_common(c("integer", "text")))
-#   expect_snapshot_error(json_ptype_common(c("real", "text")))
-#   expect_snapshot_error(json_ptype_common(c("object", "text")))
-#   expect_snapshot_error(json_ptype_common(c("array", "text")))
-#
-#   # incompatible with object/array
-#   expect_snapshot_error(json_ptype_common(c("object", "true")))
-#   expect_snapshot_error(json_ptype_common(c("array", "false")))
-# })
+
+# json_ptype_common -------------------------------------------------------
+
+test_that("json_ptype_common works", {
+  expect_equal(
+    json_ptype_common(c("true", "false", "null")),
+    logical()
+  )
+
+  expect_equal(
+    json_ptype_common(c("integer", "true", "false", "null")),
+    integer()
+  )
+
+  expect_equal(
+    json_ptype_common(c("real", "integer", "true", "false", "null")),
+    numeric()
+  )
+
+  expect_equal(
+    json_ptype_common(c("text", "null")),
+    character()
+  )
+
+  expect_equal(
+    json_ptype_common(c("array", "null")),
+    new_json2()
+  )
+
+  expect_equal(
+    json_ptype_common(c("object", "null")),
+    new_json2()
+  )
+
+  expect_equal(
+    json_ptype_common(c("object", "array", "null")),
+    new_json2()
+  )
+})
+
+test_that("json_ptype_common incompatible types", {
+  # incompatible with text
+  expect_snapshot_error(json_ptype_common(c("true", "text")))
+  expect_snapshot_error(json_ptype_common(c("false", "text")))
+  expect_snapshot_error(json_ptype_common(c("integer", "text")))
+  expect_snapshot_error(json_ptype_common(c("real", "text")))
+  expect_snapshot_error(json_ptype_common(c("object", "text")))
+  expect_snapshot_error(json_ptype_common(c("array", "text")))
+
+  # object and array are compatible with text for correct ptype
+  expect_equal(
+    json_ptype_common(c("object", "text"), ptype = character()),
+    character()
+  )
+
+  expect_equal(
+    json_ptype_common(c("array", "text"), ptype = character()),
+    character()
+  )
+
+  # incompatible with object/array
+  expect_snapshot_error(json_ptype_common(c("object", "true")))
+  expect_snapshot_error(json_ptype_common(c("array", "false")))
+})
+
+test_that("json_ptype_common incompatible ptype", {
+  expect_snapshot_error(
+    json_ptype_common("object", ptype = new_json_array())
+  )
+
+  expect_snapshot_error(
+    json_ptype_common("array", ptype = new_json_object())
+  )
+})
 
 # json_ptype_common -------------------------------------------------------
 
@@ -173,18 +194,22 @@ test_that("json_vec_c handles json (array/object) ptype", {
   )
 })
 
-test_that("json_ptype_common incompatible types", {
-  # incompatible with text
-  expect_snapshot_error(json_ptype_common(c("true", "text")))
-  expect_snapshot_error(json_ptype_common(c("false", "text")))
-  expect_snapshot_error(json_ptype_common(c("integer", "text")))
-  expect_snapshot_error(json_ptype_common(c("real", "text")))
-  expect_snapshot_error(json_ptype_common(c("object", "text")))
-  expect_snapshot_error(json_ptype_common(c("array", "text")))
+test_that("json_convert_values errors for incompatible types", {
+  expect_snapshot_error(
+    json_vec_c(
+      x = list(1, "a"),
+      types = c("integer", "text"),
+      ptype = NULL
+    )
+  )
 
-  # incompatible with object/array
-  expect_snapshot_error(json_ptype_common(c("object", "true")))
-  expect_snapshot_error(json_ptype_common(c("array", "false")))
+  expect_snapshot_error(
+    json_vec_c(
+      x = list(1, 2),
+      types = c("integer", "integer"),
+      ptype = character()
+    )
+  )
 })
 
 # json_convert_value ------------------------------------------------------
@@ -201,112 +226,7 @@ test_that("json_convert_value works", {
   )
 })
 
-test_that("json_convert_values errors for incompatible types", {
-  expect_snapshot_error(
-    json_convert_value(
-      x = c("1", "a"),
-      json_types = c("integer", "text"),
-      ptype = NULL
-    )
-  )
-
-  expect_snapshot_error(
-    json_convert_value(
-      x = c("1", "a"),
-      json_types = c("integer", "text"),
-      ptype = character()
-    )
-  )
-})
-
-test_that("json_convert_value works arrays and objects", {
-  expect_equal(
-    json_convert_value(
-      x = c("[1, 2]", '["a", "b"]'),
-      json_types = c("array", "array"),
-      ptype = NULL
-    ),
-    new_json2(c("[1, 2]", '["a", "b"]'))
-    # new_json_array(c("[1, 2]", '["a", "b"]'))
-  )
-
-  expect_equal(
-    json_convert_value(
-      x = c('{"a": 1}', '{"a": 2}'),
-      json_types = c("object", "object"),
-      ptype = NULL
-    ),
-    new_json2(c('{"a": 1}', '{"a": 2}'))
-    # new_json_object(c('{"a": 1}', '{"a": 2}'))
-  )
-})
-
-test_that("json_convert_value doesn't convert arrays to objects", {
-  expect_snapshot_error(
-    json_convert_value(
-      x = "[1, 2]",
-      json_types = "array",
-      ptype = new_json_object()
-    )
-  )
-
-  expect_snapshot_error(
-    json_convert_value(
-      x = '{"a": 1}',
-      json_types = "object",
-      ptype = new_json_array()
-    )
-  )
-})
-
-test_that("json_convert_value works with mix of arrays and objects", {
-  expect_equal(
-    json_convert_value(
-      x = c("[1, 2]", '{"a": 1}'),
-      json_types = c("array", "object"),
-      ptype = new_json2()
-    ),
-    new_json2(c("[1, 2]", '{"a": 1}'))
-  )
-
-  expect_equal(
-    json_convert_value(
-      x = c("[1, 2]", '{"a": 1}'),
-      json_types = c("array", "object"),
-      ptype = NULL
-    ),
-    new_json2(c("[1, 2]", '{"a": 1}'))
-  )
-})
-
-test_that("json_convert_value handles array/object and text without wrap_scalars", {
-  expect_snapshot_error(
-    json_convert_value(
-      x = c("[1, 2]", '["a", "b"]'),
-      json_types = c("array", "text"),
-      ptype = NULL
-    )
-  )
-
-  expect_snapshot_error(
-    json_convert_value(
-      x = c("[1, 2]", '{"a": 1}'),
-      json_types = c("array", "text"),
-      ptype = new_json_array()
-    )
-  )
-
-  expect_equal(
-    json_convert_value(
-      x = c("[1, 2]", '{"a": 1}'),
-      json_types = c("array", "text"),
-      ptype = character()
-    ),
-    c("[1, 2]", '{"a": 1}')
-  )
-})
-
-test_that("json_convert_value handles array/object and text with wrap_scalars", {
+test_that("json_convert_value can wrap scalars", {
   expect_equal(
     json_convert_value(
       x = c("[1, 2]", 'a'),
@@ -371,5 +291,54 @@ test_that("json_convert_value handles big integers", {
       bigint_as_char = TRUE
     ),
     c("9999999999", "1")
+  )
+
+  skip("bigint handling not yet implemented")
+  expect_equal(
+    json_extract('[2147483647]', "$[0]"),
+    2147483647L
+  )
+
+  expect_equal(
+    json_extract('[-2147483647]', "$[0]"),
+    -2147483647L
+  )
+
+  some_above <- c('[1]', '[9999999999]')
+  expect_snapshot(
+    expect_equal(
+      json_extract(some_above, "$[0]"),
+      c("1", "9999999999")
+    )
+  )
+
+  expect_snapshot(
+    expect_equal(
+      json_extract(some_above, "$[0]", bigint_as_char = FALSE),
+      bit64::as.integer64(c("1", "9999999999"))
+    )
+  )
+
+  int64 <- bit64::integer64()
+  expect_snapshot_error(
+    json_extract(some_above, "$[0]", ptype = int64),
+    class = "jsontools_error"
+  )
+
+  expect_snapshot_output(
+    expect_equal(
+      json_extract(some_above, "$[0]", ptype = int64, bigint_as_char = FALSE),
+      bit64::as.integer64(c("1", "9999999999"))
+    )
+  )
+
+  char <- character()
+  expect_equal(
+    json_extract(some_above, "$[0]", ptype = char),
+    c("1", "9999999999")
+  )
+
+  expect_snapshot_error(
+    json_extract(some_above, "$[0]", ptype = char, bigint_as_char = FALSE)
   )
 })

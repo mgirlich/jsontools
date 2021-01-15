@@ -7,6 +7,12 @@ test_that("json_extract works", {
 
   # nested path
   expect_equal(json_extract('{"nested": {"int": 1}}', "$.nested.int"), 1)
+
+  # extract json
+  expect_equal(
+    json_extract(c('[{"a": 1}]', '[[1]]'), "$[0]"),
+    json2(c('{"a":1}', '[1]'))
+  )
 })
 
 test_that("json_extract can convert with ptype", {
@@ -30,63 +36,7 @@ test_that("json_extract handles mixed types", {
   )
 })
 
-test_that("json_extract handles long ints", {
-  skip("bigint handling not yet implemented")
-  # y <- c(
-  #   '{"mixed": "a"}',
-  #   '{"first_above": 2147483648, "mixed": 9999999999}'
-  # )
-
-  expect_equal(
-    json_extract('[2147483647]', "$[0]"),
-    2147483647L
-  )
-
-  expect_equal(
-    json_extract('[-2147483647]', "$[0]"),
-    -2147483647L
-  )
-
-  some_above <- c('[1]', '[9999999999]')
-  expect_snapshot(
-    expect_equal(
-      json_extract(some_above, "$[0]"),
-      c("1", "9999999999")
-    )
-  )
-
-  expect_snapshot(
-    expect_equal(
-      json_extract(some_above, "$[0]", bigint_as_char = FALSE),
-      bit64::as.integer64(c("1", "9999999999"))
-    )
-  )
-
-  int64 <- bit64::integer64()
-  expect_snapshot_error(
-    json_extract(some_above, "$[0]", ptype = int64),
-    class = "jsontools_error"
-  )
-
-  expect_snapshot_output(
-    expect_equal(
-      json_extract(some_above, "$[0]", ptype = int64, bigint_as_char = FALSE),
-      bit64::as.integer64(c("1", "9999999999"))
-    )
-  )
-
-  char <- character()
-  expect_equal(
-    json_extract(some_above, "$[0]", ptype = char),
-    c("1", "9999999999")
-  )
-
-  expect_snapshot_error(
-    json_extract(some_above, "$[0]", ptype = char, bigint_as_char = FALSE)
-  )
-})
-
-test_that("json_extract handles missing and null elements", {
+test_that("json_extract handles missing elements", {
   x <- c('{"miss-sometimes": 1}', '{"b": 1}')
 
   # path does not exist at all
@@ -120,9 +70,9 @@ test_that("json_extract handles missing and null elements", {
 })
 
 test_that("json_extract checks `default`", {
-  skip("not yet implemented")
   y <- c('{"miss-sometimes": [1]}', '{"b": 1}')
 
+  # TODO better error message
   # invalid `default` for array
   expect_snapshot_error(
     json_extract(y, "$.miss-sometimes", default = "1]"),
@@ -180,41 +130,4 @@ test_that("json_extract checks path", {
 test_that("json_extract checks path syntax", {
   skip("not yet implemented path check")
   expect_snapshot_error(json_extract(x, ".commit.author"))
-})
-
-test_that("json_extract handles objects and arrays", {
-  expect_equal(
-    json_extract('[{"a": 1}]', "$[0]"),
-    json2('{"a":1}')
-  )
-
-  expect_equal(
-    json_extract('[[1]]', "$[0]"),
-    json2('[1]')
-  )
-
-  expect_equal(
-    json_extract(c('[{"a": 1}]', '[[1]]'), "$[0]"),
-    json2(c('{"a":1}', '[1]'))
-  )
-})
-
-test_that("json_extract handles ptype object and array", {
-  expect_snapshot_error(
-    json_extract('[{"a": 1}]', "$[0]", new_json_array())
-  )
-
-  expect_equal(
-    json_extract('[{"a": 1}]', "$[0]", new_json_object()),
-    json2('{"a":1}')
-  )
-
-  expect_snapshot_error(
-    json_extract('[[1]]', "$[0]", new_json_object())
-  )
-
-  expect_equal(
-    json_extract('[[1]]', "$[0]", new_json_array()),
-    json2('[1]')
-  )
 })
