@@ -15,49 +15,119 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(jsontools)
-got_json <- json2(got_chars_json)
+# library(jsontools)
+devtools::load_all("~/GitHub/jsontools")
+# got_json <- json2(got_chars_json)
+# got_json <- json2(readChar(got_chars_json, nchars = 1e6))
+got_json <- json2(readChar("../data/got_chars.json", nchars = 1e6))
 ```
 
 ## Overview
-TODO a summary/glimpse function would be nice
+First, let's find out what's the type of the JSON
 
-```{r}
+```{r type}
 json_type(got_json)
-json_array_length(got_json)
 ```
 
-```{r}
-got_chars <- json_flatten_query(got_json)
+With `json_array_length()` and `json_array_types()` we can find out the number of elements in the array and the type of each element:
+
+```{r array-infos}
+json_array_length(got_json)
+json_array_types(got_json)
+```
+
+Each element of the array is a JSON object. We can now unpack the array with `json_flatten_query()`:
+
+```{r flatten}
+got_chars <- json_flatten(got_json)
 json_prettify(got_chars[1])
 ```
 
-## Extract Data
+In non-interactive use it is a good idea to specify via the `ptype` argument the type you expect.
+In this example `new_json_object()` or `json2()` both make sense:
 
-```{r}
+```{r flatten-ptype}
+got_chars <- json_flatten(got_json, ptype = new_json_object())
+got_chars <- json_flatten(got_json, ptype = json2())
+```
+
+
+## Extract Data
+Let's have a look at the first Game of Thrones character
+
+```{r got-chars}
+got_chars[1]
+```
+
+For a better readability we can use `json_prettify()`
+
+```{r prettify}
+json_prettify(got_chars[1])
+```
+
+With the help of `json_get_value()` we can now easily construct a tibble with some basic information about the characters
+
+```{r extract}
 tibble::tibble(
-  id = json_get_value(got_chars, "$.id"),
-  name = json_get_value(got_chars, "$.name"),
-  gender = json_get_value(got_chars, "$.gender"),
-  alive = json_get_value(got_chars, "$.alive")
+  id = json_extract(got_chars, "$.id"),
+  name = json_extract(got_chars, "$.name"),
+  alive = json_extract(got_chars, "$.alive")
 )
 ```
 
-the books are an array, we cannot extract them with `json_get_value()`
+Oh, we actually also wanted the books. Let's add them now:
 
 ```{r error=TRUE}
-json_get_value(got_chars, "$.books")
+tibble::tibble(
+  id = json_extract(got_chars, "$.id"),
+  name = json_extract(got_chars, "$.name"),
+  alive = json_extract(got_chars, "$.alive"),
+  books = json_extract(got_chars, "$.titles")
+)
 ```
 
-Instead we need to use `json_get_query()`
-
-```{r error=TRUE}
-json_get_query(got_chars, "$.books")
-```
+Hmm, but now we get an error message that we cannot combine an array with text. Let's try extracting the books as text:
 
 ```{r}
-books <- json_get_query(got_chars, "$.books", wrap_scalars = TRUE)
-books
+json_extract(got_chars, "$.titles", ptype = character())
+```
+
+We see that the API actually isn't type stable: it returns a simple text value instead of an array if the character appeared only in a single book.
+This is quite a bad idea but we can still fix it with the argument `wrap_scalars` and get nice JSON arrays:
+
+```{r}
+json_extract(got_chars, "$.titles", wrap_scalars = TRUE)
+```
+
+If we have a vector of JSON objects and want to convert the keys into columns we can simply use `json_unnest_wider()`.
+Of course, we also have to use `wrap_scalars = TRUE`:
+
+```{r unnest-wider}
+tibble::tibble(chars_json = got_chars) %>%
+  json_unnest_wider(chars_json, wrap_scalars = TRUE) %>%
+  dplyr::glimpse()
+```
+
+```{r unnest-longer}
+tibble::tibble(chars_json = got_chars) %>% 
+  dplyr::transmute(
+    url = json_extract(chars_json, "$.url"),
+    id = json_extract(chars_json, "$.id"),
+    name = json_extract(chars_json, "$.name"),
+    # TODO should this be possible? -> explicit cast to character would then be needed
+    # books = json_extract(chars_json, "$.titles", wrap_scalars = FALSE)
+    titles = json_extract(chars_json, "$.titles", wrap_scalars = TRUE)
+  ) %>% 
+  # mutate(books = json_wrap_scalars(books)) %>% 
+  json_unnest_longer(titles)
+```
+
+
+```{r extract-wrap-scalars, error=TRUE}
+json_extract(got_chars, "$.titles")
+json_extract(got_chars, "$.titles", wrap_scalars = TRUE)
+json_extract(got_chars, "$.titles", ptype = character()) %>% json2()
+# json_extract(got_chars, "$.titles", wrap_scalars = FALSE)
 ```
 
 ## Modify Data
@@ -74,7 +144,7 @@ got_chars_small
 ```
 
 ```{r}
-gender <- json_get_value(got_chars_small, "$.gender")
+gender <- json_extract(got_chars_small, "$.gender")
 
 json_mutate(
   got_chars_small,
