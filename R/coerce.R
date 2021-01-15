@@ -19,21 +19,10 @@ vec_ptype2.json2.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
 #' @export
 vec_ptype2.json2.json2 <- function(x, y, ...) new_json2()
 
-#' @method vec_ptype2.json2 character
 #' @export
-vec_ptype2.json2.character <- function(x, y, ...) {
-  # validate_json2(y)
-  # new_json2()
-  character()
-}
+vec_ptype2.json2.character <- function(x, y, ...) character()
+vec_ptype2.character.json2 <- function(x, y, ...) character()
 
-#' @method vec_ptype2.character json2
-#' @export
-vec_ptype2.character.json2 <- function(x, y, ...) {
-  # validate_json2(x)
-  # new_json2()
-  character()
-}
 
 # json classes from other packages ----------------------------------------
 
@@ -78,13 +67,10 @@ vec_ptype2.json2.pq_jsonb <- function(x, y, ...) new_json2()
 
 #' @rdname vec_ptype2.json2
 #'
-#' @method vec_ptype2 pq_json
 #' @export
 #' @export vec_ptype2.pq_json
 vec_ptype2.pq_json <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.pq_json", y)
-#' @method vec_ptype2.pq_json json2
 #' @export
 vec_ptype2.pq_json.json2 <- function(x, y, ...) new_json2()
-#' @method vec_ptype2.json2 pq_json
 #' @export
 vec_ptype2.json2.pq_json <- function(x, y, ...) new_json2()

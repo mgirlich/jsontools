@@ -10,30 +10,26 @@
 #' @export vec_cast.json2
 vec_cast.json2 <- function(x, to, ...) UseMethod("vec_cast.json2")
 
-#' @method vec_cast.json2 json2
+# self cast
 #' @export
 vec_cast.json2.json2 <- function(x, to, ...) x
 
-#' @method vec_cast.json2 character
+# cast to character
+#' @export
+vec_cast.character.json2 <- function(x, to, ...) vec_data(x)
+
+#' @export
+vec_cast.list.json2 <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  lapply(seq_along(x), function(i) x[[i]])
+}
+
+# cast from character
 #' @export
 vec_cast.json2.character <- function(x, to, ...) {
   # workaround for problem with rendering in markdown
   x <- ifelse(x == "__NA__", NA, x)
   json2(vec_data(x))
 }
-
-#' @method vec_cast.character json2
-#' @export
-vec_cast.character.json2 <- function(x, to, ...) {
-  vec_data(x)
-}
-
-#' @method vec_cast.list json2
-#' @export
-vec_cast.list.json2 <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-  lapply(seq_along(x), function(i) x[[i]])
-}
-
 
 # json classes from other packages ----------------------------------------
 
