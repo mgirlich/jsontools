@@ -36,7 +36,12 @@ determined by computing the common type across all elements. Use
 \code{new_json_array()} resp. \code{new_json_object()} if you know every element is
 an array resp. object. Mind that the return type will only be \code{json2}.}
 
-\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
+\item{wrap_scalars}{Should scalar values be wrapped?
+Note that scalars are only wrapped if either
+\itemize{
+\item \code{ptype} is \code{new_json_array()} or \code{json2} vector.
+\item \code{ptype} is \code{NULL} and the elements are a mix of scalar values and arrays.
+}}
 }
 \description{
 Unnest a column of JSON arrays in a data frame producing a longer data frame.
@@ -44,7 +49,7 @@ Unnest a column of JSON arrays in a data frame producing a longer data frame.
 \examples{
 df <- tibble::tibble(
   x = c("a", "b"),
-  json = c('[1, 2]', '[3, 4, 5]')
+  json = c("[1, 2]", "[3, 4, 5]")
 )
 df
 

@@ -31,7 +31,12 @@ empty.}
 
 \item{na}{Default value if element of \code{x} is \code{NA}.}
 
-\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
+\item{wrap_scalars}{Should scalar values be wrapped?
+Note that scalars are only wrapped if either
+\itemize{
+\item \code{ptype} is \code{new_json_array()} or \code{json2} vector.
+\item \code{ptype} is \code{NULL} and the elements are a mix of scalar values and arrays.
+}}
 
 \item{bigint_as_char}{Convert big integers to character?}
 }

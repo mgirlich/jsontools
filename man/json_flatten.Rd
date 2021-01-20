@@ -22,7 +22,12 @@ an array resp. object. Mind that the return type will only be \code{json2}.}
 
 \item{allow_scalars}{Do not error for scalar elements?}
 
-\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
+\item{wrap_scalars}{Should scalar values be wrapped?
+Note that scalars are only wrapped if either
+\itemize{
+\item \code{ptype} is \code{new_json_array()} or \code{json2} vector.
+\item \code{ptype} is \code{NULL} and the elements are a mix of scalar values and arrays.
+}}
 
 \item{bigint_as_char}{Convert big integers to character?}
 }

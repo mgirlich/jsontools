@@ -38,7 +38,15 @@ the object keys.}
 
 \item{names_repair}{What happens if the output has invalid column names?}
 
-\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
+\item{wrap_scalars}{A named list of \code{TRUE} or \code{FALSE} specifying for each
+field whether to wrap scalar values in a JSON array. Unspecified fields
+are not wrapped. This can also be a single value of \code{TRUE} or \code{FALSE}
+that is then used for every field.
+Note that scalars are only wrapped if either
+\itemize{
+\item \code{ptype} is \code{new_json_array()} or \code{json2} vector.
+\item \code{ptype} is \code{NULL} and the elements are a mix of scalar values and arrays.
+}}
 }
 \description{
 Unnest a column of JSON objects in a data frame producing a wider data frame.

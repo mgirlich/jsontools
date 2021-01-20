@@ -37,7 +37,7 @@ format_json_list(
   POSIXt = c("string", "ISO8601", "epoch", "mongo"),
   factor = c("string", "integer"),
   complex = c("string", "list"),
-  raw = c("base64", "hex", "mongo"),
+  raw = c("base64", "hex", "mongo", "int", "js"),
   digits = 4,
   json_verbatim = TRUE,
   force = FALSE,
