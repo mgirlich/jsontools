@@ -143,7 +143,7 @@ format_json_list <- function(x,
                              POSIXt = c("string", "ISO8601", "epoch", "mongo"),
                              factor = c("string", "integer"),
                              complex = c("string", "list"),
-                             raw = c("base64", "hex", "mongo"),
+                             raw = c("base64", "hex", "mongo", "int", "js"),
                              digits = 4,
                              json_verbatim = TRUE,
                              force = FALSE,
@@ -156,12 +156,6 @@ format_json_list <- function(x,
       "only works with list.",
       i = "Did you want to use `format_json_rowwise()` instead?"
     ))
-  }
-
-  if (!missing(na)) {
-    na <- match.arg(na)
-  } else {
-    na <- NULL
   }
 
   purrr::map(
