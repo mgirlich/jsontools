@@ -93,7 +93,7 @@ test_that("json_flatten errors for mix of array/object and scalars", {
 
 test_that("json_flatten can wrap scalars", {
   skip("not yet decided")
-  json_flatten('[[1,2], 2]')
+  json_flatten("[[1,2], 2]")
   # NOTE json_unnest_longer(tibble(x = '[[1,2], 2]'), x) can wrap them...
 })
 
@@ -283,7 +283,7 @@ test_that("json_unnest_wider handles NA", {
     id = 1:2,
     json = c(
       '{"a": 1}',
-      'null'
+      "null"
     )
   )
 
@@ -346,7 +346,7 @@ test_that("json_unnest_wider respects ptype", {
 
 test_that("json_unnest_wider errors on non-objects", {
   expect_snapshot_error(
-    json_unnest_wider(tibble(json = '[1]'), "json")
+    json_unnest_wider(tibble(json = "[1]"), "json")
   )
 })
 

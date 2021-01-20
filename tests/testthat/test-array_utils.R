@@ -12,7 +12,7 @@ test_that("json_array_agg works", {
   )
 
   expect_equal(
-    json_array_agg(c('a"b', 'a\nb')),
+    json_array_agg(c('a"b', "a\nb")),
     # new_json_array('["a\\"b","a\\nb"]')
     new_json2('["a\\"b","a\\nb"]')
   )

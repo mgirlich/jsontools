@@ -155,7 +155,7 @@ json_each_df <- function(x) {
 #' @examples
 #' df <- tibble::tibble(
 #'   x = c("a", "b"),
-#'   json = c('[1, 2]', '[3, 4, 5]')
+#'   json = c("[1, 2]", "[3, 4, 5]")
 #' )
 #' df
 #'

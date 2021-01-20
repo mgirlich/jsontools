@@ -1,7 +1,7 @@
 test_that("json_extract works", {
   # simple path
   expect_equal(
-    json_extract(c('[true]', '[false]'), "$[0]"),
+    json_extract(c("[true]", "[false]"), "$[0]"),
     c(TRUE, FALSE)
   )
 
@@ -10,14 +10,14 @@ test_that("json_extract works", {
 
   # extract json
   expect_equal(
-    json_extract(c('[{"a": 1}]', '[[1]]'), "$[0]"),
-    json2(c('{"a":1}', '[1]'))
+    json_extract(c('[{"a": 1}]', "[[1]]"), "$[0]"),
+    json2(c('{"a":1}', "[1]"))
   )
 })
 
 test_that("json_extract can convert with ptype", {
   expect_equal(
-    json_extract(c('[true]', '[false]'), "$[0]", ptype = numeric()),
+    json_extract(c("[true]", "[false]"), "$[0]", ptype = numeric()),
     c(1, 0)
   )
 })
@@ -25,13 +25,13 @@ test_that("json_extract can convert with ptype", {
 test_that("json_extract handles mixed types", {
   # errors without explicit ptype list()
   expect_snapshot_error(
-    json_extract(c('[1]', '["a"]'), "$[0]"),
+    json_extract(c("[1]", '["a"]'), "$[0]"),
     "vctrs_error_incompatible_type"
   )
 
   # works with ptype list()
   expect_equal(
-    json_extract(c('[1]', '["a"]'), "$[0]", ptype = list()),
+    json_extract(c("[1]", '["a"]'), "$[0]", ptype = list()),
     list(1, "a")
   )
 })
@@ -80,7 +80,7 @@ test_that("json_extract checks `default`", {
   )
 
   expect_snapshot_error(
-    json_extract(y, "$.miss-sometimes", default = 'a'),
+    json_extract(y, "$.miss-sometimes", default = "a"),
     class = "jsontools_error"
   )
 })

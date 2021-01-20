@@ -32,7 +32,9 @@ json_type <- function(x, path = NULL) {
     exec_sqlite_json(
       glue_sql(
         "SELECT JSON_TYPE(data, {path}) AS result
-      FROM my_tbl", .con = con)
+      FROM my_tbl",
+        .con = con
+      )
     )$result
   }
 }

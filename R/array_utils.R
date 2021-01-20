@@ -68,7 +68,7 @@ json_array_agg.Date <- function(x) {
 }
 
 #' @export
-json_array_agg.complex<- function(x) {
+json_array_agg.complex <- function(x) {
   agg_array(x)
 }
 
@@ -176,5 +176,6 @@ json_wrap_scalars <- function(x) {
         WHEN my_tbl.data IS NULL THEN 'null'
         ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
       END AS result
-    FROM my_tbl")$result %>% json2()
+    FROM my_tbl"
+  )$result %>% json2()
 }

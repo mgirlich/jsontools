@@ -45,7 +45,7 @@ should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
 #' @return A list of parsed values.
 #'
 #' @examples
-#' convert_json_type(c('1', '[1]'), c('integer', 'array'))
+#' convert_json_type(c("1", "[1]"), c("integer", "array"))
 convert_json_type <- function(x, json_types, bigint_as_char = TRUE) {
   stopifnot(length(x) == length(json_types))
   stopifnot(all(json_types %in% all_json_types | is.na(json_types)))

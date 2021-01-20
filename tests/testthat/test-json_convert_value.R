@@ -229,7 +229,7 @@ test_that("json_convert_value works", {
 test_that("json_convert_value can wrap scalars", {
   expect_equal(
     json_convert_value(
-      x = c("[1, 2]", 'a'),
+      x = c("[1, 2]", "a"),
       json_types = c("array", "text"),
       ptype = NULL,
       wrap_scalars = TRUE
@@ -240,7 +240,7 @@ test_that("json_convert_value can wrap scalars", {
 
   expect_equal(
     json_convert_value(
-      x = c("[1, 2]", 'a'),
+      x = c("[1, 2]", "a"),
       json_types = c("array", "text"),
       ptype = new_json_array(),
       wrap_scalars = TRUE
@@ -295,16 +295,16 @@ test_that("json_convert_value handles big integers", {
 
   skip("bigint handling not yet implemented")
   expect_equal(
-    json_extract('[2147483647]', "$[0]"),
+    json_extract("[2147483647]", "$[0]"),
     2147483647L
   )
 
   expect_equal(
-    json_extract('[-2147483647]', "$[0]"),
+    json_extract("[-2147483647]", "$[0]"),
     -2147483647L
   )
 
-  some_above <- c('[1]', '[9999999999]')
+  some_above <- c("[1]", "[9999999999]")
   expect_snapshot(
     expect_equal(
       json_extract(some_above, "$[0]"),
