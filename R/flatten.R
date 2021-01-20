@@ -186,35 +186,45 @@ json_unnest_longer <- function(data,
     # TODO should this be allowed as argument?
     allow_scalars = FALSE
   )
-  x_each <- x_each[
-    # drop json NULL
-    x_each$type != "null" |
-      # but keep NA
-      vec_slice(is.na(data[[col]]), x_each$row_id),
-  ]
+  # x_each <- x_each[
+  #   # drop json NULL
+  #   x_each$type != "null" |
+  #     # but keep NA
+  #     vec_slice(is.na(data[[col]]), x_each$row_id),
+  # ]
 
   data[[col]] <- NULL
-  data <- vec_slice(data, x_each$row_id)
-  data[[values_to]] <- json_convert_value(
+
+  missing_row_ids <- setdiff(vec_seq_along(data), x_each$row_id)
+  row_ids <- c(x_each$row_id, missing_row_ids)
+  o <- vec_order(row_ids)
+  ids <- seq_along(x_each$row_id)
+
+  data <- vec_slice(data, row_ids)
+  values <- json_convert_value(
     x_each$value,
     x_each$type,
     ptype = ptype,
     wrap_scalars = wrap_scalars
   )
 
+  data[[values_to]] <- vec_init(values, vec_size_common(data))
+  vec_slice(data[[values_to]], ids) <- values
+
   if (!is.null(row_numbers_to)) {
-    data[[row_numbers_to]] <- x_each$row_id
+    data[[row_numbers_to]] <- row_ids
   }
 
   if (!is.null(indices_to)) {
-    data[[indices_to]] <- x_each$key
+    data[[indices_to]] <- vec_init_along(NA_character_, row_ids)
+    vec_slice(data[[indices_to]], ids) <- x_each$key
   }
 
   if (inherits(data[[values_to]], "json2")) {
     data[[values_to]] <- vec_cast(data[[values_to]], new_json2())
   }
 
-  data
+  vec_slice(data, o)
 }
 
 #' Unnest a JSON object into columns

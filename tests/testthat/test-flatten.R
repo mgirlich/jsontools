@@ -71,12 +71,19 @@ test_that("json_flatten works for scalars", {
 })
 
 test_that("json_flatten empty output", {
-  expect_null(json_flatten("[]"))
   expect_null(json_flatten(character()))
-  expect_null(json_flatten("[null]"))
-
   expect_null(json_flatten("null"))
+  # compare to purrr::flatten(NULL) -> error
+  # but error doesn't feel right
+
+  expect_null(json_flatten("[]"))
+  # compare to purrr::flatten(list())
+
+  expect_null(json_flatten("[null]"))
+  # compare to `purrr::flatten()`
+
   expect_null(json_flatten(NA_character_))
+  # no equivalent?
 
   expect_equal(
     json_flatten("[]", ptype = integer()),
@@ -176,23 +183,9 @@ test_that("json_unnest_longer works", {
       json = c(1, 2, 3, 5, 9)
     )
   )
+})
 
-  df <- tibble(
-    id = 1:2,
-    json = c(
-      "[null]",
-      "[3,5,9]"
-    )
-  )
-
-  expect_equal(
-    json_unnest_longer(df, "json"),
-    tibble(
-      id = c(2, 2, 2),
-      json = c(3, 5, 9)
-    )
-  )
-
+test_that("json_unnest_longer handles NA", {
   df <- tibble(
     id = 1:2,
     json = c(
@@ -208,6 +201,68 @@ test_that("json_unnest_longer works", {
       json = c(NA, "a", "b")
     )
   )
+
+  # tidyr::unnest_longer(tibble(id = 1:2, l = list(NULL, 1:2)), l)
+})
+
+test_that("json_unnest_longer handles null", {
+  df <- tibble(
+    id = 1:2,
+    json = c(
+      "null",
+      '["a", "b"]'
+    )
+  )
+
+  # drops it?
+  expect_equal(
+    json_unnest_longer(df, "json"),
+    tibble(
+      id = c(1, 2, 2),
+      json = c(NA, "a", "b")
+    )
+  )
+})
+
+test_that("json_unnest_longer handles empty arrays", {
+  df <- tibble(
+    id = 1:2,
+    json = c(
+      "[]",
+      "[3,5,9]"
+    )
+  )
+
+  # drops it
+  expect_equal(
+    json_unnest_longer(df, "json"),
+    tibble(
+      id = c(1, 2, 2, 2),
+      json = c(NA, 3, 5, 9)
+    )
+  )
+
+  # tidyr::unnest_longer(tibble(id = 1:2, l = list(c(), 1:2)), l)
+})
+
+test_that("json_unnest_longer handles empty null in arrays", {
+  df <- tibble(
+    id = 1:2,
+    json = c(
+      "[null]",
+      "[3,5,9]"
+    )
+  )
+
+  expect_equal(
+    json_unnest_longer(df, "json"),
+    tibble(
+      id = c(1, 2, 2, 2),
+      json = c(NA, 3, 5, 9)
+    )
+  )
+
+  # no equivalent?
 })
 
 test_that("json_unnest_longer handles scalars", {
