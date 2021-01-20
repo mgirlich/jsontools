@@ -92,9 +92,10 @@ test_that("json_flatten errors for mix of array/object and scalars", {
 })
 
 test_that("json_flatten can wrap scalars", {
-  skip("not yet decided")
-  json_flatten("[[1,2], 2]")
-  # NOTE json_unnest_longer(tibble(x = '[[1,2], 2]'), x) can wrap them...
+  expect_equal(
+    json_flatten("[[1,2], 2]", wrap_scalars = TRUE),
+    new_json2(c("[1,2]", "[2]"))
+  )
 })
 
 test_that("json_flatten handles scalars correctly", {
@@ -207,8 +208,10 @@ test_that("json_unnest_longer works", {
       json = c(NA, "a", "b")
     )
   )
+})
 
-  skip("not sure whether to do or not")
+test_that("json_unnest_longer handles scalars", {
+  skip("not decided whether to add `allow_scalars`")
   df <- tibble(
     id = 1:3,
     json = c(
@@ -219,7 +222,7 @@ test_that("json_unnest_longer works", {
   )
 
   expect_equal(
-    json_unnest_longer(df, "json"),
+    json_unnest_longer(df, "json", allow_scalars = TRUE),
     tibble(
       id = c(2, 2, 3),
       json = c("a", "b", "c")

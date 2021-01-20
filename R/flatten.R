@@ -173,8 +173,6 @@ json_unnest_longer <- function(data,
                                ptype = NULL,
                                # allow_scalars = TRUE,
                                wrap_scalars = FALSE) {
-  # TODO allow to unnest multiple columns at once?
-  # TODO transform?
   # TODO parameter to drop rows of empty arrays? and drop NA?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
@@ -279,10 +277,6 @@ json_unnest_wider <- function(data,
   # TODO argument how to handle `NA`?
   # TODO keeping rows where json type is null but dropping NA is inconsistent
   # --> `drop_na` to drop `NA`, `null`, and `[null]`?
-  # TODO transform?
-
-  # TODO argument to only unnest a defined set of values (similar to hoist?)
-  # --> add `json_hoist()`?
 
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
@@ -326,17 +320,24 @@ json_unnest_wider <- function(data,
   for (i in idx) {
     key <- x_each_split$key[[i]]
     val <- x_each_split$val[[i]]
-    # TODO improve error message -> inform which key has the issue
-    # message(key)
 
-    values <- json_convert_value(
-      val$value,
-      val$type,
-      ptype = ptype[[key]],
-      wrap_scalars = wrap_scalars[[key]]
+    tryCatch(
+      values <- json_convert_value(
+        val$value,
+        val$type,
+        ptype = ptype[[key]],
+        wrap_scalars = wrap_scalars[[key]]
+      ),
+      error = function(e) {
+        msg <- c(
+          paste0("Issue when extracting key `", key, "`"),
+          conditionMessage(e)
+        )
+
+        stop_jsontools(msg)
+      }
     )
 
-    # TODO less hacky solution?
     out <- vec_init_along(vec_ptype(values), col_values)
 
     empty_flag <- lengths(val$value) == 0

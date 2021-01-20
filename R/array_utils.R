@@ -157,9 +157,6 @@ is_json_array <- function(x, null = TRUE, na = TRUE) {
 #' json_wrap_scalars(c('["a", "b"]', "c", "d"))
 #' json_wrap_scalars(c(1, 2))
 json_wrap_scalars <- function(x) {
-  # TODO without path could do it purely in R
-  # TODO allow wrapping scalars at a path? like a combination of modify and wrap?
-  # json_type(x)
   write_json_tbl(x)
 
   exec_sqlite_json(
