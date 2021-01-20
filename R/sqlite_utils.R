@@ -1,6 +1,6 @@
 #' @noRd
 #' @examples
-#' values <- tibble(
+#' values <- tibble::tibble(
 #'   id = 1:3,
 #'   letters = letters[1:3],
 #'   json = x

@@ -84,7 +84,9 @@ json_type <- function(x, path = NULL) {
 
 #' Unbox a vector or data frame
 #'
-#' A wrapper around `jsonlite::unbox()` to avoid conflict with `rlang::unbox()`.
+#' Mark a vector of length one to not be wrapped in an array when formated as
+#' `JSON`. This is only a tiny wrapper around `jsonlite::unbox()` to avoid
+#' conflict with `rlang::unbox()`.
 #'
 #' @param x atomic vector of length 1, or data frame with 1 row.
 #'
@@ -98,14 +100,6 @@ json_u <- function(x) {
   jsonlite::unbox(x)
 }
 
-
-row_all <- function(x) {
-  unname(apply(x, 1, all))
-}
-
-row_any <- function(x) {
-  unname(apply(x, 1, any))
-}
 
 #' @noRd
 #' @examples

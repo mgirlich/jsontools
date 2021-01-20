@@ -2,7 +2,7 @@
 #' @rdname format_json
 #'
 #' @description
-#' `format_json` is only a wrapper around the great [`jsonlite::toJSON`].
+#' `format_json` is only a wrapper around the great [`jsonlite::toJSON()`].
 #' The differences are
 #' * expose argument `json_verbatim`, `rownames`, and `always_decimal`.
 #' * use `json_verbatim = TRUE` by default so that JSON isn't escaped again.

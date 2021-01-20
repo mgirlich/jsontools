@@ -6,8 +6,8 @@
 #' @details Under the hood [`jsonlite::stream_out`] is used for the conversion.
 #'
 #' @param df A dataframe.
-#' @param null,na,auto_unbox,dataframe,matrix,Date passed on to [`jsonlite::toJSON`].
-#' @param POSIXt,factor,complex,raw,digits,force,pretty,... passed on to [`jsonlite::toJSON`].
+#' @param null,na,POSIXt,factor,complex,matrix,Date passed on to [`jsonlite::stream_out`].
+#' @param auto_unbox,raw,digits,force,... passed on to [`jsonlite::stream_out`].
 #' @inheritParams format_json
 #'
 #' @return A json2 vector of json objects.
@@ -24,6 +24,7 @@
 #' format_json_rowwise(df)
 #'
 #' if (require("dplyr", quietly = TRUE, warn.conflicts = FALSE)) {
+#'   tibble <- tibble::tibble
 #'   # often useful in mutate/transmute
 #'   mtcars %>%
 #'     transmute(json = format_json_rowwise(tibble(mpg, cyl, extra = tibble(disp, hp))))

@@ -246,7 +246,7 @@ json_unnest_longer <- function(data,
 #' @export
 #' @examples
 #' # turn all components of item into columns with json_unnest_wider()
-#' tibble(
+#' tibble::tibble(
 #'   id = 1:2,
 #'   x = c(
 #'     '{"name": "Peter", "age": 19}',
@@ -255,7 +255,7 @@ json_unnest_longer <- function(data,
 #' ) %>%
 #'   json_unnest_wider(x)
 #'
-#' tibble(
+#' tibble::tibble(
 #'   id = 1:2,
 #'   x = c(
 #'     '{"name": "Peter", "age": 19, "purchase_ids": [1, 2]}',
