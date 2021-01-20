@@ -16,7 +16,8 @@
 
 # json_extract checks `default`
 
-    invalid JSON at 1 locations:
+    not possible to assign `default`
+    x invalid JSON at 1 locations:
       1
     
     1: offset 2
@@ -27,7 +28,8 @@
 
 ---
 
-    invalid JSON at 1 locations:
+    not possible to assign `default`
+    x invalid JSON at 1 locations:
       1
     
     1: offset 1

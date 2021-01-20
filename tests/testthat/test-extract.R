@@ -72,7 +72,6 @@ test_that("json_extract handles missing elements", {
 test_that("json_extract checks `default`", {
   y <- c('{"miss-sometimes": [1]}', '{"b": 1}')
 
-  # TODO better error message
   # invalid `default` for array
   expect_snapshot_error(
     json_extract(y, "$.miss-sometimes", default = "1]"),

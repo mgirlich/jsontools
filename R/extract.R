@@ -53,12 +53,12 @@ json_extract <- function(x,
     stop_jsontools("`path` must be a character vector of length 1")
   }
 
-  na <- vec_cast(na, ptype)
+  na <- vec_cast(na, ptype, x_arg = "na", to_arg = "ptype")
   if (length(na) != 1) {
     stop_jsontools("`na` must have length 1")
   }
 
-  default <- vec_cast(default, ptype)
+  default <- vec_cast(default, ptype, x_arg = "default", to_arg = "ptype")
   if (!(is.null(default) || is_scalar_atomic(default))) {
     stop_jsontools("`default` must be NULL or have length 1")
   }
@@ -82,9 +82,6 @@ json_extract <- function(x,
     wrap_scalars = wrap_scalars
   )
 
-  # TODO if `ptype` was `NULL` above then we don't get an understandable error
-  # message if `na` or `default` doesn't fit to the ptype...
-
   # now that the values are parsed the original NAs can be replaced
   # TODO replace NA earlier on?
   x_result <- replace_na(x_result, is.na(x), na)
@@ -95,7 +92,7 @@ json_extract <- function(x,
 
 replace_not_found <- function(x, not_found_flag, default) {
   if (any(not_found_flag)) {
-    if (is.null(default)) {
+    if (is_null(default)) {
       msg <- c(
         x = "`path` does not always exist.",
         i = "Did you provide an incorrect path?",
@@ -103,17 +100,33 @@ replace_not_found <- function(x, not_found_flag, default) {
       )
       stop_jsontools(msg)
     }
-
-    x[not_found_flag] <- default
   }
 
-  x
+  replace_helper(x, not_found_flag, default, value_arg = "default")
 }
 
 replace_na <- function(x, na_flag, na) {
-  if (any(na_flag)) {
-    x[na_flag] <- na
+  replace_helper(x, na_flag, na, value_arg = "na")
+}
+
+replace_helper <- function(x, where, value, x_arg = "", value_arg = "") {
+  if (all(!where)) {
+    return(x)
   }
 
-  x
+  if (all(where)) {
+    return(vec_rep(value, vec_size(x)))
+  }
+
+  tryCatch(
+    vec_assign(x, where, value, x_arg = x_arg, value_arg = value_arg),
+    error = function(e) {
+      msg <- c(
+        paste0("not possible to assign `", value_arg, "`"),
+        x = conditionMessage(e)
+      )
+
+      stop_jsontools(msg)
+    }
+  )
 }
