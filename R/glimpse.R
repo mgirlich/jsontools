@@ -499,7 +499,7 @@
 #' x <- readr::read_file(repurrrsive::discog_json()) %>%
 #'   json_flatten_array() %>%
 #'   json_get_query("$.basic_information") %>%
-#'   json_agg_array()
+#'   json_array_agg()
 #'
 #' json_glimpse_array(x)
 #'
