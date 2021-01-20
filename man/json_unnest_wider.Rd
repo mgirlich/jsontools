@@ -18,12 +18,16 @@ json_unnest_wider(
 \arguments{
 \item{data}{A data frame.}
 
-\item{col}{JSON-column of objects to extract components from.}
+\item{col}{JSON-column of arrays to extract components from.}
 
-\item{path}{Path where to extract from.}
+\item{path}{Path to element. This must be a valid
+\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
+For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
-determined by computing the common type across all elements of \code{...}.}
+determined by computing the common type across all elements. Use
+\code{new_json_array()} resp. \code{new_json_object()} if you know every element is
+an array resp. object. Mind that the return type will only be \code{json2}.}
 
 \item{names_sort}{Should the extracted columns be sorted by name? If \code{FALSE},
 the default, the columns are sorted by appearance.}
@@ -34,14 +38,14 @@ the object keys.}
 
 \item{names_repair}{What happens if the output has invalid column names?}
 
-\item{wrap_scalars}{Should scalars be wrapped?}
+\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
 }
 \description{
-Unnest a JSON object into columns
+Unnest a column of JSON objects in a data frame producing a wider data frame.
 }
 \examples{
 # turn all components of item into columns with json_unnest_wider()
-tibble(
+tibble::tibble(
   id = 1:2,
   x = c(
     '{"name": "Peter", "age": 19}',
@@ -50,7 +54,8 @@ tibble(
 ) \%>\%
   json_unnest_wider(x)
 
-tibble(
+# sort names and specify proto types
+tibble::tibble(
   id = 1:2,
   x = c(
     '{"name": "Peter", "age": 19, "purchase_ids": [1, 2]}',
@@ -66,4 +71,7 @@ tibble(
     ),
     names_sort = TRUE
   )
+}
+\seealso{
+\code{\link[=json_unnest_longer]{json_unnest_longer()}}
 }

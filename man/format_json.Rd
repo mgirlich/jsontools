@@ -61,7 +61,7 @@ format_json_list(
 \item{always_decimal}{Use real number notation in whole number doubles?}
 }
 \description{
-\code{format_json} is only a wrapper around the great \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.
+\code{format_json} is only a wrapper around the great \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}}.
 The differences are
 \itemize{
 \item expose argument \code{json_verbatim}, \code{rownames}, and \code{always_decimal}.

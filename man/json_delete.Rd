@@ -2,7 +2,7 @@
 % Please edit documentation in R/delete.R
 \name{json_delete}
 \alias{json_delete}
-\title{Delete key}
+\title{Remove JSON element}
 \usage{
 json_delete(x, ...)
 }
@@ -12,14 +12,17 @@ json_delete(x, ...)
 \item{...}{Paths to delete.}
 }
 \description{
-Delete the elements at the specified paths.
+Remote the elements at the specified paths from a JSON vector.
 }
 \examples{
 x <- c('{"a": 11, "b": {"x": 12}}', NA)
 
 json_delete(x, "$.a")
+# remove from multiple paths at once
 json_delete(x, "$.a", "$.b")
+# remove at a nested path
 json_delete(x, "$.b.x")
 
+# non-existing elements are just ignored
 json_delete(x, "$.abc")
 }

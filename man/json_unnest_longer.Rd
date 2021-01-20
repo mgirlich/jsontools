@@ -9,8 +9,8 @@ json_unnest_longer(
   col,
   path = NULL,
   values_to = NULL,
+  row_numbers_to = NULL,
   indices_to = NULL,
-  keys_to = NULL,
   ptype = NULL,
   wrap_scalars = FALSE
 )
@@ -20,40 +20,41 @@ json_unnest_longer(
 
 \item{col}{JSON-column of arrays to extract components from.}
 
-\item{path}{Path where to extract from.}
+\item{path}{Path to element. This must be a valid
+\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
+For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{values_to}{Name of column to store vector values. Defaults to \code{col}.}
 
-\item{indices_to}{A string giving the name of column which will contain the
-rownumber before unnesting.}
+\item{row_numbers_to}{Name of column to store the row number before unnesting.}
 
-\item{keys_to}{A string giving the name of column which will contain the
-object keys resp. the array indices.}
+\item{indices_to}{Name of column to store the array index of each element;
+note that this starts with 0.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
-determined by computing the common type across all elements of \code{...}.}
+determined by computing the common type across all elements. Use
+\code{new_json_array()} resp. \code{new_json_object()} if you know every element is
+an array resp. object. Mind that the return type will only be \code{json2}.}
 
-\item{wrap_scalars}{Should scalars be wrapped?}
+\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
 }
 \description{
-Unnest a JSON array column
+Unnest a column of JSON arrays in a data frame producing a longer data frame.
 }
 \examples{
-df <- tibble::tibble(json = discog_json)
+df <- tibble::tibble(
+  x = c("a", "b"),
+  json = c('[1, 2]', '[3, 4, 5]')
+)
 df
 
-item_df <- df \%>\%
+df \%>\%
   json_unnest_longer(
     "json",
-    values_to = "item"
+    row_numbers_to = "id",
+    indices_to = "index"
   )
-item_df
-
-item_df \%>\%
-  json_unnest_longer(
-    "item",
-    path = c("$.basic_information.artists"),
-    values_to = "artist",
-    indices_to = "component_id"
-  )
+}
+\seealso{
+\code{\link[=json_unnest_wider]{json_unnest_wider()}}
 }

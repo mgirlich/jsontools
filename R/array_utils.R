@@ -120,7 +120,20 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   as.integer(array_lengths)
 }
 
+#' Get the type of array elements
+#'
+#' This is barely useful on its own but can be of some use in combination with
+#' [`json_array_length()`].
+#'
+#' @inheritParams json_extract
+#'
+#' @return A character vector of JSON types.
+#'
+#' @seealso [`json_type()`]
+#'
 #' @export
+#' @examples
+#' json_array_types(c("[1, true]", '["a", [1]]'))
 json_array_types <- function(x, path = NULL) {
   json_each(x, path = path)$type
 }

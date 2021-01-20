@@ -2,7 +2,7 @@
 % Please edit documentation in R/flatten.R
 \name{json_flatten}
 \alias{json_flatten}
-\title{Flatten an array of values}
+\title{Flatten a JSON array}
 \usage{
 json_flatten(
   x,
@@ -16,20 +16,30 @@ json_flatten(
 \item{x}{A JSON vector.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
-determined by computing the common type across all elements of \code{...}.}
+determined by computing the common type across all elements. Use
+\code{new_json_array()} resp. \code{new_json_object()} if you know every element is
+an array resp. object. Mind that the return type will only be \code{json2}.}
 
 \item{allow_scalars}{Do not error for scalar elements?}
 
-\item{wrap_scalars}{Should scalars be wrapped?}
+\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
 
 \item{bigint_as_char}{Convert big integers to character?}
 }
 \description{
-Flatten an array of values
+Flatten a JSON array
 }
 \examples{
+json_flatten(c("[1, 2]", "[3]"))
+
+# names are kep
 json_flatten(c(x = "[1, 2]", y = "[3]"))
 
+# scalar elements produce an error ...
 try(json_flatten(c(x = "[1, 2]", y = "3")))
+# ... but can be explicitly allowed with `allow_scalars`
 json_flatten(c(x = "[1, 2]", y = "3"), allow_scalars = TRUE)
+}
+\seealso{
+\code{\link[=json_unnest_longer]{json_unnest_longer()}}, \code{\link[=json_unnest_wider]{json_unnest_wider()}}
 }

@@ -7,9 +7,11 @@
 json_array_length(x, path = NULL, wrap_scalars = FALSE)
 }
 \arguments{
-\item{x}{Vector with JSON.}
+\item{x}{A JSON vector.}
 
-\item{path}{Path}
+\item{path}{Path to element. This must be a valid
+\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
+For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{wrap_scalars}{Consider scalars as length one array?}
 }
@@ -21,5 +23,7 @@ Get array length of JSON arrays
 }
 \examples{
 json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
+
+# scalars produce an error unless `wrap_scalars` is `TRUE`
 json_array_length(1, wrap_scalars = TRUE)
 }

@@ -13,7 +13,9 @@ json_u(x)
 A singleton version of \code{x}.
 }
 \description{
-A wrapper around \code{jsonlite::unbox()} to avoid conflict with \code{rlang::unbox()}.
+Mark a vector of length one to not be wrapped in an array when formated as
+\code{JSON}. This is only a tiny wrapper around \code{jsonlite::unbox()} to avoid
+conflict with \code{rlang::unbox()}.
 }
 \examples{
 format_json(list(foo = 123))

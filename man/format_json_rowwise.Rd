@@ -25,9 +25,9 @@ format_json_rowwise(
 \arguments{
 \item{df}{A dataframe.}
 
-\item{null, na, auto_unbox, dataframe, matrix, Date}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+\item{null, na, POSIXt, factor, complex, matrix, Date}{passed on to \code{\link[jsonlite:stream_in]{jsonlite::stream_out}}.}
 
-\item{POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
+\item{auto_unbox, raw, digits, force, ...}{passed on to \code{\link[jsonlite:stream_in]{jsonlite::stream_out}}.}
 
 \item{json_verbatim}{Leave json as it is and do not encode it again?}
 
@@ -52,6 +52,7 @@ df$y <- data.frame(z = c("a", "b"))
 format_json_rowwise(df)
 
 if (require("dplyr", quietly = TRUE, warn.conflicts = FALSE)) {
+  tibble <- tibble::tibble
   # often useful in mutate/transmute
   mtcars \%>\%
     transmute(json = format_json_rowwise(tibble(mpg, cyl, extra = tibble(disp, hp))))

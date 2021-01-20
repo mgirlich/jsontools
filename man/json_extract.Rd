@@ -17,22 +17,28 @@ json_extract(
 \arguments{
 \item{x}{A JSON vector.}
 
-\item{path}{Path to element to extract.}
+\item{path}{Path to element. This must be a valid
+\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
+For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
-determined by computing the common type across all elements of \code{...}.}
+determined by computing the common type across all elements. Use
+\code{new_json_array()} resp. \code{new_json_object()} if you know every element is
+an array resp. object. Mind that the return type will only be \code{json2}.}
 
 \item{default}{Default value if path doesn't exist or element at path is
 empty.}
 
 \item{na}{Default value if element of \code{x} is \code{NA}.}
 
-\item{wrap_scalars}{Should scalars be wrapped?}
+\item{wrap_scalars}{Should scalar values be wrapped as a JSON array?}
 
 \item{bigint_as_char}{Convert big integers to character?}
 }
 \value{
-A vector with class given by \code{.ptype} and length equal to \code{x}.
+A vector with class given by \code{ptype} and length equal to \code{x}. Mind
+that for \code{new_json_array()} and \code{new_json_object()} the return type will
+only be \code{json2}.
 }
 \description{
 Extract an element at a given path.
@@ -40,12 +46,19 @@ Extract an element at a given path.
 \examples{
 x1 <- '{"a": 1, "b": 2}'
 json_extract(x1, "$.a")
+json_extract('{"a": {"b": 1}}', "$.a")
 
+# `NA` values stay `NA` ...
 json_extract(c(NA_character_, x1), "$.a")
+# ... but can return the value of `na` instead.
 json_extract(c(NA_character_, x1), "$.a", na = 3)
 
+# missing paths error by default ...
 try(json_extract(x1, "$.c"))
+# ... but can be replaced by the value of `default` instead.
 json_extract(x1, "$.c", default = "not there")
 
-json_extract('{"a": {"b": 1}}', "$.a")
+# make sure to error if you don't get back an array
+json_extract('{"a": [1]}', "$.a", ptype = new_json_array())
+try(json_extract('{"a": {"b": 1}}', "$.a", ptype = new_json_array()))
 }
