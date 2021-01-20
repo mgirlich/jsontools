@@ -51,7 +51,7 @@ parse_json_vector(customer_infos)
 but with the `.na` argument we can specify which value should be used instead:
 
 ```{r parse-na-success}
-parse_json_vector(customer_infos, .na = NULL)
+parse_json_vector(customer_infos, .na = NULL) %>% str()
 ```
 
 Note that the default for `simplifyDataFrame` and `simplifyMatrix` has been changed to `FALSE`.
@@ -112,7 +112,31 @@ To format every element of a list to JSON instead of the whole list at once use
 
 ```{r format_json_list}
 customer_infos_list <- parse_json_vector(customer_infos, .na = NULL)
-customer_infos_list
+str(customer_infos_list)
 
 format_json_list(customer_infos_list)
 ```
+
+Notice that each value is wrapped in a JSON array?
+If you do not want this you have three possibilites:
+
+* use `json_u()` on the elements you do not want in an array.
+* use the argument `auto_unbox = TRUE` to only wrap elements of length > 1 in an array.
+* put the data in a data frame.
+
+While `auto_unbox = TRUE` is quite handy you should only use it in non-interactive scripts as otherwise the output JSON might change the format.
+For example we a value `customers` in a list. Usually, customers is a vector of length > 1.
+
+```{r}
+x <- list(customers = 1:2)
+format_json(x, auto_unbox = TRUE)
+```
+
+But in some rare cases there is only a single customer
+
+```{r}
+x <- list(customers = 1)
+format_json(x, auto_unbox = TRUE)
+```
+
+and instead of an array we get a scalar integer at the key "customers".
