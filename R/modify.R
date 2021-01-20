@@ -16,6 +16,10 @@
 #' json_mutate(x_na, .c = 0, .d.x = c("a", "b", "c"))
 json_mutate <- function(x, ...) {
   dots <- list(...)
+  if (is_empty(dots)) {
+    return(x)
+  }
+
   dots <- lapply(dots, escape_value)
 
   paths <- paste0("$", names(dots))
