@@ -54,16 +54,21 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE) {
   result
 }
 
-#' Flatten an array of values
+#' Flatten a JSON array
 #'
 #' @inheritParams json_extract
 #' @param allow_scalars Do not error for scalar elements?
 #'
 #' @export
 #' @examples
+#' json_flatten(c("[1, 2]", "[3]"))
+#'
+#' # names are kep
 #' json_flatten(c(x = "[1, 2]", y = "[3]"))
 #'
+#' # scalar elements produce an error ...
 #' try(json_flatten(c(x = "[1, 2]", y = "3")))
+#' # ... but can be explicitly allowed with `allow_scalars`
 #' json_flatten(c(x = "[1, 2]", y = "3"), allow_scalars = TRUE)
 json_flatten <- function(x,
                          ptype = NULL,
@@ -132,41 +137,38 @@ json_each_df <- function(x) {
 
 #' Unnest a JSON array column
 #'
+#' Unnest a column of JSON arrays in a data frame producing a longer data frame.
+#'
 #' @param data A data frame.
 #' @param col JSON-column of arrays to extract components from.
-#' @param path Path where to extract from.
+#' @inheritParams json_extract
 #' @param values_to Name of column to store vector values. Defaults to `col`.
-#' @param indices_to A string giving the name of column which will contain the
-#'   rownumber before unnesting.
-#' @param keys_to A string giving the name of column which will contain the
-#'   object keys resp. the array indices.
-#' @inheritParams json_flatten
+#' @param row_numbers_to Name of column to store the row number before unnesting.
+#' @param indices_to Name of column to store the array index of each element;
+#'   note that this starts with 0.
+#'
+#' @seealso [`json_unnest_wider()`]
 #'
 #' @export
 #' @examples
-#' df <- tibble::tibble(json = discog_json)
+#' df <- tibble::tibble(
+#'   x = c("a", "b"),
+#'   json = c('[1, 2]', '[3, 4, 5]')
+#' )
 #' df
 #'
-#' item_df <- df %>%
+#' df %>%
 #'   json_unnest_longer(
 #'     "json",
-#'     values_to = "item"
-#'   )
-#' item_df
-#'
-#' item_df %>%
-#'   json_unnest_longer(
-#'     "item",
-#'     path = c("$.basic_information.artists"),
-#'     values_to = "artist",
-#'     indices_to = "component_id"
+#'     row_numbers_to = "id",
+#'     indices_to = "index"
 #'   )
 json_unnest_longer <- function(data,
                                col,
                                path = NULL,
                                values_to = NULL,
+                               row_numbers_to = NULL,
                                indices_to = NULL,
-                               keys_to = NULL,
                                ptype = NULL,
                                # allow_scalars = TRUE,
                                wrap_scalars = FALSE) {
@@ -202,12 +204,12 @@ json_unnest_longer <- function(data,
     wrap_scalars = wrap_scalars
   )
 
-  if (!is.null(indices_to)) {
-    data[[indices_to]] <- x_each$row_id
+  if (!is.null(row_numbers_to)) {
+    data[[row_numbers_to]] <- x_each$row_id
   }
 
-  if (!is.null(keys_to)) {
-    data[[keys_to]] <- x_each$key
+  if (!is.null(indices_to)) {
+    data[[indices_to]] <- x_each$key
   }
 
   if (inherits(data[[values_to]], "json2")) {
@@ -219,16 +221,17 @@ json_unnest_longer <- function(data,
 
 #' Unnest a JSON object into columns
 #'
-#' @param data A data frame.
-#' @param col JSON-column of objects to extract components from.
-#' @param path Path where to extract from.
+#' Unnest a column of JSON objects in a data frame producing a wider data frame.
+#'
+#' @inheritParams json_unnest_longer
 #' @param names_sort Should the extracted columns be sorted by name? If `FALSE`,
 #'   the default, the columns are sorted by appearance.
 #' @param names_sep If `NULL`, the default, the keys of the objects in `col`
 #'   are used as the column names. If a character it is used to join `col` and
 #'   the object keys.
 #' @param names_repair What happens if the output has invalid column names?
-#' @inheritParams json_flatten
+#'
+#' @seealso [`json_unnest_longer()`]
 #'
 #' @export
 #' @examples
@@ -242,6 +245,7 @@ json_unnest_longer <- function(data,
 #' ) %>%
 #'   json_unnest_wider(x)
 #'
+#' # sort names and specify proto types
 #' tibble::tibble(
 #'   id = 1:2,
 #'   x = c(
