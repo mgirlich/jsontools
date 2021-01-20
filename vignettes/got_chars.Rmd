@@ -15,8 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# library(jsontools)
-devtools::load_all("~/GitHub/jsontools")
+library(jsontools)
+# devtools::load_all("~/GitHub/jsontools")
 # got_json <- json2(got_chars_json)
 # got_json <- json2(readChar(got_chars_json, nchars = 1e6))
 got_json <- json2(readChar("../data/got_chars.json", nchars = 1e6))
@@ -36,36 +36,64 @@ json_array_length(got_json)
 json_array_types(got_json)
 ```
 
-Each element of the array is a JSON object. We can now unpack the array with `json_flatten_query()`:
+Each element of the array is a JSON object. To work with the data in the array it is often more convenient to unpack it with `json_flatten()`.
+This produces a JSON vector whose elements are the elements of the array:
 
 ```{r flatten}
-got_chars <- json_flatten(got_json)
-json_prettify(got_chars[1])
+json_flatten(got_json)
 ```
 
-In non-interactive use it is a good idea to specify via the `ptype` argument the type you expect.
-In this example `new_json_object()` or `json2()` both make sense:
+In non-interactive use it is a good idea to specify the type you expect via the `ptype` argument.
+In this case we expect each element to be a JSON object and therefore use `ptype = new_json_object()`.
 
 ```{r flatten-ptype}
 got_chars <- json_flatten(got_json, ptype = new_json_object())
-got_chars <- json_flatten(got_json, ptype = json2())
 ```
+
+An alternative would have been to use `ptype = json2()` when we don't care whether the elements are arrays, objects, or a mix of them.
 
 
 ## Extract Data
 Let's have a look at the first Game of Thrones character
 
-```{r got-chars}
+```{r got_chars_1}
 got_chars[1]
 ```
 
-For a better readability we can use `json_prettify()`
+This minified JSON is not so easy to read so we prettify it with `json_prettify()`
 
 ```{r prettify}
 json_prettify(got_chars[1])
 ```
 
-With the help of `json_get_value()` we can now easily construct a tibble with some basic information about the characters
+To extract data from the JSON vector we need to know about the JSON path syntax
+used here. It comes from the command line tool [jq](https://stedolan.github.io/jq/)
+and is very similar to the SQL standard.
+The path to the key of an object is simply a dot followed by the key ".key".
+And for nested objects one simply concatenates this syntax ".key1.key2". For
+example to get the message in the commit one uses the path ".commit.message".
+
+
+With the help of `json_extract()` we can now easily extract values from each character:
+
+```{r extract-simple}
+json_extract(got_chars, "$.name")
+```
+
+The second argument `"$.name"` specifies the `path` of the element we want to extract.
+The basic syntax is relatively simple:
+
+* `$.name` to extract the attribute `name` of a JSON object.
+* `$[0]` to extract the first element of a JSON array. Keep in mind that the index here starts with 0 unlike in `R`!
+* `$[last]` to extract the last element.
+
+If you wonder about the dollar sign `$`: it stands for the current element.
+Simply always start the path with it and you will be fine.
+
+To extract elements of nested objects you simply combine the path.
+For example the path to `1` in {"a": {"b": [1, 2]}} is `$.a.b[0]`.
+
+We can now construct a tibble with some basic information about the characters
 
 ```{r extract}
 tibble::tibble(
@@ -75,80 +103,91 @@ tibble::tibble(
 )
 ```
 
-Oh, we actually also wanted the books. Let's add them now:
+Oh, we actually also wanted the titles of each character
 
 ```{r error=TRUE}
 tibble::tibble(
   id = json_extract(got_chars, "$.id"),
   name = json_extract(got_chars, "$.name"),
   alive = json_extract(got_chars, "$.alive"),
-  books = json_extract(got_chars, "$.titles")
+  titles = json_extract(got_chars, "$.titles")
 )
 ```
 
-Hmm, but now we get an error message that we cannot combine an array with text. Let's try extracting the books as text:
+Unfortunately, we get an error message saying that we cannot combine an array with text.
+Let's try extracting the books as text:
 
 ```{r}
 json_extract(got_chars, "$.titles", ptype = character())
 ```
 
-We see that the API actually isn't type stable: it returns a simple text value instead of an array if the character appeared only in a single book.
-This is quite a bad idea but we can still fix it with the argument `wrap_scalars` and get nice JSON arrays:
+We see that the API actually isn't type stable: it returns a simple text value instead of an array if the character only has one title.
+It is usually not a good idea to mix characters and arrays in an API.
+But as some APIs in the wild do this you can fix it with the argument `wrap_scalars` and get only JSON arrays back:
 
 ```{r}
 json_extract(got_chars, "$.titles", wrap_scalars = TRUE)
 ```
 
-If we have a vector of JSON objects and want to convert the keys into columns we can simply use `json_unnest_wider()`.
-Of course, we also have to use `wrap_scalars = TRUE`:
+
+## Unnesting
+It would be quite tedious to extract every field of a character like that.
+Instead you can simply use `json_unnest_wider()` to convert the keys of a JSON object into columns.
+Like before, we also have to use `wrap_scalars = TRUE`:
 
 ```{r unnest-wider}
-tibble::tibble(chars_json = got_chars) %>%
-  json_unnest_wider(chars_json, wrap_scalars = TRUE) %>%
-  dplyr::glimpse()
+got_chars_df <- tibble::tibble(chars_json = got_chars) %>%
+  json_unnest_wider(chars_json, wrap_scalars = TRUE)
+
+got_chars_df
 ```
 
+We can also unnest arrays with `json_unnest_longer()`.
+This is basically a version `json_flatten()` for data frames
+
 ```{r unnest-longer}
-tibble::tibble(chars_json = got_chars) %>% 
-  dplyr::transmute(
-    url = json_extract(chars_json, "$.url"),
-    id = json_extract(chars_json, "$.id"),
-    name = json_extract(chars_json, "$.name"),
-    # TODO should this be possible? -> explicit cast to character would then be needed
-    # books = json_extract(chars_json, "$.titles", wrap_scalars = FALSE)
-    titles = json_extract(chars_json, "$.titles", wrap_scalars = TRUE)
-  ) %>% 
-  # mutate(books = json_wrap_scalars(books)) %>% 
+got_chars_df[c("id", "name", "titles")] %>% 
   json_unnest_longer(titles)
 ```
 
 
-```{r extract-wrap-scalars, error=TRUE}
-json_extract(got_chars, "$.titles")
-json_extract(got_chars, "$.titles", wrap_scalars = TRUE)
-json_extract(got_chars, "$.titles", ptype = character()) %>% json2()
-# json_extract(got_chars, "$.titles", wrap_scalars = FALSE)
-```
-
 ## Modify Data
+It is also possible to modify the JSON directly.
+With `json_delete()` we can delete multiple fields in an object
 
 ```{r}
-got_chars_small <- got_chars[1:3] %>% 
-  json_build_object(
-    id = 1:3,
-    name = .name,
-    gender = .gender
-  )
-
-got_chars_small
+got_chars_small <- json_delete(got_chars, "$.url", "$.aliases", "$.allegiances")
 ```
 
-```{r}
-gender <- json_extract(got_chars_small, "$.gender")
+And with `json_mutate()` we can easily mutate elements
 
+```{r}
 json_mutate(
   got_chars_small,
-  .gender = tolower(gender)
+  .id = 1:5,
+  .alive = !json_extract(got_chars_small, "$.alive")
 )
 ```
 
+or patch with another JSON using `json_merge()`
+
+```{r}
+x <- c(
+  '{"id": 1, "a": 3}',
+  '{"id": 2, "a": 4}',
+  '{"id": 3}'
+)
+
+# remove element at "a"
+json_merge(x, '{"a": null}')
+
+# it is vectorised
+json_merge(
+  x,
+  c(
+    '{"a": null}',
+    '{"a": 5}',
+    '{"a": 6}'
+  )
+)
+```
