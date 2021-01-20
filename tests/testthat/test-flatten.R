@@ -246,7 +246,7 @@ test_that("json_unnest_longer with discog_json", {
     "item",
     path = c("$.basic_information.artists"),
     values_to = "artists",
-    indices_to = "component_id"
+    row_numbers_to = "component_id"
   )
 
   expect_snapshot_value(
