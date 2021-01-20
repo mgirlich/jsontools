@@ -28,3 +28,13 @@ json_delete <- function(x, ...) {
   write_json_tbl(x)
   new_json2(exec_sqlite_json(sql)$result)
 }
+
+escape_paths <- function(..., collapse = FALSE) {
+  paths <- DBI::dbQuoteString(con, c(...))
+
+  if (is_true(collapse)) {
+    paths <- paste0(paths, collapse = ", ")
+  }
+
+  paths
+}
