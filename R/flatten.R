@@ -1,16 +1,3 @@
-write_json_tbl <- function(x, ...) {
-  DBI::dbWriteTable(
-    con,
-    "my_tbl",
-    tibble::tibble(row_id = seq_along(x), data = x, ...),
-    overwrite = TRUE
-  )
-}
-
-exec_sqlite_json <- function(sql) {
-  tibble::as_tibble(DBI::dbGetQuery(con, sql))
-}
-
 json_each <- function(x, path = NULL, allow_scalars = FALSE) {
   # TODO handle NA
   # * error by default
@@ -351,22 +338,6 @@ json_unnest_wider <- function(data,
   }
 
   data
-}
-
-json_wrap_scalars <- function(x) {
-  # TODO without path could do it purely in R
-  # TODO allow wrapping scalars at a path? like a combination of modify and wrap?
-  # json_type(x)
-  write_json_tbl(x)
-
-  exec_sqlite_json(
-    "SELECT
-      CASE
-        WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
-        WHEN my_tbl.data IS NULL THEN 'null'
-        ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
-      END AS result
-    FROM my_tbl")$result %>% json2()
 }
 
 is_scalar <- function(x) {

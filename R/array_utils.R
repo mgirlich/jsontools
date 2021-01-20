@@ -121,3 +121,19 @@ is_json_array <- function(x, null = TRUE, na = TRUE) {
     (null & x == "null" & !is.na(x)) |
     (na & is.na(x))
 }
+
+json_wrap_scalars <- function(x) {
+  # TODO without path could do it purely in R
+  # TODO allow wrapping scalars at a path? like a combination of modify and wrap?
+  # json_type(x)
+  write_json_tbl(x)
+
+  exec_sqlite_json(
+    "SELECT
+      CASE
+        WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
+        WHEN my_tbl.data IS NULL THEN 'null'
+        ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
+      END AS result
+    FROM my_tbl")$result %>% json2()
+}
