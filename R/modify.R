@@ -61,15 +61,24 @@ json_mutate <- function(x, ...) {
   new_json2(result)
 }
 
-#' Merge two jsons
+#' Merge two JSON objects
+#'
+#' By merging two objects you can add, modify, or remove elements of an object.
+#' Arrays cannot be modified but only replaced as a whole.
 #'
 #' @param x A JSON vector to update.
 #' @param y A JSON vector with updated values.
 #'
 #' @export
 #' @examples
-#' # something like list_modify and list_merge?
-#' json_merge('{"a": 1, "c": 3}', '{"a": 11, "b": 2}')
+#' # update element with key "a"
+#' json_merge('{"a": 1, "c": 3}', '{"a": 11}')
+#'
+#' # you can also add elements
+#' json_merge('{"a": 1, "c": 3}', '{"b": 2}')
+#'
+#' # remove elements with `null`
+#' json_merge('{"a": 1, "c": 3}', '{"c": null}')
 json_merge <- function(x, y) {
   if (any(is.na(y) & !is.na(x))) {
     stop_jsontools("`y` can only be NA where `x` is as well.")

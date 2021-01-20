@@ -59,6 +59,8 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE) {
 #' @inheritParams json_extract
 #' @param allow_scalars Do not error for scalar elements?
 #'
+#' @seealso [`json_unnest_longer()`], [`json_unnest_wider()`]
+#'
 #' @export
 #' @examples
 #' json_flatten(c("[1, 2]", "[3]"))
