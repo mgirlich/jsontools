@@ -3,7 +3,9 @@
 #' Extract an element at a given path.
 #'
 #' @param x A JSON vector.
-#' @param path Path to element to extract.
+#' @param path Path to element to extract. This must be a valid
+#' [JSONpath](https://goessner.net/articles/JsonPath/index.html#e2) expression.
+#' For example `"$.a.b[0]` extracts the `1` in `{"a": {"b": [1, 2]}}`.
 #' @param ptype Output type. If `NULL`, the default, the output type is
 #' determined by computing the common type across all elements. Use
 #' `new_json_array()` resp. `new_json_object()` if you know every element is
