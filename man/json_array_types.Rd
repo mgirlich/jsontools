@@ -4,14 +4,10 @@
 \alias{json_array_types}
 \title{Get the type of array elements}
 \usage{
-json_array_types(x, path = NULL)
+json_array_types(x)
 }
 \arguments{
 \item{x}{A JSON vector.}
-
-\item{path}{Path to element. This must be a valid
-\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
-For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 }
 \value{
 A character vector of JSON types.

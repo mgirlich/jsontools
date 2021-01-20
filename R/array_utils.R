@@ -89,8 +89,8 @@ agg_array <- function(x) {
 #'
 #' # scalars produce an error unless `wrap_scalars` is `TRUE`
 #' json_array_length(1, wrap_scalars = TRUE)
-json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
-  path <- path %||% "$"
+json_array_length <- function(x, wrap_scalars = FALSE) {
+  path <- "$"
 
   write_json_tbl(x)
   array_info_df <- exec_sqlite_json(
@@ -134,8 +134,8 @@ json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
 #' @export
 #' @examples
 #' json_array_types(c("[1, true]", '["a", [1]]'))
-json_array_types <- function(x, path = NULL) {
-  json_each(x, path = path)$type
+json_array_types <- function(x) {
+  json_each(x)$type
 }
 
 is_json_array <- function(x, null = TRUE, na = TRUE) {

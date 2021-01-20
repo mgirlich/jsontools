@@ -7,7 +7,6 @@
 json_unnest_wider(
   data,
   col,
-  path = NULL,
   ptype = list(),
   names_sort = FALSE,
   names_sep = NULL,
@@ -19,10 +18,6 @@ json_unnest_wider(
 \item{data}{A data frame.}
 
 \item{col}{JSON-column of arrays to extract components from.}
-
-\item{path}{Path to element. This must be a valid
-\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
-For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{ptype}{Output type. If \code{NULL}, the default, the output type is
 determined by computing the common type across all elements. Use

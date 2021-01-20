@@ -241,16 +241,16 @@ test_that("json_unnest_longer with discog_json", {
     style = "json2"
   )
 
-  artists_df <- json_unnest_longer(
-    item_df,
-    "item",
-    path = c("$.basic_information.artists"),
-    values_to = "artists",
-    row_numbers_to = "component_id"
+  artist_df <- tibble(
+    artists = json_extract(item_df$item, "$.basic_information.artists")
   )
 
   expect_snapshot_value(
-    artists_df,
+    json_unnest_longer(
+      artist_df,
+      "artists",
+      row_numbers_to = "component_id"
+    ),
     style = "json2"
   )
 })
@@ -364,11 +364,14 @@ test_that("json_unnest_wider with discog_json", {
     style = "json2"
   )
 
+  basic_info_df <- tibble(
+    basic_info = json_extract(item_df$item, "$.basic_information")
+  )
+
   expect_snapshot_value(
     json_unnest_wider(
-      item_df,
-      "item",
-      path = c("$.basic_information")
+      basic_info_df,
+      "basic_info"
     ),
     style = "json2"
   )

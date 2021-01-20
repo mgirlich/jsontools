@@ -4,14 +4,10 @@
 \alias{json_array_length}
 \title{Get array length of JSON arrays}
 \usage{
-json_array_length(x, path = NULL, wrap_scalars = FALSE)
+json_array_length(x, wrap_scalars = FALSE)
 }
 \arguments{
 \item{x}{A JSON vector.}
-
-\item{path}{Path to element. This must be a valid
-\href{https://goessner.net/articles/JsonPath/index.html#e2}{JSONpath} expression.
-For example \verb{"$.a.b[0]} extracts the \code{1} in \verb{\{"a": \{"b": [1, 2]\}\}}.}
 
 \item{wrap_scalars}{Consider scalars as length one array?}
 }

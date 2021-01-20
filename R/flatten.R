@@ -167,7 +167,6 @@ json_each_df <- function(x) {
 #'   )
 json_unnest_longer <- function(data,
                                col,
-                               path = NULL,
                                values_to = NULL,
                                row_numbers_to = NULL,
                                indices_to = NULL,
@@ -186,7 +185,6 @@ json_unnest_longer <- function(data,
 
   x_each <- json_each(
     data[[col]],
-    path = path,
     # TODO should this be allowed as argument?
     allow_scalars = FALSE
   )
@@ -273,7 +271,6 @@ json_unnest_longer <- function(data,
 #'   )
 json_unnest_wider <- function(data,
                               col,
-                              path = NULL,
                               ptype = list(),
                               names_sort = FALSE,
                               names_sep = NULL,
@@ -294,10 +291,7 @@ json_unnest_wider <- function(data,
   data <- data[!is.na(data[[col]]), ]
   col_values <- data[[col]]
 
-  x_each <- json_each(
-    col_values,
-    path = path
-  )
+  x_each <- json_each(col_values)
 
   if (!all(x_each$col_type == "object")) {
     stop_jsontools("every element of `col` must be a json object")
