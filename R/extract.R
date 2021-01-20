@@ -5,27 +5,38 @@
 #' @param x A JSON vector.
 #' @param path Path to element to extract.
 #' @param ptype Output type. If `NULL`, the default, the output type is
-#' determined by computing the common type across all elements of `...`.
+#' determined by computing the common type across all elements. Use
+#' `new_json_array()` resp. `new_json_object()` if you know every element is
+#' an array resp. object. Mind that the return type will only be `json2`.
 #' @param default Default value if path doesn't exist or element at path is
 #' empty.
 #' @param na Default value if element of `x` is `NA`.
-#' @param wrap_scalars Should scalars be wrapped?
+#' @param wrap_scalars Should scalar values be wrapped as a JSON array?
 #' @param bigint_as_char Convert big integers to character?
 #'
-#' @return A vector with class given by `.ptype` and length equal to `x`.
+#' @return A vector with class given by `ptype` and length equal to `x`. Mind
+#' that for `new_json_array()` and `new_json_object()` the return type will
+#' only be `json2`.
 #'
 #' @export
 #' @examples
 #' x1 <- '{"a": 1, "b": 2}'
 #' json_extract(x1, "$.a")
+#' json_extract('{"a": {"b": 1}}', "$.a")
 #'
+#' # `NA` values stay `NA` ...
 #' json_extract(c(NA_character_, x1), "$.a")
+#' # ... but can return the value of `na` instead.
 #' json_extract(c(NA_character_, x1), "$.a", na = 3)
 #'
+#' # missing paths error by default ...
 #' try(json_extract(x1, "$.c"))
+#' # ... but can be replaced by the value of `default` instead.
 #' json_extract(x1, "$.c", default = "not there")
 #'
-#' json_extract('{"a": {"b": 1}}', "$.a")
+#' # make sure to error if you don't get back an array
+#' json_extract('{"a": [1]}', "$.a", ptype = new_json_array())
+#' try(json_extract('{"a": {"b": 1}}', "$.a", ptype = new_json_array()))
 json_extract <- function(x,
                          path,
                          ptype = NULL,
