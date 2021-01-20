@@ -18,7 +18,7 @@ json_convert_value <- function(x,
   if (should_wrap_scalars(wrap_scalars, ptype, json_types)) {
     # wrap all simple types in an array and change the json_type
     idx <- !json_types %in% c("null", cplx_json_types) & !is.na(json_types)
-    x_parsed[idx] <- lapply(x_parsed[idx], json_agg_array)
+    x_parsed[idx] <- lapply(x_parsed[idx], json_array_agg)
     json_types[idx] <- "array"
   }
 

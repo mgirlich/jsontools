@@ -6,59 +6,69 @@
 #' @export
 #'
 #' @examples
-#' json_agg_array(1:3)
-#' json_agg_array(json2(c('{"a": 1}', '{"b": 2}')))
-json_agg_array <- function(x) {
-  UseMethod("json_agg_array")
+#' json_array_agg(1:3)
+#' json_array_agg(json2(c('{"a": 1}', '{"b": 2}')))
+#'
+#' # can be quite useful in combination with `dplyr::group_by()`
+#' if (require("dplyr", quietly = TRUE, warn.conflicts = FALSE)) {
+#'   tibble::tibble(
+#'     group = c(1, 1, 2, 2),
+#'     json = c(1:4)
+#'   ) %>%
+#'     dplyr::group_by(group) %>%
+#'     dplyr::summarise(json = json_array_agg(json))
+#' }
+json_array_agg <- function(x) {
+  UseMethod("json_array_agg")
 }
 
 #' @export
-json_agg_array.json2 <- function(x) {
+json_array_agg.json2 <- function(x) {
   new_json2(sprintf("[%s]", paste0(x, collapse = ",")))
 }
 
 #' @export
-json_agg_array.integer <- function(x) {
+json_array_agg.integer <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.double <- function(x) {
+json_array_agg.double <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.logical <- function(x) {
+json_array_agg.logical <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.character <- function(x) {
+json_array_agg.character <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.factor <- function(x) {
+json_array_agg.factor <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.POSIXct <- function(x) {
+json_array_agg.POSIXct <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.POSIXlt <- function(x) {
+json_array_agg.POSIXlt <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.Date <- function(x) {
+json_array_agg.Date <- function(x) {
   agg_array(x)
 }
 
 #' @export
-json_agg_array.complex<- function(x) {
+json_array_agg.complex<- function(x) {
   agg_array(x)
 }
 
@@ -68,8 +78,7 @@ agg_array <- function(x) {
 
 #' Get array length of JSON arrays
 #'
-#' @param x Vector with JSON.
-#' @param path Path
+#' @inheritParams json_extract
 #' @param wrap_scalars Consider scalars as length one array?
 #'
 #' @return An integer vector of array lengths
@@ -77,6 +86,8 @@ agg_array <- function(x) {
 #'
 #' @examples
 #' json_array_length(c(NA, "[1, 2, 3]", "[1, 2]"))
+#'
+#' # scalars produce an error unless `wrap_scalars` is `TRUE`
 #' json_array_length(1, wrap_scalars = TRUE)
 json_array_length <- function(x, path = NULL, wrap_scalars = FALSE) {
   path <- path %||% "$"
@@ -122,6 +133,16 @@ is_json_array <- function(x, null = TRUE, na = TRUE) {
     (na & is.na(x))
 }
 
+#' Wrap scalars in a JSON array
+#'
+#' @param x A character or numeric vector.
+#'
+#' @return A `json2` vector.
+#' @export
+#'
+#' @examples
+#' json_wrap_scalars(c('["a", "b"]', "c", "d"))
+#' json_wrap_scalars(c(1, 2))
 json_wrap_scalars <- function(x) {
   # TODO without path could do it purely in R
   # TODO allow wrapping scalars at a path? like a combination of modify and wrap?
@@ -131,7 +152,14 @@ json_wrap_scalars <- function(x) {
   exec_sqlite_json(
     "SELECT
       CASE
-        WHEN JSON_VALID(my_tbl.data) THEN my_tbl.data
+        WHEN JSON_VALID(my_tbl.data) THEN CASE
+          WHEN
+            JSON_TYPE(my_tbl.data) NOT IN ('array', 'object')
+          THEN
+            JSON_ARRAY(my_tbl.data)
+          ELSE
+            my_tbl.data
+          END
         WHEN my_tbl.data IS NULL THEN 'null'
         ELSE JSON_ARRAY(JSON_QUOTE(my_tbl.data))
       END AS result
