@@ -14,10 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(jsontools)
-```
-
 ## Parsing from JSON
 
 There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`). But for me they all had some drawbacks when working with JSON columns from a database:
@@ -33,7 +29,9 @@ There are already a couple of packages to parse JSON (e.g. `rjson` or `jsonlite`
 
 As an example assume we got the following JSON vector
 
-```{r}
+```{r customer_infos}
+library(jsontools)
+
 customer_infos <- json2(c(
   '{"name": "Peter", "age": 19, "premium": true}',
   '{"name": "Daniel", "age": 41}',
@@ -46,13 +44,13 @@ customer_infos
 
 By default the `NA` produces an error
 
-```{r error=TRUE}
+```{r parse-na-error, error=TRUE}
 parse_json_vector(customer_infos)
 ```
 
 but with the `.na` argument we can specify which value should be used instead:
 
-```{r}
+```{r parse-na-success}
 parse_json_vector(customer_infos, .na = NULL)
 ```
 
@@ -75,7 +73,7 @@ For conversion there are the following functions:
 
 Let's look at our customer infos from above. Assume we have converted it into a tibble:
 
-```{r}
+```{r customer_infos_df}
 customer_infos_df <- tibble::tibble(
   name = c("Peter", "Daniel", NA, "Pablo"),
   age = c(19L, 41L, NA, 27L),
@@ -85,7 +83,7 @@ customer_infos_df <- tibble::tibble(
 
 and filled the missing fields:
 
-```{r}
+```{r customer_infos_df-filled}
 customer_infos_df[3, ] <- tibble::tibble(
   name = "Michael",
   age = 38,
@@ -98,6 +96,23 @@ customer_infos_df
 
 We can now easily convert it back into a JSON vector
 
-```{r}
+```{r format_json_rowwise}
 format_json_rowwise(customer_infos_df)
+```
+
+Compare this to `format_json()` which turns the data frame into an array of
+objects:
+
+```{r format_json}
+format_json(customer_infos_df)
+```
+
+To format every element of a list to JSON instead of the whole list at once use
+`format_json_list()`:
+
+```{r format_json_list}
+customer_infos_list <- parse_json_vector(customer_infos, .na = NULL)
+customer_infos_list
+
+format_json_list(customer_infos_list)
 ```
