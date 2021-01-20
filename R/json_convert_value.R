@@ -157,12 +157,21 @@ json_vec_c <- function(x, types, ptype = NULL) {
   vec_c(!!!x, .ptype = ptype)
 }
 
-new_json_object <- function(x = character()) {
-  new_vctr(x, class = c("json2_object", "json2"))
+#' Prototype helpers
+#'
+#' Create a JSON object/array prototype to pass to the `.ptype` argument in
+#' some of the functions.
+#'
+#' @export
+#' @rdname new_json_object
+new_json_object <- function() {
+  new_vctr(character(), class = c("json2_object", "json2"))
 }
 
-new_json_array <- function(x = character()) {
-  new_vctr(x, class = c("json2_array", "json2"))
+#' @export
+#' @rdname new_json_object
+new_json_array <- function() {
+  new_vctr(character(), class = c("json2_array", "json2"))
 }
 
 scalar_json_types <- c("true", "false", "integer", "real", "text")
