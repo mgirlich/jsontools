@@ -13,7 +13,10 @@
 #' @param default Default value if path doesn't exist or element at path is
 #' empty.
 #' @param na Default value if element of `x` is `NA`.
-#' @param wrap_scalars Should scalar values be wrapped as a JSON array?
+#' @param wrap_scalars Should scalar values be wrapped?
+#'   Note that scalars are only wrapped if either
+#'   * `ptype` is `new_json_array()` or `json2` vector.
+#'   * `ptype` is `NULL` and the elements are a mix of scalar values and arrays.
 #' @param bigint_as_char Convert big integers to character?
 #'
 #' @return A vector with class given by `ptype` and length equal to `x`. Mind

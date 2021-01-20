@@ -232,6 +232,13 @@ json_unnest_longer <- function(data,
 #'   are used as the column names. If a character it is used to join `col` and
 #'   the object keys.
 #' @param names_repair What happens if the output has invalid column names?
+#' @param wrap_scalars A named list of `TRUE` or `FALSE` specifying for each
+#'   field whether to wrap scalar values in a JSON array. Unspecified fields
+#'   are not wrapped. This can also be a single value of `TRUE` or `FALSE`
+#'   that is then used for every field.
+#'   Note that scalars are only wrapped if either
+#'   * `ptype` is `new_json_array()` or `json2` vector.
+#'   * `ptype` is `NULL` and the elements are a mix of scalar values and arrays.
 #'
 #' @seealso [`json_unnest_longer()`]
 #'
