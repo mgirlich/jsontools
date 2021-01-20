@@ -85,29 +85,7 @@ json_extract <- function(x,
   x_result <- replace_na(x_result, is.na(x), na)
 
   path_not_found <- is.na(result_df$type) & !is.na(x)
-  x_result <- replace_not_found(x_result, path_not_found, default)
-
-  # TODO remove hack?
-  if (inherits(x_result, "json2")) {
-    x_result <- vec_cast(x_result, new_json2())
-  }
-
-  x_result
-}
-
-json_wrap_scalar_afterwards <- function(x_each, ptype) {
-  if ((is_null(ptype) || inherits(ptype, "json2")) &&
-      any(x_each$type %in% c("array", "object"), na.rm = TRUE)) {
-    idx <- !x_each$type %in% c("null", "array", "object") & !is.na(x_each$type)
-    x_each$value[idx] <- vapply(
-      x_each$value[idx],
-      json_agg_array,
-      character(1)
-    )
-    x_each$type[idx] <- "array"
-  }
-
-  x_each
+  replace_not_found(x_result, path_not_found, default)
 }
 
 replace_not_found <- function(x, not_found_flag, default) {
