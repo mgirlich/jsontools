@@ -142,6 +142,24 @@ test_that("json_flatten errors", {
 })
 
 
+# json_each ---------------------------------------------------------------
+
+test_that("json_each works", {
+  df <- tibble::tribble(
+    ~ description,    ~ json,
+    "NA",             NA,
+    "empty array",    "[]",
+    "empty object",   "{}",
+    "json null",      "null",
+    "array w/ null",  "[null]",
+    "object w/ null", '{"a": null}'
+  )
+
+  out <- json_each(df$json)
+  idx <- vctrs::vec_match(vctrs::vec_seq_along(df), out$row_id)
+  expect_snapshot(vec_cbind(df, vec_slice(out, idx)))
+})
+
 # json_each_df ------------------------------------------------------------
 
 test_that("json_each_df works", {
@@ -185,85 +203,33 @@ test_that("json_unnest_longer works", {
   )
 })
 
-test_that("json_unnest_longer handles NA", {
+test_that("json_unnest_longer handles NA/null/empty arrays/arrays of null", {
   df <- tibble(
     id = 1:2,
-    json = c(
-      NA_character_,
-      '["a", "b"]'
-    )
+    json = c(NA_character_, '["a", "b"]')
   )
 
-  expect_equal(
-    json_unnest_longer(df, "json"),
-    tibble(
-      id = c(1, 2, 2),
-      json = c(NA, "a", "b")
-    )
+  out <- tibble(
+    id = c(1, 2, 2),
+    json = c(NA, "a", "b")
   )
 
+  expect_equal(json_unnest_longer(df, "json"), out)
   # tidyr::unnest_longer(tibble(id = 1:2, l = list(NULL, 1:2)), l)
-})
 
-test_that("json_unnest_longer handles null", {
-  df <- tibble(
-    id = 1:2,
-    json = c(
-      "null",
-      '["a", "b"]'
-    )
-  )
+  df$json[1] <- "null"
+  expect_equal(json_unnest_longer(df, "json"), out)
+  # tidyr::unnest_longer(tibble(id = 1:2, l = list(NULL, 1:2)), l)
 
-  # drops it?
-  expect_equal(
-    json_unnest_longer(df, "json"),
-    tibble(
-      id = c(1, 2, 2),
-      json = c(NA, "a", "b")
-    )
-  )
-})
-
-test_that("json_unnest_longer handles empty arrays", {
-  df <- tibble(
-    id = 1:2,
-    json = c(
-      "[]",
-      "[3,5,9]"
-    )
-  )
-
-  # drops it
-  expect_equal(
-    json_unnest_longer(df, "json"),
-    tibble(
-      id = c(1, 2, 2, 2),
-      json = c(NA, 3, 5, 9)
-    )
-  )
-
+  df$json[1] <- "[]"
+  expect_equal(json_unnest_longer(df, "json"), out)
   # tidyr::unnest_longer(tibble(id = 1:2, l = list(c(), 1:2)), l)
-})
 
-test_that("json_unnest_longer handles empty null in arrays", {
-  df <- tibble(
-    id = 1:2,
-    json = c(
-      "[null]",
-      "[3,5,9]"
-    )
-  )
-
-  expect_equal(
-    json_unnest_longer(df, "json"),
-    tibble(
-      id = c(1, 2, 2, 2),
-      json = c(NA, 3, 5, 9)
-    )
-  )
-
+  df$json[1] <- "[null]"
+  expect_equal(json_unnest_longer(df, "json"), out)
   # no equivalent?
 })
+
 
 test_that("json_unnest_longer handles scalars", {
   skip("not decided whether to add `allow_scalars`")
@@ -329,45 +295,38 @@ test_that("json_unnest_wider works", {
     json_unnest_wider(df, "json"),
     tibble(
       id = c(1, 2),
-      b = c(12, NA),
-      a = c(NA, 21)
+      a = c(NA, 21),
+      b = c(12, NA)
     )
   )
 })
 
-test_that("json_unnest_wider handles NA", {
-  skip("not yet decided what to do")
+test_that("json_unnest_wider handles NA/null/empty arrays/arrays of null", {
   df <- tibble(
     id = 1:2,
-    json = c(
-      '{"a": 1}',
-      "null"
-    )
+    json = c(NA_character_, '{"a": 1}')
   )
 
-  expect_equal(
-    json_unnest_wider(df, "json"),
-    tibble(
-      id = c(1, 2),
-      a = c(1, NA)
-    )
+  out <- tibble(
+    id = c(1, 2),
+    a = c(NA, 1)
   )
 
-  df <- tibble(
-    id = 1:2,
-    json = c(
-      NA,
-      '{"a": 1}'
-    )
-  )
+  expect_equal(json_unnest_wider(df, "json"), out)
+  tidyr::unnest_wider(tibble(id = 1:2, l = list(NULL, list(a = 1))), l)
 
-  expect_equal(
-    json_unnest_wider(df, "json"),
-    tibble(
-      id = 2,
-      a = 1
-    )
-  )
+  df$json[1] <- "null"
+  expect_equal(json_unnest_wider(df, "json"), out)
+  # tidyr::unnest_longer(tibble(id = 1:2, l = list(NULL, 1:2)), l)
+
+  df$json[1] <- "{}"
+  expect_equal(json_unnest_wider(df, "json"), out)
+  # tidyr::unnest_longer(tibble(id = 1:2, l = list(c(), 1:2)), l)
+
+  # this must not be dropped!
+  df$json[1] <- '{"a": null}'
+  expect_equal(json_unnest_wider(df, "json"), out)
+  # no equivalent?
 })
 
 

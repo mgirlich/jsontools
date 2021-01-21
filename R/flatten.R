@@ -173,7 +173,6 @@ json_unnest_longer <- function(data,
                                ptype = NULL,
                                # allow_scalars = TRUE,
                                wrap_scalars = FALSE) {
-  # TODO parameter to drop rows of empty arrays? and drop NA?
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -186,45 +185,54 @@ json_unnest_longer <- function(data,
     # TODO should this be allowed as argument?
     allow_scalars = FALSE
   )
-  # x_each <- x_each[
-  #   # drop json NULL
-  #   x_each$type != "null" |
-  #     # but keep NA
-  #     vec_slice(is.na(data[[col]]), x_each$row_id),
-  # ]
+
+  drop_na <- FALSE
+  if (drop_na) {
+    x_each <- x_each[!(
+      is.na(x_each$type) |
+        # drop JSON "null"
+        x_each$type == "null"
+    ), ]
+  } else {
+    # empty JSON arrays "[]" don't return a row in `x_each`
+    missing_row_ids <- setdiff(vec_seq_along(data), x_each$row_id)
+
+    row_ids <- c(x_each$row_id, missing_row_ids)
+    x_each <- vec_rbind(
+      x_each,
+      tibble(
+        row_id = missing_row_ids,
+        name = names2(data[[col]])[row_id]
+      )
+    )
+
+    x_each <- vec_slice(x_each, vec_order(row_ids))
+  }
 
   data[[col]] <- NULL
-
-  missing_row_ids <- setdiff(vec_seq_along(data), x_each$row_id)
-  row_ids <- c(x_each$row_id, missing_row_ids)
-  o <- vec_order(row_ids)
-  ids <- seq_along(x_each$row_id)
-
-  data <- vec_slice(data, row_ids)
-  values <- json_convert_value(
+  data <- vec_slice(data, x_each$row_id)
+  data[[values_to]] <- json_convert_value(
     x_each$value,
     x_each$type,
     ptype = ptype,
     wrap_scalars = wrap_scalars
   )
 
-  data[[values_to]] <- vec_init(values, vec_size_common(data))
-  vec_slice(data[[values_to]], ids) <- values
-
   if (!is.null(row_numbers_to)) {
-    data[[row_numbers_to]] <- row_ids
+    data[[row_numbers_to]] <- x_each$row_id
   }
 
   if (!is.null(indices_to)) {
-    data[[indices_to]] <- vec_init_along(NA_character_, row_ids)
-    vec_slice(data[[indices_to]], ids) <- x_each$key
+    # data[[indices_to]] <- vec_init_along(NA_character_, row_ids)
+    # vec_slice(data[[indices_to]], ids) <- x_each$key
+    data[[indices_to]] <- x_each$key
   }
 
   if (inherits(data[[values_to]], "json2")) {
     data[[values_to]] <- vec_cast(data[[values_to]], new_json2())
   }
 
-  vec_slice(data, o)
+  data
 }
 
 #' Unnest a JSON object into columns
@@ -284,30 +292,24 @@ json_unnest_wider <- function(data,
                               names_sep = NULL,
                               names_repair = "check_unique",
                               wrap_scalars = FALSE) {
-  # TODO argument how to handle `NA`?
-  # TODO keeping rows where json type is null but dropping NA is inconsistent
-  # --> `drop_na` to drop `NA`, `null`, and `[null]`?
-
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
-  # drop na
-  data <- data[!is.na(data[[col]]), ]
   col_values <- data[[col]]
 
   x_each <- json_each(col_values)
 
-  if (!all(x_each$col_type == "object")) {
+  if (!all(x_each$col_type %in% c("object", "null"))) {
     stop_jsontools("every element of `col` must be a json object")
   }
 
-  x_each <- x_each[!x_each$type == "null", ]
+  x_each <- x_each[!is.na(x_each$key), ]
+  row_ids_dropped <- setdiff(vec_seq_along(data), x_each$row_id)
+
   x_each_split <- vec_split(
     x_each[c("row_id", "value", "type")],
     x_each$key
   )
-
-  data[[col]] <- NULL
 
   if (!is_null(names_sep)) {
     x_each_split$key <- paste(col, x_each_split$key, sep = names_sep)
@@ -353,6 +355,12 @@ json_unnest_wider <- function(data,
     empty_flag <- lengths(val$value) == 0
     vec_slice(out, val$row_id[!empty_flag]) <- values
     data[[key]] <- out
+  }
+
+  data[[col]] <- NULL
+  drop_na <- FALSE
+  if (drop_na) {
+    data <- vec_slice(data, -row_ids_dropped)
   }
 
   data
