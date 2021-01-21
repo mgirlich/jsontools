@@ -13,7 +13,9 @@ json_merge(x, y)
 }
 \description{
 By merging two objects you can add, modify, or remove elements of an object.
-Arrays cannot be modified but only replaced as a whole.
+Arrays cannot be modified but only replaced as a whole. It is mostly a small
+wrapper around the SQLite function
+\href{https://www.sqlite.org/json1.html#jpatch}{\code{json_patch()}}.
 }
 \examples{
 # update element with key "a"

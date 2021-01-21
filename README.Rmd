@@ -22,8 +22,9 @@ knitr::opts_chunk$set(
 
 ## Overview
 With the increasing support of JSON in databases and since 2016 even support 
-in the SQL standard, JSON data in vectors become more common. With jsontools
-one can easily work with JSON vectors in R. 
+in the SQL standard, JSON data in vectors become more common.
+With jsontools one can easily work with JSON vectors in R. 
+
 The three main parts are:
 1. parsing from JSON and converting to JSON
 2. direct manipulation of JSON without parsing and conversion over R
@@ -38,31 +39,5 @@ jsontools is not yet release on CRAN. You can install it from GitHub with
 devtools::install_github("tidyverse/dplyr")
 ```
 
-```{r child='vignettes/jsontools.Rmd'} 
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(jsontools)
-
-gh_orgs[1]
-
-gh_orgs <- prettify(gh_orgs)
-gh_orgs[1]
-
-json_glimpse(gh_orgs[1])
-
-gh_orgs_small <- gh_orgs %>% 
-  json_build_object(login, id, description)
-
-parse_json_vector(gh_orgs_small)
-
-(logins <- jsonr_extract_lst(gh_orgs_small, ".login") %>% 
-    purrr::flatten_chr())
-
-json_mutate(gh_orgs, .login = paste0("new-", logins))[1:2] %>% 
-  prettify()
+```{r child='vignettes/got_chars.Rmd'} 
 ```
