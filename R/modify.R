@@ -68,7 +68,9 @@ json_mutate <- function(x, ...) {
 #' Merge two JSON objects
 #'
 #' By merging two objects you can add, modify, or remove elements of an object.
-#' Arrays cannot be modified but only replaced as a whole.
+#' Arrays cannot be modified but only replaced as a whole. It is mostly a small
+#' wrapper around the SQLite function
+#' [`json_patch()`](https://www.sqlite.org/json1.html#jpatch).
 #'
 #' @param x A JSON vector to update.
 #' @param y A JSON vector with updated values.
