@@ -26,9 +26,10 @@ in the SQL standard, JSON data in vectors become more common.
 With jsontools one can easily work with JSON vectors in R. 
 
 The three main parts are:
+
 1. parsing from JSON and converting to JSON
-2. direct manipulation of JSON without parsing and conversion over R
-3. extract data from JSON without parsing everything
+2. extract data from JSON without parsing everything
+3. manipulate JSON directly
 
 ## Installation
 

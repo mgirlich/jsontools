@@ -63,14 +63,6 @@ This minified JSON is not so easy to read so we prettify it with `json_prettify(
 json_prettify(got_chars[1])
 ```
 
-To extract data from the JSON vector we need to know about the JSON path syntax
-used here. It comes from the command line tool [jq](https://stedolan.github.io/jq/)
-and is very similar to the SQL standard.
-The path to the key of an object is simply a dot followed by the key ".key".
-And for nested objects one simply concatenates this syntax ".key1.key2". For
-example to get the message in the commit one uses the path ".commit.message".
-
-
 With the help of `json_extract()` we can now easily extract values from each character:
 
 ```{r extract-simple}
@@ -88,7 +80,7 @@ If you wonder about the dollar sign `$`: it stands for the current element.
 Simply always start the path with it and you will be fine.
 
 To extract elements of nested objects you simply combine the path.
-For example the path to `1` in {"a": {"b": [1, 2]}} is `$.a.b[0]`.
+For example the path to `1` in `{"a": {"b": [1, 2]}}` is `$.a.b[0]`.
 
 We can now construct a tibble with some basic information about the characters
 

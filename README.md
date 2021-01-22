@@ -17,9 +17,11 @@ With the increasing support of JSON in databases and since 2016 even
 support in the SQL standard, JSON data in vectors become more common.
 With jsontools one can easily work with JSON vectors in R.
 
-The three main parts are: 1. parsing from JSON and converting to JSON 2.
-direct manipulation of JSON without parsing and conversion over R 3.
-extract data from JSON without parsing everything
+The three main parts are:
+
+1.  parsing from JSON and converting to JSON
+2.  extract data from JSON without parsing everything
+3.  manipulate JSON directly
 
 ## Installation
 
@@ -28,15 +30,12 @@ with
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("tidyverse/dplyr")
+devtools::install_github("mgirlich/jsontools")
 ```
 
 ``` r
 library(jsontools)
-# devtools::load_all("~/GitHub/jsontools")
-# got_json <- json2(got_chars_json)
-# got_json <- json2(readChar(got_chars_json, nchars = 1e6))
-got_json <- json2(readChar("../data/got_chars.json", nchars = 1e6))
+got_json <- got_chars_json
 ```
 
 ## Overview
@@ -117,14 +116,6 @@ json_prettify(got_chars[1])
 #> }
 ```
 
-To extract data from the JSON vector we need to know about the JSON path
-syntax used here. It comes from the command line tool
-[jq](https://stedolan.github.io/jq/) and is very similar to the SQL
-standard. The path to the key of an object is simply a dot followed by
-the key “.key”. And for nested objects one simply concatenates this
-syntax “.key1.key2”. For example to get the message in the commit one
-uses the path “.commit.message”.
-
 With the help of `json_extract()` we can now easily extract values from
 each character:
 
@@ -146,7 +137,7 @@ If you wonder about the dollar sign `$`: it stands for the current
 element. Simply always start the path with it and you will be fine.
 
 To extract elements of nested objects you simply combine the path. For
-example the path to `1` in {“a”: {“b”: \[1, 2\]}} is `$.a.b[0]`.
+example the path to `1` in `{"a": {"b": [1, 2]}}` is `$.a.b[0]`.
 
 We can now construct a tibble with some basic information about the
 characters
@@ -177,6 +168,8 @@ tibble::tibble(
   titles = json_extract(got_chars, "$.titles")
 )
 #> Error: Cannot combine JSON array/object with scalar values.
+#> ℹ Use `wrap_scalars = TRUE` to wrap scalars in an array.
+#> ℹ Use `ptype = character()` to return result as text.
 ```
 
 Unfortunately, we get an error message saying that we cannot combine an
