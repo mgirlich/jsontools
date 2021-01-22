@@ -90,8 +90,8 @@ json_assert_valid <- function(x, x_arg = "") {
   valid_flags <- unlist(validate_results)
 
   if (!all(valid_flags)) {
-    errors <- my_map_chr(validate_results[!valid_flags], ~ attr(.x, "err"))
-    offsets <- my_map_int(validate_results[!valid_flags], ~ attr(.x, "offset"))
+    errors <- purrr::map_chr(validate_results[!valid_flags], ~ attr(.x, "err"))
+    offsets <- purrr::map_int(validate_results[!valid_flags], ~ attr(.x, "offset"))
     locations <- which(!valid_flags)
 
     stop_jsontools(

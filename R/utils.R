@@ -23,12 +23,32 @@ json_u <- function(x) {
   jsonlite::unbox(x)
 }
 
-my_map_chr <- function(x, f) {
-  f <- as_function(f)
-  vapply(x, f, character(1))
+prep_list_arg <- function(x, nms, x_arg) {
+  extra_nm <- setdiff(names2(x), c(nms, ""))
+  if (!is_empty(extra_nm)) {
+    msg <- vec_c(
+      x = paste0("Specified options in `", x_arg, "` that are not used."),
+      i = paste0("`", extra_nm, "` not found"),
+      .name_spec = "{outer}"
+    )
+    stop_jsontools(msg)
+  }
+
+  if (is_scalar(x)) {
+    x <- rep_named(names(dots), list(x))
+  }
+
+  x
 }
 
-my_map_int <- function(x, f) {
-  f <- as_function(f)
-  vapply(x, f, integer(1))
+is_scalar <- function(x) {
+  if (is.null(x)) {
+    return(FALSE)
+  }
+
+  if (is.list(x)) {
+    (length(x) == 1) && !have_name(x)
+  } else {
+    length(x) == 1
+  }
 }
