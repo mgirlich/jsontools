@@ -17,18 +17,26 @@
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 # json_ptype_common incompatible ptype
 
@@ -41,10 +49,14 @@
 # json_vec_c handles mix of array/object and text
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 # json_vec_c handles json (array/object) ptype
 

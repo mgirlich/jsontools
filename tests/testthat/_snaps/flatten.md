@@ -1,10 +1,14 @@
 # json_flatten errors
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
     Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 
 ---
 
@@ -244,4 +248,6 @@
 
     Issue when extracting key `a`
     * Cannot combine JSON array/object with scalar values.
+    i Use `wrap_scalars = TRUE` to wrap scalars in an array.
+    i Use `ptype = character()` to return result as text.
 

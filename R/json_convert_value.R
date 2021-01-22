@@ -3,7 +3,6 @@ json_convert_value <- function(x,
                                ptype,
                                wrap_scalars = FALSE,
                                bigint_as_char = TRUE) {
-  # TODO replace na
   x_parsed <- convert_json_type(x, json_types, bigint_as_char = FALSE)
 
   if (identical(ptype, list())) {
@@ -114,8 +113,12 @@ json_ptype_common <- function(types, ptype = NULL) {
       # array + object => json
       # array/object + anything else => error
       if (any(scalar_json_types %in% types)) {
-        # TODO inform about `wrap_scalars` or `ptype = character()`
-        stop_jsontools("Cannot combine JSON array/object with scalar values.")
+        msg <- c(
+          x = "Cannot combine JSON array/object with scalar values.",
+          i = "Use `wrap_scalars = TRUE` to wrap scalars in an array.",
+          i = "Use `ptype = character()` to return result as text."
+        )
+        stop_jsontools(msg)
       }
 
       return(new_json2())
