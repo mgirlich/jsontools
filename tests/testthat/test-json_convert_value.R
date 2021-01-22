@@ -251,27 +251,6 @@ test_that("json_convert_value can wrap scalars", {
 })
 
 test_that("json_convert_value handles big integers", {
-  skip("bigint handling not yet implemented")
-  expect_equal(
-    json_convert_value(
-      x = "9999999999",
-      json_types = "integer",
-      ptype = NULL,
-      bigint_as_char = TRUE
-    ),
-    "9999999999"
-  )
-
-  expect_equal(
-    json_convert_value(
-      x = c("9999999999"),
-      json_types = "integer",
-      ptype = NULL,
-      bigint_as_char = FALSE
-    ),
-    bit64::as.integer64("9999999999")
-  )
-
   expect_equal(
     json_convert_value(
       x = c("9999999999", "1"),
@@ -282,63 +261,44 @@ test_that("json_convert_value handles big integers", {
     bit64::as.integer64(c("9999999999", 1))
   )
 
-  skip("not yet decided...")
   expect_equal(
     json_convert_value(
       x = c("9999999999", "1"),
       json_types = c("integer", "true"),
-      ptype = NULL,
+      ptype = bit64::integer64(),
+      bigint_as_char = FALSE
+    ),
+    bit64::as.integer64(c("9999999999", 1))
+  )
+
+  expect_snapshot(
+    expect_equal(
+      json_convert_value(
+        x = c("9999999999", "1"),
+        json_types = c("integer", "true"),
+        ptype = NULL,
+        bigint_as_char = TRUE
+      ),
+      c("9999999999", "1")
+    )
+  )
+
+  expect_equal(
+    json_convert_value(
+      x = c("9999999999", "1"),
+      json_types = c("integer", "true"),
+      ptype = bit64::integer64(),
       bigint_as_char = TRUE
     ),
     c("9999999999", "1")
   )
 
-  skip("bigint handling not yet implemented")
-  expect_equal(
-    json_extract("[2147483647]", "$[0]"),
-    2147483647L
-  )
-
-  expect_equal(
-    json_extract("[-2147483647]", "$[0]"),
-    -2147483647L
-  )
-
-  some_above <- c("[1]", "[9999999999]")
-  expect_snapshot(
-    expect_equal(
-      json_extract(some_above, "$[0]"),
-      c("1", "9999999999")
-    )
-  )
-
-  expect_snapshot(
-    expect_equal(
-      json_extract(some_above, "$[0]", bigint_as_char = FALSE),
-      bit64::as.integer64(c("1", "9999999999"))
-    )
-  )
-
-  int64 <- bit64::integer64()
   expect_snapshot_error(
-    json_extract(some_above, "$[0]", ptype = int64),
-    class = "jsontools_error"
-  )
-
-  expect_snapshot_output(
-    expect_equal(
-      json_extract(some_above, "$[0]", ptype = int64, bigint_as_char = FALSE),
-      bit64::as.integer64(c("1", "9999999999"))
+    json_convert_value(
+      x = c("9999999999"),
+      json_types = c("integer"),
+      ptype = character(),
+      bigint_as_char = TRUE
     )
-  )
-
-  char <- character()
-  expect_equal(
-    json_extract(some_above, "$[0]", ptype = char),
-    c("1", "9999999999")
-  )
-
-  expect_snapshot_error(
-    json_extract(some_above, "$[0]", ptype = char, bigint_as_char = FALSE)
   )
 })

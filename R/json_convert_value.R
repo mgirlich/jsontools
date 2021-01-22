@@ -3,7 +3,13 @@ json_convert_value <- function(x,
                                ptype,
                                wrap_scalars = FALSE,
                                bigint_as_char = TRUE) {
-  x_parsed <- convert_json_type(x, json_types, bigint_as_char = FALSE)
+  x_parsed <- convert_json_type(x, json_types, bigint_as_char = bigint_as_char)
+
+  if (is_null(ptype) &&
+      bigint_as_char &&
+      is_true(attr(x_parsed, "bigint"))) {
+    message("big integers found and converted to character.")
+  }
 
   if (identical(ptype, list())) {
     return(x_parsed)
@@ -21,7 +27,7 @@ json_convert_value <- function(x,
     json_types[idx] <- "array"
   }
 
-  json_vec_c(x_parsed, json_types, ptype = ptype)
+  json_vec_c(x_parsed, json_types, ptype = ptype, bigint_as_char = bigint_as_char)
 }
 
 should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
@@ -60,7 +66,7 @@ convert_json_type <- function(x, json_types, bigint_as_char = TRUE) {
     if (bigint_as_char) {
       x_parsed[int_idx] <- x[int_idx]
     } else {
-      x_parsed[int_idx] <- vec_chop(bit64::as.integer64(x[int_idx]))
+      x_parsed[int_idx] <- vec_chop(as_integer64(x[int_idx]))
     }
 
     attr(x_parsed, "bigint") <- TRUE
@@ -141,15 +147,43 @@ json_ptype_common <- function(types, ptype = NULL) {
   ptype
 }
 
-json_vec_c <- function(x, types, ptype = NULL) {
+json_vec_c <- function(x, types, ptype = NULL, bigint_as_char = FALSE) {
   # call `json_ptype_common()` for its side effect of errors
   json_ptype_common(types, ptype)
+
+  bigint_found <- is_true(attr(x, "bigint"))
+
+  # check that `ptype` is compatible before converting the big ints to character
+  if (bigint_found) {
+    vec_ptype2(ptype, integer())
+  }
+
+  if (bigint_found &&
+      bigint_as_char &&
+      (is_null(ptype) || is_integer64(ptype))) {
+    # manually convert types that can be cast to character
+    x[types == "true"] <- "1"
+    x[types == "false"] <- "0"
+    numeric_types_idx <- types %in% c("integer", "real", "true", "false")
+    x[numeric_types_idx] <- as.character(x[numeric_types_idx])
+
+    ptype <- character()
+  }
 
   if (inherits(ptype, "json2_object") || inherits(ptype, "json2_array")) {
     ptype <- new_json2()
   }
 
   vec_c(!!!x, .ptype = ptype)
+}
+
+as_integer64 <- function(x) {
+  rlang::check_installed("bit64")
+  bit64::as.integer64(x)
+}
+
+is_integer64 <- function(x) {
+  inherits(x, "integer64")
 }
 
 #' Prototype helpers

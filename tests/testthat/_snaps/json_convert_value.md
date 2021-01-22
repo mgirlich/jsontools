@@ -74,3 +74,15 @@
 
     Can't convert <double> to <character>.
 
+# json_convert_value handles big integers
+
+    Code
+      expect_equal(json_convert_value(x = c("9999999999", "1"), json_types = c(
+        "integer", "true"), ptype = NULL, bigint_as_char = TRUE), c("9999999999", "1"))
+    Message <simpleMessage>
+      big integers found and converted to character.
+
+---
+
+    Can't combine <character> and <integer>.
+
