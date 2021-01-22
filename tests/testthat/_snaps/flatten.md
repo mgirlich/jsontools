@@ -240,3 +240,8 @@
       ]
     }
 
+# json_unnest_wider can wrap scalars
+
+    Issue when extracting key `a`
+    * Cannot combine JSON array/object with scalar values.
+

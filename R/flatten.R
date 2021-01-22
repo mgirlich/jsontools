@@ -293,6 +293,10 @@ json_unnest_wider <- function(data,
 
   col_values <- data[[col]]
 
+  if (!is_json2(col_values)) {
+    json_assert_valid(col_values, x_arg = col)
+  }
+
   x_each <- json_each(col_values)
 
   if (!all(x_each$col_type %in% c("object", "null"))) {

@@ -394,24 +394,24 @@ test_that("json_unnest_wider with discog_json", {
   )
 })
 
-# TODO wrap scalars
-# tibble::tibble(chars_json = got_chars) %>%
-#   json_unnest_wider(
-#     chars_json,
-#     wrap_scalars = FALSE,
-#     ptype = list(
-#       titles = character(),
-#       aliases = character(),
-#       allegiances = character(),
-#       povBooks = character(),
-#       tvSeries = character(),
-#       playedBy = character(),
-#       books = character()
-#     )
-#   )
+test_that("json_unnest_wider can wrap scalars", {
+  df <- tibble(
+    id = 1:2,
+    json = c(
+      '{"a": 1}',
+      '{"a": [1]}'
+    )
+  )
 
-# tibble::tibble(chars_json = got_chars) %>%
-#   json_unnest_wider(
-#     chars_json,
-#     wrap_scalars = TRUE
-#   )
+  expect_snapshot_error(json_unnest_wider(df, json))
+
+  expect_equal(
+    json_unnest_wider(df, json, wrap_scalars = TRUE),
+    tibble(id = 1:2, a = json2(c("[1]", "[1]")))
+  )
+
+  expect_equal(
+    json_unnest_wider(df, json, wrap_scalars = list(a = TRUE)),
+    tibble(id = 1:2, a = json2(c("[1]", "[1]")))
+  )
+})
