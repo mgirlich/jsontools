@@ -114,3 +114,10 @@ validate_scalar_json <- function(x) {
     jsonlite::validate(x)
   }
 }
+
+#' @importFrom pillar pillar_shaft
+#' @export
+pillar_shaft.json2 <- function(x, ...) {
+  out <- format(x)
+  pillar::new_pillar_shaft_simple(out, align = "right", min_width = 10)
+}
