@@ -83,7 +83,7 @@ json_is_valid <- function(x) {
 #' \dontrun{
 #' json_assert_valid("[1, 2")
 #' }
-json_assert_valid <- function(x) {
+json_assert_valid <- function(x, x_arg = "") {
   validate_results <- lapply(x, validate_scalar_json)
   valid_flags <- unlist(validate_results)
 
@@ -97,7 +97,8 @@ json_assert_valid <- function(x) {
       error_type = "invalid_json",
       errors = errors,
       offsets = offsets,
-      locations = locations
+      locations = locations,
+      x_arg = x_arg
     )
   }
 

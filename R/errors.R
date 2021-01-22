@@ -23,8 +23,12 @@ conditionMessage.jsontools_error_invalid_json <- function(c) {
   }
   locs <- paste0(locs, collapse = ", ")
 
+  if (c$x_arg != "") {
+    c$x_arg <- paste0("`", c$x_arg, "` has ")
+  }
+
   head <- glue("
-  invalid JSON at {n_invalid} locations:
+  {c$x_arg}invalid JSON at {n_invalid} locations:
     {locs}
   ")
 
