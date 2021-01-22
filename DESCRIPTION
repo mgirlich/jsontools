@@ -6,37 +6,39 @@ Authors@R:
            family = "Girlich",
            role = c("aut", "cre"),
            email = "maximilian.girlich@outlook.com")
-Description: A toolbox for working with JSON vectors similar to the functions
-    Postgres provides to work with JSON columns. It supports in parsing and
-    formatting JSON, extracting data from JSON, and modifying JSON data.
+Description: A toolbox for working with JSON vectors similar to
+    the functions Postgres provides to work with JSON columns. It supports
+    in parsing and formatting JSON, extracting data from JSON, and
+    modifying JSON data.
 License: GPL-3
+Depends: 
+    R (>= 3.2.0)
+Imports: 
+    bit64,
+    DBI,
+    glue,
+    jsonlite,
+    magrittr,
+    methods,
+    pillar,
+    purrr,
+    rlang,
+    RSQLite,
+    tibble,
+    tidyselect,
+    vctrs,
+    withr
 Suggests: 
-    testthat (>= 2.1.0),
-    knitr,
-    rmarkdown,
     curl,
     dplyr,
-    repurrrsive
+    knitr,
+    repurrrsive,
+    rmarkdown,
+    testthat (>= 2.1.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Depends: 
-    R (>= 3.2.0)
-Imports: 
-    vctrs,
-    jsonlite,
-    glue,
-    rlang,
-    pillar,
-    magrittr,
-    DBI,
-    RSQLite,
-    tibble,
-    methods,
-    bit64,
-    withr,
-    tidyselect,
-    purrr
-VignetteBuilder: knitr
-Config/testthat/edition: 3
