@@ -125,8 +125,3 @@ test_that("json_extract checks path", {
 
   expect_snapshot_error(json_extract(x, c("a", "b")))
 })
-
-test_that("json_extract checks path syntax", {
-  skip("not yet implemented path check")
-  expect_snapshot_error(json_extract(x, ".commit.author"))
-})
