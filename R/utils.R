@@ -35,7 +35,7 @@ prep_list_arg <- function(x, nms, x_arg) {
   }
 
   if (is_scalar(x)) {
-    x <- rep_named(names(dots), list(x))
+    x <- rep_named(nms, list(x))
   }
 
   x
