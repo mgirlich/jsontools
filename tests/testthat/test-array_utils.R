@@ -52,8 +52,6 @@ test_that("json_array_length works", {
     c(0, 2)
   )
 
-  skip("not yet decided")
-  # what should NA return?
   expect_equal(
     json_array_length(c(NA, "[1, 2]")),
     c(NA, 2)

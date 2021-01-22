@@ -231,28 +231,8 @@ test_that("json_unnest_longer handles NA/null/empty arrays/arrays of null", {
 })
 
 
-test_that("json_unnest_longer handles scalars", {
-  skip("not decided whether to add `allow_scalars`")
-  df <- tibble(
-    id = 1:3,
-    json = c(
-      "[null]",
-      '["a", "b"]',
-      "c"
-    )
-  )
-
-  expect_equal(
-    json_unnest_longer(df, "json", allow_scalars = TRUE),
-    tibble(
-      id = c(2, 2, 3),
-      json = c("a", "b", "c")
-    )
-  )
-})
-
 test_that("json_unnest_longer with discog_json", {
-  df <- tibble(json = discog_json)
+  df <- tibble(json = readChar(repurrrsive::discog_json(), nchars = 1e6))
 
   item_df <- json_unnest_longer(
     df,
@@ -368,7 +348,7 @@ test_that("json_unnest_wider errors on non-objects", {
 })
 
 test_that("json_unnest_wider with discog_json", {
-  df <- tibble(json = discog_json)
+  df <- tibble(json = readChar(repurrrsive::discog_json(), nchars = 1e6))
 
   item_df <- json_unnest_longer(
     df,

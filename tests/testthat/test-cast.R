@@ -19,37 +19,14 @@ object <- new_json_object()
 
 test_that("self ptypes", {
   expect_equal(vec_ptype2(json, json), json)
-  # expect_equal(vec_ptype2(array, array), array)
-  # expect_equal(vec_ptype2(object, object), object)
 })
 
-# test_that("ptype with json2", {
-#   expect_equal(vec_ptype2(json, array), json)
-#   expect_equal(vec_ptype2(array, json), json)
-#
-#   expect_equal(vec_ptype2(json, object), json)
-#   expect_equal(vec_ptype2(object, json), json)
-# })
-
-# test_that("ptype array/object", {
-#   expect_equal(vec_ptype2(object, array), json)
-#   expect_equal(vec_ptype2(array, object), json)
-# })
-
 test_that("ptype with character", {
-  skip("not yet decided")
   expect_equal(vec_ptype2(json, character()), character())
   expect_equal(vec_ptype2(character(), json), character())
-
-  # expect_equal(vec_ptype2(character(), array), character())
-  # expect_equal(vec_ptype2(array, character()), character())
-  #
-  # expect_equal(vec_ptype2(character(), object), character())
-  # expect_equal(vec_ptype2(object, character()), character())
 })
 
 test_that("ptype with json from other classes", {
-  skip("not yet decided")
   result <- new_json2(x_valid)
   expect_equal(as_json2(x_jqson), result)
   expect_equal(as_json2(x_jsonlite), result)
@@ -60,23 +37,10 @@ test_that("ptype with json from other classes", {
 
 test_that("cast to json2 works", {
   expect_equal(vec_cast("[1]", json2()), json2("[1]"))
-  # expect_equal(vec_cast(new_json_array("[1]"), json2()), json2("[1]"))
-  # expect_equal(vec_cast(new_json_object('{"a":1}'), json2()), json2('{"a":1}'))
 })
-
-# test_that("cast to array/object works", {
-#   skip("not yet decided/implemented")
-#   expect_equal(vec_cast(json2("[1]"), array), new_json_array("[1]"))
-#   expect_equal(vec_cast(json2('{"a":1}'), object), new_json_object('{"a":1}'))
-#
-#   expect_equal(vec_cast("[1]", array), new_json_array("[1]"))
-#   expect_equal(vec_cast('{"a":1}', object), new_json_object('{"a":1}'))
-# })
 
 test_that("cast to character works", {
   expect_equal(vec_cast(x_json2, character()), x_valid)
-  # expect_equal(vec_cast(new_json_array("[1]"), character()), "[1]")
-  # expect_equal(vec_cast(new_json_object('{"a":1}'), character()), '{"a":1}')
 })
 
 test_that("cast classes from other packages works", {
