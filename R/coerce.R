@@ -21,6 +21,7 @@ vec_ptype2.json2.json2 <- function(x, y, ...) new_json2()
 
 #' @export
 vec_ptype2.json2.character <- function(x, y, ...) character()
+#' @export
 vec_ptype2.character.json2 <- function(x, y, ...) character()
 
 
