@@ -79,14 +79,6 @@ convert_json_type <- function(x, json_types, bigint_as_char = TRUE) {
   if (any(json_idx)) {
     x_parsed[json_idx] <- vec_chop(new_json2(x[json_idx]))
   }
-  # object_idx <- json_types == "object" & not_na
-  # if (any(object_idx)) {
-  #   x_parsed[object_idx] <- vec_chop(new_json_object(x[object_idx]))
-  # }
-  # array_idx <- json_types == "array" & not_na
-  # if (any(array_idx)) {
-  #   x_parsed[array_idx] <- vec_chop(new_json_array(x[array_idx]))
-  # }
 
   x_parsed
 }
