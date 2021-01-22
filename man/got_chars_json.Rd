@@ -3,7 +3,7 @@
 \docType{data}
 \name{got_chars_json}
 \alias{got_chars_json}
-\title{Game of Thrones POV characters}
+\title{Game of Thrones characters}
 \format{
 A JSON array of objects. Each object describes a character and has
 the following keys:

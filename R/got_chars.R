@@ -1,4 +1,4 @@
-#' Game of Thrones POV characters
+#' Game of Thrones characters
 #'
 #' A JSON with some basic information about some of the Game of Thrones
 #' characters.

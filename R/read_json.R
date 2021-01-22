@@ -14,7 +14,7 @@
 #' @param x a scalar JSON character
 #' @param simplifyVector,simplifyDataFrame,simplifyMatrix,flatten,... passed on
 #'   to [`jsonlite::parse_json`].
-#' @param bigint_as_char Parse big ints as character?
+#' @param bigint_as_char Parse big integers as character?
 #' @param .na Value to return if `x` is `NA`. By default an error of class
 #' `jsontools_error_na_json` is thrown.
 #' @param .null Return the prototype of `.null` if `x` is `NULL`
@@ -115,7 +115,7 @@ loadpkg <- function(pkg) {
 }
 
 
-#' Parse a vector of jsons into a list
+#' Parse a vector of JSON into a list
 #'
 #' @inheritParams parse_json
 #'

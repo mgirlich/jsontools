@@ -34,12 +34,12 @@ should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
 }
 
 #' @noRd
-#' @title Convert characters according to json types
+#' @title Convert characters according to JSON types
 #'
 #' Convert the values returned by `json_each` according to the types.
 #'
 #' @param x Character values returned from `json_each`.
-#' @param json_types Character vector of json types.
+#' @param json_types Character vector of JSON types.
 #'
 #' @return A list of parsed values.
 #'
@@ -123,12 +123,12 @@ json_ptype_common <- function(types, ptype = NULL) {
 
       return(new_json2())
     } else {
-      # no json => normal coercion rules
+      # no JSON => normal coercion rules
       return(vec_ptype_common(!!!type_map[r_types]))
     }
   }
 
-  # if ptype is specified as array/object/json => only these are valid
+  # if ptype is specified as array/object/JSON => only these are valid
   if (inherits(ptype, "json2_array")) {
     if (any(types != "array")) {
       stop_jsontools("Not all elements are arrays.")

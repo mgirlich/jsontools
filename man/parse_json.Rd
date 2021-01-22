@@ -28,7 +28,7 @@ or a zero length character}
 \item{simplifyVector, simplifyDataFrame, simplifyMatrix, flatten, ...}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 
-\item{bigint_as_char}{Parse big ints as character?}
+\item{bigint_as_char}{Parse big integers as character?}
 }
 \description{
 A wrapper around the great \code{\link[jsonlite:read_json]{jsonlite::parse_json}}. The differences are:

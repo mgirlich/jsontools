@@ -13,7 +13,7 @@ json_u(x)
 A singleton version of \code{x}.
 }
 \description{
-Mark a vector of length one to not be wrapped in an array when formated as
+Mark a vector of length one to not be wrapped in an array when formatted as
 \code{JSON}. This is only a tiny wrapper around \code{jsonlite::unbox()} to avoid
 conflict with \code{rlang::unbox()}.
 }

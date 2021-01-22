@@ -29,12 +29,12 @@ format_json_rowwise(
 
 \item{auto_unbox, raw, digits, force, ...}{passed on to \code{\link[jsonlite:stream_in]{jsonlite::stream_out}}.}
 
-\item{json_verbatim}{Leave json as it is and do not encode it again?}
+\item{json_verbatim}{Leave JSON as it is and do not encode it again?}
 
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
 }
 \value{
-A json2 vector of json objects.
+A json2 vector of JSON objects.
 }
 \description{
 Convert each row of a data frame to a JSON object (this basically produces

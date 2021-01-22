@@ -71,7 +71,7 @@ For conversion there are the following functions:
 * `format_json_rowwise()`: convert each row of a data frame to JSON.
 * `write_json()`: convert an R object to JSON and write it to disk.
 
-Let's look at our customer infos from above. Assume we have converted it into a tibble:
+Let's look at our customer informations from above. Assume we have converted it into a tibble:
 
 ```{r customer_infos_df}
 customer_infos_df <- tibble::tibble(
@@ -118,7 +118,7 @@ format_json_list(customer_infos_list)
 ```
 
 Notice that each value is wrapped in a JSON array?
-If you do not want this you have three possibilites:
+If you do not want this you have three possibilities:
 
 * use `json_u()` on the elements you do not want in an array.
 * use the argument `auto_unbox = TRUE` to only wrap elements of length > 1 in an array.

@@ -10,7 +10,7 @@
 #' @param auto_unbox,raw,digits,force,... passed on to [`jsonlite::stream_out`].
 #' @inheritParams format_json
 #'
-#' @return A json2 vector of json objects.
+#' @return A json2 vector of JSON objects.
 #'
 #' @seealso [`write_json()`], [`format_json()`]
 #'

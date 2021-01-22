@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_json.R
 \name{parse_json_vector}
 \alias{parse_json_vector}
-\title{Parse a vector of jsons into a list}
+\title{Parse a vector of JSON into a list}
 \usage{
 parse_json_vector(
   x,
@@ -37,7 +37,7 @@ to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 \item{flatten}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 
-\item{bigint_as_char}{Parse big ints as character?}
+\item{bigint_as_char}{Parse big integers as character?}
 
 \item{...}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
@@ -46,7 +46,7 @@ to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 A list of the same length as \code{x}.
 }
 \description{
-Parse a vector of jsons into a list
+Parse a vector of JSON into a list
 }
 \examples{
 parse_json_vector(x = c('"a"', '"b"'))

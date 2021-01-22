@@ -300,7 +300,7 @@ json_unnest_wider <- function(data,
   x_each <- json_each(col_values)
 
   if (!all(x_each$col_type %in% c("object", "null"))) {
-    stop_jsontools("every element of `col` must be a json object")
+    stop_jsontools("every element of `col` must be a JSON object")
   }
 
   # drop `NA` keys as we don't want to generate a column from them

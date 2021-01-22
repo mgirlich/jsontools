@@ -25,7 +25,7 @@ vec_ptype2.json2.character <- function(x, y, ...) character()
 vec_ptype2.character.json2 <- function(x, y, ...) character()
 
 
-# json classes from other packages ----------------------------------------
+# JSON classes from other packages ----------------------------------------
 
 #' @rdname vec_ptype2.json2
 #'

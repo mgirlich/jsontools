@@ -31,7 +31,7 @@ vec_cast.json2.character <- function(x, to, ...) {
   json2(vec_data(x))
 }
 
-# json classes from other packages ----------------------------------------
+# JSON classes from other packages ----------------------------------------
 
 #' @method vec_cast.json2 jqson
 #' @export

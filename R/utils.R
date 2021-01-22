@@ -7,7 +7,7 @@ check_present <- function(x) {
 
 #' Unbox a vector or data frame
 #'
-#' Mark a vector of length one to not be wrapped in an array when formated as
+#' Mark a vector of length one to not be wrapped in an array when formatted as
 #' `JSON`. This is only a tiny wrapper around `jsonlite::unbox()` to avoid
 #' conflict with `rlang::unbox()`.
 #'

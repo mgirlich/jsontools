@@ -14,7 +14,7 @@
 #' [`json_u()`] or [`jsonlite::unbox()`].
 #'
 #' @param x the object to be encoded
-#' @param json_verbatim Leave json as it is and do not encode it again?
+#' @param json_verbatim Leave JSON as it is and do not encode it again?
 #' @param rownames For data.frames add a field `_row` with the row name?
 #' @param always_decimal Use real number notation in whole number doubles?
 #' @param null,na,auto_unbox,dataframe,matrix,Date passed on to [`jsonlite::toJSON`].

@@ -54,7 +54,7 @@ format_json_list(
 
 \item{POSIXt, factor, complex, raw, digits, force, pretty, ...}{passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
-\item{json_verbatim}{Leave json as it is and do not encode it again?}
+\item{json_verbatim}{Leave JSON as it is and do not encode it again?}
 
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
 
