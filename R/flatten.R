@@ -171,7 +171,6 @@ json_unnest_longer <- function(data,
                                row_numbers_to = NULL,
                                indices_to = NULL,
                                ptype = NULL,
-                               # allow_scalars = TRUE,
                                wrap_scalars = FALSE) {
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
@@ -182,7 +181,6 @@ json_unnest_longer <- function(data,
 
   x_each <- json_each(
     data[[col]],
-    # TODO should this be allowed as argument?
     allow_scalars = FALSE
   )
 
@@ -202,7 +200,7 @@ json_unnest_longer <- function(data,
       x_each,
       tibble(
         row_id = missing_row_ids,
-        name = names2(data[[col]])[row_id]
+        name = names2(data[[col]])[missing_row_ids]
       )
     )
 
@@ -223,8 +221,6 @@ json_unnest_longer <- function(data,
   }
 
   if (!is.null(indices_to)) {
-    # data[[indices_to]] <- vec_init_along(NA_character_, row_ids)
-    # vec_slice(data[[indices_to]], ids) <- x_each$key
     data[[indices_to]] <- x_each$key
   }
 

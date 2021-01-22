@@ -313,7 +313,7 @@ test_that("json_unnest_wider handles NA/null/empty arrays/arrays of null", {
   )
 
   expect_equal(json_unnest_wider(df, "json"), out)
-  tidyr::unnest_wider(tibble(id = 1:2, l = list(NULL, list(a = 1))), l)
+  # tidyr::unnest_wider(tibble(id = 1:2, l = list(NULL, list(a = 1))), l)
 
   df$json[1] <- "null"
   expect_equal(json_unnest_wider(df, "json"), out)

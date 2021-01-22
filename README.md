@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# json2tools
+# jsontools
 
 <!-- badges: start -->
 
