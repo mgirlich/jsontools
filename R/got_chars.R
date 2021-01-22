@@ -13,7 +13,6 @@
 #'   * `aliases`
 #'   * `allegiances`
 #'
-#' @export
 #' @source <https://anapioficeandfire.com>
 #' @examples
 #' got_chars_json

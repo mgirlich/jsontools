@@ -16,10 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(jsontools)
-# devtools::load_all("~/GitHub/jsontools")
-# got_json <- json2(got_chars_json)
-# got_json <- json2(readChar(got_chars_json, nchars = 1e6))
-got_json <- json2(readChar("../data/got_chars.json", nchars = 1e6))
+got_json <- got_chars_json
 ```
 
 ## Overview

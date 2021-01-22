@@ -36,7 +36,7 @@ jsontools is not yet release on CRAN. You can install it from GitHub with
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("tidyverse/dplyr")
+devtools::install_github("mgirlich/jsontools")
 ```
 
 ```{r child='vignettes/got_chars.Rmd'} 

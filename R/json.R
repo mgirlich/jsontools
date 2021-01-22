@@ -69,6 +69,8 @@ json_is_valid <- function(x) {
 #' Uses [`jsonlite::validate()`] under the hood.
 #'
 #' @param x A character vector.
+#' @param x_arg Argument name for `x`. Used in error message to inform the user
+#'   about the location of the error.
 #'
 #' @return `json_is_valid()` returns a vector of `TRUE` and `FALSE`.
 #' `json_assert_valid()` either throws an error with information on the invalid

@@ -7,10 +7,13 @@
 \usage{
 json_is_valid(x)
 
-json_assert_valid(x)
+json_assert_valid(x, x_arg = "")
 }
 \arguments{
 \item{x}{A character vector.}
+
+\item{x_arg}{Argument name for \code{x}. Used in error message to inform the user
+about the location of the error.}
 }
 \value{
 \code{json_is_valid()} returns a vector of \code{TRUE} and \code{FALSE}.
