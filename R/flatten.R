@@ -1,13 +1,5 @@
-json_each <- function(x, path = NULL, allow_scalars = FALSE) {
-  # TODO handle NA
-  # * error by default
-  # * in `json_flatten*()` it probably doesn't make sense to support anything else?
-  # * in `json_unnest_longer()` one might want to keep the NA
-
-  # TODO decide how exactly scalars should be handled
-  # * integers work (b/c they are valid JSON)
-  # * character fail (b/c they are not valid JSON)
-  # -> check if each element of x is an array
+json_each <- function(x, path = NULL, allow_scalars = FALSE,
+                      allowed_types = NULL) {
   path <- path %||% "$"
 
   if (!is_string(path)) {
@@ -50,6 +42,14 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE) {
 
   x_nms <- names2(x)
   result$name <- vec_slice(x_nms, result$row_id)
+
+  if (is_false(allow_scalars) && any(result$col_type %in% scalar_json_types)) {
+    msg <- c(
+      x = "`x` contains scalar JSON values",
+      i = "Use `allow_scalars = TRUE` if you want to allow them."
+    )
+    stop_jsontools(msg)
+  }
 
   result
 }
@@ -101,7 +101,7 @@ json_flatten <- function(x,
 
   # drop `NA` as after flattening it is not clear where they came from anyway
   x <- x[!is.na(x)]
-  x_each <- json_each(x[!is.na(x)], allow_scalars = allow_scalars)
+  x_each <- json_each(x, allow_scalars = allow_scalars)
 
   # drop nulls as after flattening it is not clear where they came from anyway
   x_each <- x_each[x_each$type != "null", ]
@@ -303,6 +303,7 @@ json_unnest_wider <- function(data,
     stop_jsontools("every element of `col` must be a json object")
   }
 
+  # drop `NA` keys as we don't want to generate a column from them
   x_each <- x_each[!is.na(x_each$key), ]
   row_ids_dropped <- setdiff(vec_seq_along(data), x_each$row_id)
 

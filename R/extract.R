@@ -83,7 +83,6 @@ json_extract <- function(x,
   )
 
   # now that the values are parsed the original NAs can be replaced
-  # TODO replace NA earlier on?
   x_result <- replace_na(x_result, is.na(x), na)
 
   path_not_found <- is.na(result_df$type) & !is.na(x)
