@@ -5,7 +5,7 @@
 #' * control how to handle `NA` and `NULL`.
 #' * `simplifyDataFrame`, `simplifyMatrix`, and `flatten` default to `FALSE` as
 #'   they are not very stable in many real world APIs. Use the
-#'   [tibblify package](https://cran.rstudio.com/web/packages/tibblify/index.html)
+#'   [tibblify package](https://cran.r-project.org/package=tibblify)
 #'   for a more robust conversion to a dataframe.
 #' * don't collapse strings but error instead if they have more than one element.
 #'

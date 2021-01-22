@@ -1,5 +1,5 @@
 Package: jsontools
-Title: Working with JSON vectors
+Title: Working with JSON Vectors
 Version: 0.1.0
 Authors@R: 
     person(given = "Maximilian",

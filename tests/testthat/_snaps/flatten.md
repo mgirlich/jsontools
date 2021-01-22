@@ -108,7 +108,7 @@
 
 # json_unnest_wider errors on non-objects
 
-    every element of `col` must be a json object
+    every element of `col` must be a JSON object
 
 # json_unnest_wider with discog_json
 

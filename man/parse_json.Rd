@@ -37,7 +37,7 @@ A wrapper around the great \code{\link[jsonlite:read_json]{jsonlite::parse_json}
 \item control how to handle \code{NA} and \code{NULL}.
 \item \code{simplifyDataFrame}, \code{simplifyMatrix}, and \code{flatten} default to \code{FALSE} as
 they are not very stable in many real world APIs. Use the
-\href{https://cran.rstudio.com/web/packages/tibblify/index.html}{tibblify package}
+\href{https://cran.r-project.org/package=tibblify}{tibblify package}
 for a more robust conversion to a dataframe.
 \item don't collapse strings but error instead if they have more than one element.
 }

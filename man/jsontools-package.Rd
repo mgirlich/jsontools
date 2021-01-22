@@ -4,7 +4,7 @@
 \name{jsontools-package}
 \alias{jsontools}
 \alias{jsontools-package}
-\title{jsontools: Working with JSON vectors}
+\title{jsontools: Working with JSON Vectors}
 \description{
 A toolbox for working with JSON vectors similar to
     the functions Postgres provides to work with JSON columns. It supports
