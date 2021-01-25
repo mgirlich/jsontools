@@ -54,7 +54,8 @@ json_unnest_wider <- function(data,
                               names_sort = FALSE,
                               names_sep = NULL,
                               names_repair = "check_unique",
-                              wrap_scalars = FALSE) {
+                              wrap_scalars = FALSE,
+                              bigint_as_char = bigint_default()) {
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -96,6 +97,9 @@ json_unnest_wider <- function(data,
   if (is_scalar(wrap_scalars)) {
     wrap_scalars <- rep_named(x_each_split$key, wrap_scalars)
   }
+  if (is_scalar(bigint_as_char)) {
+    bigint_as_char <- rep_named(x_each_split$key, bigint_as_char)
+  }
 
   for (i in idx) {
     key <- x_each_split$key[[i]]
@@ -106,7 +110,8 @@ json_unnest_wider <- function(data,
         val$value,
         val$type,
         ptype = ptype[[key]],
-        wrap_scalars = wrap_scalars[[key]]
+        wrap_scalars = wrap_scalars[[key]],
+        bigint_as_char = bigint_as_char[[key]]
       ),
       error = function(e) {
         msg <- c(

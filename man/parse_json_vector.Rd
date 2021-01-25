@@ -12,7 +12,7 @@ parse_json_vector(
   simplifyDataFrame = FALSE,
   simplifyMatrix = FALSE,
   flatten = FALSE,
-  bigint_as_char = TRUE,
+  bigint_as_char = bigint_default(),
   ...
 )
 }
@@ -37,7 +37,8 @@ to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 \item{flatten}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 
-\item{bigint_as_char}{Parse big integers as character?}
+\item{bigint_as_char}{Parse big integers as character? The option
+\code{jsontools.bigint_as_char} is used as default.}
 
 \item{...}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}

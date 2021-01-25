@@ -2,7 +2,7 @@ json_convert_value <- function(x,
                                json_types,
                                ptype,
                                wrap_scalars = FALSE,
-                               bigint_as_char = TRUE) {
+                               bigint_as_char = FALSE) {
   x_parsed <- convert_json_type(x, json_types, bigint_as_char = bigint_as_char)
 
   if (is_null(ptype) &&

@@ -5,8 +5,8 @@
 #' @param ... Elements of `.col` to turn into columns in the form
 #'   `col_name = "JSON path"`.
 #' @param .remove If `TRUE`, the default, will remove the column `.col`.
-#' @param .ptype,.wrap_scalars,.default,.na Optionally, a named list of
-#'   parameters passed to [`json_extract()`].
+#' @param .ptype,.wrap_scalars,.default,.na,bigint_as_char Optionally, a named
+#'   list of parameters passed to [`json_extract()`].
 #'
 #' @export
 #'
@@ -26,7 +26,8 @@ json_hoist <- function(.data,
                        .ptype = list(),
                        .wrap_scalars = list(),
                        .default = list(),
-                       .na = list()) {
+                       .na = list(),
+                       bigint_as_char = bigint_default()) {
   check_present(.col)
   .col <- tidyselect::vars_pull(names(.data), !!enquo(.col))
 
@@ -45,6 +46,7 @@ json_hoist <- function(.data,
   .wrap_scalars <- prep_list_arg(.wrap_scalars, names(dots), ".wrap_scalars")
   .default <- prep_list_arg(.default, names(dots), ".default")
   .na <- prep_list_arg(.na, names(dots), ".na")
+  bigint_as_char <- prep_list_arg(bigint_as_char, names(dots), ".na")
 
   extracted_values <- purrr::imap(
     dots,
@@ -53,7 +55,8 @@ json_hoist <- function(.data,
         values,
         path = .x,
         ptype = .ptype[[.y]],
-        wrap_scalars = .wrap_scalars[[.y]] %||% FALSE
+        wrap_scalars = .wrap_scalars[[.y]] %||% FALSE,
+        bigint_as_char = bigint_as_char[[.y]]
       )
     }
   )

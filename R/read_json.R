@@ -14,7 +14,8 @@
 #' @param x a scalar JSON character
 #' @param simplifyVector,simplifyDataFrame,simplifyMatrix,flatten,... passed on
 #'   to [`jsonlite::parse_json`].
-#' @param bigint_as_char Parse big integers as character?
+#' @param bigint_as_char Parse big integers as character? The option
+#'   `jsontools.bigint_as_char` is used as default.
 #' @param .na Value to return if `x` is `NA`. By default an error of class
 #' `jsontools_error_na_json` is thrown.
 #' @param .null Return the prototype of `.null` if `x` is `NULL`
@@ -45,7 +46,7 @@ parse_json <- function(x,
                        simplifyDataFrame = FALSE,
                        simplifyMatrix = FALSE,
                        flatten = FALSE,
-                       bigint_as_char = TRUE,
+                       bigint_as_char = bigint_default(),
                        ...) {
   if (is_null(x) || (is_character(x) && vec_size(x) == 0)) {
     return(vec_ptype(.null))
@@ -133,7 +134,7 @@ parse_json_vector <- function(x,
                               simplifyDataFrame = FALSE,
                               simplifyMatrix = FALSE,
                               flatten = FALSE,
-                              bigint_as_char = TRUE,
+                              bigint_as_char = bigint_default(),
                               ...) {
   lapply(
     x,

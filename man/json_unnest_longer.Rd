@@ -11,7 +11,8 @@ json_unnest_longer(
   row_numbers_to = NULL,
   indices_to = NULL,
   ptype = NULL,
-  wrap_scalars = FALSE
+  wrap_scalars = FALSE,
+  bigint_as_char = bigint_default()
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ Note that scalars are only wrapped if either
 \item \code{ptype} is \code{new_json_array()} or \code{json2} vector.
 \item \code{ptype} is \code{NULL} and the elements are a mix of scalar values and arrays.
 }}
+
+\item{bigint_as_char}{Convert big integers to character? The option
+\code{jsontools.bigint_as_char} is used as default.}
 }
 \description{
 Unnest a column of JSON arrays in a data frame producing a longer data frame.

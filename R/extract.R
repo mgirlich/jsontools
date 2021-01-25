@@ -17,7 +17,8 @@
 #'   Note that scalars are only wrapped if either
 #'   * `ptype` is `new_json_array()` or `json2` vector.
 #'   * `ptype` is `NULL` and the elements are a mix of scalar values and arrays.
-#' @param bigint_as_char Convert big integers to character?
+#' @param bigint_as_char Convert big integers to character? The option
+#'   `jsontools.bigint_as_char` is used as default.
 #'
 #' @return A vector with class given by `ptype` and length equal to `x`. Mind
 #' that for `new_json_array()` and `new_json_object()` the return type will
@@ -48,7 +49,7 @@ json_extract <- function(x,
                          default = NULL,
                          na = NA,
                          wrap_scalars = FALSE,
-                         bigint_as_char = TRUE) {
+                         bigint_as_char = bigint_default()) {
   if (!is_string(path)) {
     stop_jsontools("`path` must be a character vector of length 1")
   }

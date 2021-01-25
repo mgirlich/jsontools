@@ -52,3 +52,7 @@ is_scalar <- function(x) {
     length(x) == 1
   }
 }
+
+bigint_default <- function() {
+  getOption("jsontools.bigint_as_char") %||% FALSE
+}

@@ -76,7 +76,7 @@ json_flatten <- function(x,
                          ptype = NULL,
                          allow_scalars = FALSE,
                          wrap_scalars = FALSE,
-                         bigint_as_char = TRUE) {
+                         bigint_as_char = bigint_default()) {
   # thoughts:
   # * no parameter `path` (for now) because then one should also add the other
   #   parameters from `json_extract`

@@ -32,7 +32,8 @@ json_unnest_longer <- function(data,
                                row_numbers_to = NULL,
                                indices_to = NULL,
                                ptype = NULL,
-                               wrap_scalars = FALSE) {
+                               wrap_scalars = FALSE,
+                               bigint_as_char = bigint_default()) {
   check_present(col)
   col <- tidyselect::vars_pull(names(data), !!enquo(col))
 
@@ -74,7 +75,8 @@ json_unnest_longer <- function(data,
     x_each$value,
     x_each$type,
     ptype = ptype,
-    wrap_scalars = wrap_scalars
+    wrap_scalars = wrap_scalars,
+    bigint_as_char = bigint_as_char
   )
 
   if (!is.null(row_numbers_to)) {

@@ -12,7 +12,8 @@ json_hoist(
   .ptype = list(),
   .wrap_scalars = list(),
   .default = list(),
-  .na = list()
+  .na = list(),
+  bigint_as_char = bigint_default()
 )
 }
 \arguments{
@@ -25,8 +26,8 @@ json_hoist(
 
 \item{.remove}{If \code{TRUE}, the default, will remove the column \code{.col}.}
 
-\item{.ptype, .wrap_scalars, .default, .na}{Optionally, a named list of
-parameters passed to \code{\link[=json_extract]{json_extract()}}.}
+\item{.ptype, .wrap_scalars, .default, .na, bigint_as_char}{Optionally, a named
+list of parameters passed to \code{\link[=json_extract]{json_extract()}}.}
 }
 \description{
 Rectangle a JSON vector
