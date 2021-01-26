@@ -82,6 +82,11 @@ test_that("json_extract checks `default`", {
     json_extract(y, "$.miss-sometimes", default = "a"),
     class = "jsontools_error"
   )
+
+  expect_snapshot_error(
+    json_extract(y, "$.miss-sometimes", default = character()),
+    class = "jsontools_error"
+  )
 })
 
 test_that("json_extract can handle NULL", {

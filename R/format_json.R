@@ -116,6 +116,7 @@ format_json <- function(x,
 
 to_json <- format_json
 
+# nocov start
 #' Write JSON
 #'
 #' @param x An object to write to disk.
@@ -129,6 +130,7 @@ write_json <- function(x, path, ...) {
   json <- format_json(x, ...)
   writeLines(json, path, useBytes = TRUE)
 }
+# nocov end
 
 
 #' @export
@@ -158,7 +160,7 @@ format_json_list <- function(x,
     ))
   }
 
-  purrr::map(
+  purrr::map_chr(
     x,
     function(elt) {
       format_json(
@@ -172,6 +174,5 @@ format_json_list <- function(x,
       )
     }
   ) %>%
-    purrr::flatten_chr() %>%
     new_json2()
 }

@@ -222,7 +222,6 @@ test_that("json_convert_value works", {
       ptype = list()
     ),
     list(TRUE, FALSE, 1, 1.5, "a", new_json2("[1, 2]"), new_json2('{"a": 1}'))
-    # list(TRUE, FALSE, 1, 1.5, "a", new_json_array("[1, 2]"), new_json_object('{"a": 1}'))
   )
 })
 
@@ -234,7 +233,6 @@ test_that("json_convert_value can wrap scalars", {
       ptype = NULL,
       wrap_scalars = TRUE
     ),
-    # new_json_array(c("[1, 2]", '["a"]'))
     new_json2(c("[1, 2]", '["a"]'))
   )
 
@@ -245,8 +243,34 @@ test_that("json_convert_value can wrap scalars", {
       ptype = new_json_array(),
       wrap_scalars = TRUE
     ),
-    # new_json_array(c("[1, 2]", '["a"]'))
     new_json2(c("[1, 2]", '["a"]'))
+  )
+})
+
+test_that("json_convert_value can handle objects", {
+  expect_snapshot_error(
+    json_convert_value(
+      x = c('{"a": 1}', "[1, 2]"),
+      json_types = c("object", "array"),
+      ptype = new_json_object()
+    )
+  )
+
+  expect_equal(
+    json_convert_value(
+      x = c("[1, 2]", '{"a": 1}'),
+      json_types = c("array", "object"),
+      ptype = json2()
+    ),
+    new_json2(c("[1, 2]", '{"a": 1}'))
+  )
+
+  expect_snapshot_error(
+    json_convert_value(
+      x = c("[1, 2]", '{"a": 1}', "1"),
+      json_types = c("array", "object", "integer"),
+      ptype = json2()
+    )
   )
 })
 

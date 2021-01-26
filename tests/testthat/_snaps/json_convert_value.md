@@ -74,6 +74,14 @@
 
     Can't convert <double> to <character>.
 
+# json_convert_value can handle objects
+
+    Not all elements are objects.
+
+---
+
+    Not all elements are objects or arrays.
+
 # json_convert_value handles big integers
 
     Code

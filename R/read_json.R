@@ -52,12 +52,12 @@ parse_json <- function(x,
     return(vec_ptype(.null))
   }
 
-  if (is.na(x)) {
-    return(.na)
-  }
-
   if (length(x) > 1 || !is_character(x)) {
     stop_jsontools("`x` must be a scalar character")
+  }
+
+  if (is.na(x)) {
+    return(.na)
   }
 
   jsonlite::parse_json(
@@ -73,6 +73,7 @@ parse_json <- function(x,
 
 from_json <- parse_json
 
+# nocov start
 #' Read JSON from disk or url
 #'
 #' @param path Path or connection to read from
@@ -114,7 +115,7 @@ loadpkg <- function(pkg) {
     stop_jsontools(message)
   }
 }
-
+# nocov end
 
 #' Parse a vector of JSON into a list
 #'

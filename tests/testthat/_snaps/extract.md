@@ -38,6 +38,10 @@
                          (right here) ------^
     
 
+---
+
+    `default` must be NULL or have length 1
+
 # json_extract checks path
 
     `path` must be a character vector of length 1

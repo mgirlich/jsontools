@@ -13,3 +13,9 @@ test_that("json_hoist works", {
     )
   )
 })
+
+test_that("json_hoist works", {
+  expect_snapshot_error(
+    json_hoist(tibble(json = '[0,1]'), json, a = "$[0]", a = "$[0]")
+  )
+})

@@ -139,7 +139,7 @@ json_ptype_common <- function(types, ptype = NULL) {
     return(new_json2())
   } else if (inherits(ptype, "json2")) {
     if (!all(types %in% c(cplx_json_types, "null"))) {
-      stop_jsontools("Not all elements are objects.")
+      stop_jsontools("Not all elements are objects or arrays.")
     }
     return(new_json2())
   }
