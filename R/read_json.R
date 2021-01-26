@@ -48,6 +48,7 @@ parse_json <- function(x,
                        flatten = FALSE,
                        bigint_as_char = bigint_default(),
                        ...) {
+  x <- vec_cast(x, character())
   if (is_null(x) || (is_character(x) && vec_size(x) == 0)) {
     return(vec_ptype(.null))
   }
