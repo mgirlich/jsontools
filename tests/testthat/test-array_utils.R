@@ -24,13 +24,14 @@ test_that("json_array_agg works", {
     new_json2('["a","b"]')
   )
 
+  x_posix <- vctrs::new_datetime(c(1, 2), tzone = "UTC")
   expect_equal(
-    json_array_agg(vctrs::new_datetime(c(1, 2))),
+    json_array_agg(x_posix),
     new_json2('["1970-01-01 00:00:01","1970-01-01 00:00:02"]')
   )
 
   expect_equal(
-    json_array_agg(as.POSIXlt(vctrs::new_datetime(c(1, 2)))),
+    json_array_agg(as.POSIXlt(x_posix)),
     new_json2('["1970-01-01 00:00:01","1970-01-01 00:00:02"]')
   )
 
