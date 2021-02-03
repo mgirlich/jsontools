@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/jsontools)](https://CRAN.R-project.org/package=jsontools)
 <!-- badges: end -->
@@ -137,7 +137,10 @@ If you wonder about the dollar sign `$`: it stands for the current
 element. Simply always start the path with it and you will be fine.
 
 To extract elements of nested objects you simply combine the path. For
-example the path to `1` in `{"a": {"b": [1, 2]}}` is `$.a.b[0]`.
+example the path to `1` in `{"a": {"b": [1, 2]}}` is `$.a.b[0]`. You can
+find more examples in article [JSONpath - XPath for
+JSON](https://goessner.net/articles/JsonPath/index.html#e2) by Stefan
+Gössner.
 
 We can now construct a tibble with some basic information about the
 characters

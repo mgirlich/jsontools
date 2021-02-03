@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # jsontools
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/jsontools)](https://CRAN.R-project.org/package=jsontools)
 <!-- badges: end -->
 
