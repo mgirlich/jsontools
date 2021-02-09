@@ -2,6 +2,7 @@
 This is a resubmission. In this version I have:
 
 * Written package names, software names and API (application programming interface) names in single quotes.
+* Documented return values.
 
 ## Test environments
 * local OS X install, R 3.6.1
