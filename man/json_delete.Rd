@@ -11,6 +11,10 @@ json_delete(x, ...)
 
 \item{...}{Paths to delete.}
 }
+\value{
+A \code{json2} vector similar to \code{x} with the specified paths removed
+from it.
+}
 \description{
 Remote the elements at the specified paths from a JSON vector.
 }

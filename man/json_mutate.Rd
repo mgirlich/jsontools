@@ -11,6 +11,10 @@ json_mutate(x, ...)
 
 \item{...}{Name-value pairs. The name is the JSON path (without leading "$").}
 }
+\value{
+A \code{json2} vector similar to \code{x} with the components modified as
+specified in \code{...}.
+}
 \description{
 Update values
 }

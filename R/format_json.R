@@ -22,7 +22,9 @@
 #'
 #' @seealso [`write_json()`], [`format_json_rowwise()`]
 #'
+#' @return A `json2` vector.
 #' @export
+#'
 #' @examples
 #' # null
 #' x_null <- list(a = NULL, b = 1)
@@ -125,10 +127,13 @@ to_json <- format_json
 #'
 #' @seealso [`format_json()`], [`format_json_rowwise()`]
 #'
+#' @return Returns the input `x` invisibly.
 #' @export
 write_json <- function(x, path, ...) {
   json <- format_json(x, ...)
   writeLines(json, path, useBytes = TRUE)
+
+  invisible(x)
 }
 # nocov end
 

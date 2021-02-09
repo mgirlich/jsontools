@@ -19,7 +19,9 @@
 #'
 #' @seealso [`json_unnest_longer()`]
 #'
+#' @return A data frame, or subclass of data frame of the same length as `data`.
 #' @export
+#'
 #' @examples
 #' # turn all components of item into columns with json_unnest_wider()
 #' tibble::tibble(

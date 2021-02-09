@@ -9,6 +9,9 @@ new_json_object()
 
 new_json_array()
 }
+\value{
+An empty \code{json2_object} resp. \code{json2_array}.
+}
 \description{
 Create a JSON object/array prototype to pass to the \code{.ptype} argument in
 some of the functions.

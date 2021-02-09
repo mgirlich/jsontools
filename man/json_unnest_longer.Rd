@@ -42,6 +42,9 @@ Note that scalars are only wrapped if either
 \item{bigint_as_char}{Convert big integers to character? The option
 \code{jsontools.bigint_as_char} is used as default.}
 }
+\value{
+A data frame, or subclass of data frame.
+}
 \description{
 Unnest a column of JSON arrays in a data frame producing a longer data frame.
 }

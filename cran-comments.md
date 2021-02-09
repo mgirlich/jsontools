@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Fixed a URL in README.md
+* Written package names, software names and API (application programming interface) names in single quotes.
 
 ## Test environments
 * local OS X install, R 3.6.1

@@ -5,7 +5,7 @@
 #' @param x A JSON vector.
 #' @param indent number of spaces to indent.
 #'
-#' @return A json2 vector.
+#' @return A `json2` vector.
 #' @export
 #'
 #' @examples

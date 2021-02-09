@@ -61,7 +61,10 @@ json_each <- function(x, path = NULL, allow_scalars = FALSE,
 #'
 #' @seealso [`json_unnest_longer()`], [`json_unnest_wider()`]
 #'
+#' @return A flattened version of `x` with class given by `ptype` and length
+#'   equal to the sum of the `json_array_length()` of the components of `x`.
 #' @export
+#'
 #' @examples
 #' json_flatten(c("[1, 2]", "[3]"))
 #'

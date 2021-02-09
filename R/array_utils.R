@@ -2,7 +2,8 @@
 #'
 #' @param x Vector to collapse into JSON array.
 #'
-#' @return A json2 object.
+#' @return A `json2` vector of length one with the elements of `x` collapsed
+#'   to a JSON array.
 #' @export
 #'
 #' @examples
@@ -81,7 +82,7 @@ agg_array <- function(x) {
 #' @inheritParams json_extract
 #' @param wrap_scalars Consider scalars as length one array?
 #'
-#' @return An integer vector of array lengths
+#' @return An integer vector of array lengths.
 #' @export
 #'
 #' @examples
@@ -150,7 +151,8 @@ is_json_array <- function(x, null = TRUE, na = TRUE) {
 #'
 #' @param x A character or numeric vector.
 #'
-#' @return A `json2` vector.
+#' @return A `json2` vector similar to `x` with the JSON scalars wrapped as
+#'   JSON array.
 #' @export
 #'
 #' @examples

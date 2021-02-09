@@ -12,7 +12,9 @@
 #'
 #' @seealso [`json_unnest_wider()`]
 #'
+#' @return A data frame, or subclass of data frame.
 #' @export
+#'
 #' @examples
 #' df <- tibble::tibble(
 #'   x = c("a", "b"),

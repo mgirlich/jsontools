@@ -34,7 +34,7 @@ format_json_rowwise(
 \item{rownames}{For data.frames add a field \verb{_row} with the row name?}
 }
 \value{
-A json2 vector of JSON objects.
+A \code{json2} vector of JSON objects.
 }
 \description{
 Convert each row of a data frame to a JSON object (this basically produces

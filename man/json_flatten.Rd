@@ -32,6 +32,10 @@ Note that scalars are only wrapped if either
 \item{bigint_as_char}{Convert big integers to character? The option
 \code{jsontools.bigint_as_char} is used as default.}
 }
+\value{
+A flattened version of \code{x} with class given by \code{ptype} and length
+equal to the sum of the \code{json_array_length()} of the components of \code{x}.
+}
 \description{
 Flatten a JSON array
 }

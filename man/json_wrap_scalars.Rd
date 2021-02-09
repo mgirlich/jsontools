@@ -10,7 +10,8 @@ json_wrap_scalars(x)
 \item{x}{A character or numeric vector.}
 }
 \value{
-A \code{json2} vector.
+A \code{json2} vector similar to \code{x} with the JSON scalars wrapped as
+JSON array.
 }
 \description{
 Wrap scalars in a JSON array

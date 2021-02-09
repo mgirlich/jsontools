@@ -8,6 +8,8 @@
 #' @param .ptype,.wrap_scalars,.default,.na,bigint_as_char Optionally, a named
 #'   list of parameters passed to [`json_extract()`].
 #'
+#' @return A data frame, or subclass of data frame with new columns as
+#'   specified in `...`.
 #' @export
 #'
 #' @examples

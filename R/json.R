@@ -10,7 +10,9 @@ methods::setOldClass(c("json2", "vctrs_vctr"))
 #'
 #' @param x A character vector.
 #'
+#' @return A `json2` vector.
 #' @export
+#'
 #' @examples
 #' json2()
 #' json2('{"abc": 1}')

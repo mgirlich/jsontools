@@ -5,6 +5,8 @@
 #' @param x A JSON vector.
 #' @param ... Paths to delete.
 #'
+#' @return A `json2` vector similar to `x` with the specified paths removed
+#'   from it.
 #' @export
 #' @examples
 #' x <- c('{"a": 11, "b": {"x": 12}}', NA)

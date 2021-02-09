@@ -29,6 +29,10 @@ json_hoist(
 \item{.ptype, .wrap_scalars, .default, .na, bigint_as_char}{Optionally, a named
 list of parameters passed to \code{\link[=json_extract]{json_extract()}}.}
 }
+\value{
+A data frame, or subclass of data frame with new columns as
+specified in \code{...}.
+}
 \description{
 Rectangle a JSON vector
 }

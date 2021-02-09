@@ -12,7 +12,7 @@ json_array_length(x, wrap_scalars = FALSE)
 \item{wrap_scalars}{Consider scalars as length one array?}
 }
 \value{
-An integer vector of array lengths
+An integer vector of array lengths.
 }
 \description{
 Get array length of JSON arrays

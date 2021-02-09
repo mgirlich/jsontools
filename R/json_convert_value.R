@@ -191,7 +191,9 @@ is_integer64 <- function(x) {
 #' Create a JSON object/array prototype to pass to the `.ptype` argument in
 #' some of the functions.
 #'
+#' @return An empty `json2_object` resp. `json2_array`.
 #' @export
+#'
 #' @rdname new_json_object
 new_json_object <- function() {
   new_vctr(character(), class = c("json2_object", "json2"))

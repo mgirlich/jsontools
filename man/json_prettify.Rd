@@ -15,7 +15,7 @@ json_minify(x)
 \item{indent}{number of spaces to indent.}
 }
 \value{
-A json2 vector.
+A \code{json2} vector.
 }
 \description{
 A wrapper around \code{\link[jsonlite:prettify]{jsonlite::prettify()}} resp. \code{\link[jsonlite:prettify]{jsonlite::minify()}}.

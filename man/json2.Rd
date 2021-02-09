@@ -18,6 +18,9 @@ is_json2(x)
 \arguments{
 \item{x}{A character vector.}
 }
+\value{
+A \code{json2} vector.
+}
 \description{
 \code{new_json2()} is a fast, low-level constructor that takes a character vector.
 \code{json2()} checks the input for validity.

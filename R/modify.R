@@ -3,7 +3,10 @@
 #' @param x A JSON vector.
 #' @param ... Name-value pairs. The name is the JSON path (without leading "$").
 #'
+#' @return A `json2` vector similar to `x` with the components modified as
+#'   specified in `...`.
 #' @export
+#'
 #' @examples
 #' x_na <- c('{"a": 11, "b": {"x": 12}}', NA, '{"a": 21, "b": {"x": 22}}')
 #' # update with different values

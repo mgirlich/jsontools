@@ -22,6 +22,7 @@
 #'   or a zero length character
 #'
 #' @export
+#'
 #' @examples
 #' # Parse escaped unicode
 #' parse_json('{"city" : "Z\\u00FCrich"}')

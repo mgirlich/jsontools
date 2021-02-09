@@ -10,7 +10,8 @@ json_array_agg(x)
 \item{x}{Vector to collapse into JSON array.}
 }
 \value{
-A json2 object.
+A \code{json2} vector of length one with the elements of \code{x} collapsed
+to a JSON array.
 }
 \description{
 Aggregate into a JSON array

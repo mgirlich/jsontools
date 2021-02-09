@@ -13,6 +13,9 @@ write_json(x, path, ...)
 
 \item{...}{arguments passed on to \code{\link{format_json}}}
 }
+\value{
+Returns the input \code{x} invisibly.
+}
 \description{
 Write JSON
 }
