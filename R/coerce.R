@@ -5,6 +5,8 @@
 #' @inheritParams vctrs::vec_ptype2
 #'
 #' @method vec_ptype2 json2
+#'
+#' @return A length-zero \R{} object.
 #' @export
 #' @export vec_ptype2.json2
 vec_ptype2.json2 <- function(x, y, ..., x_arg = "", y_arg = "") UseMethod("vec_ptype2.json2", y)

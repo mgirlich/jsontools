@@ -15,6 +15,9 @@
 \code{vec_cast()}, \code{vec_cast_default()}, and \code{vec_restore()}, these
 dots are only for future extensions and should be empty.}
 }
+\value{
+A \code{json2} vector.
+}
 \description{
 Double dispatch methods to support \code{\link[vctrs:vec_cast]{vctrs::vec_cast()}}.
 }

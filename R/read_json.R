@@ -21,6 +21,8 @@
 #' @param .null Return the prototype of `.null` if `x` is `NULL`
 #'   or a zero length character
 #'
+#' @return A \R{} object. The type depends on the input but is usually a list or a
+#'   data frame.
 #' @export
 #'
 #' @examples
@@ -80,6 +82,9 @@ from_json <- parse_json
 #'
 #' @param path Path or connection to read from
 #' @param ... arguments passed on to [`parse_json`]
+#'
+#' @return A \R{} object. The type depends on the input but is usually a list or a
+#'   data frame.
 read_json <- function(path, ...) {
   if (!is.character(txt) && !inherits(txt, "connection")) {
     stop_jsontools("Argument 'path' must be a path, URL or file.")

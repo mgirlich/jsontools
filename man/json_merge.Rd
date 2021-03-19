@@ -11,6 +11,9 @@ json_merge(x, y)
 
 \item{y}{A JSON vector with updated values.}
 }
+\value{
+A \code{json2} vector.
+}
 \description{
 By merging two objects you can add, modify, or remove elements of an object.
 Arrays cannot be modified but only replaced as a whole. It is mostly a small

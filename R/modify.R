@@ -78,7 +78,9 @@ json_mutate <- function(x, ...) {
 #' @param x A JSON vector to update.
 #' @param y A JSON vector with updated values.
 #'
+#' @return A `json2` vector.
 #' @export
+#'
 #' @examples
 #' # update element with key "a"
 #' json_merge('{"a": 1, "c": 3}', '{"a": 11}')

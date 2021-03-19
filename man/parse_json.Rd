@@ -31,6 +31,10 @@ to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 \item{bigint_as_char}{Parse big integers as character? The option
 \code{jsontools.bigint_as_char} is used as default.}
 }
+\value{
+A \R{} object. The type depends on the input but is usually a list or a
+data frame.
+}
 \description{
 A wrapper around the great \code{\link[jsonlite:read_json]{jsonlite::parse_json}}. The differences are:
 \itemize{

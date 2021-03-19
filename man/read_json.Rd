@@ -11,6 +11,10 @@ read_json(path, ...)
 
 \item{...}{arguments passed on to \code{\link{parse_json}}}
 }
+\value{
+A \R{} object. The type depends on the input but is usually a list or a
+data frame.
+}
 \description{
 Read JSON from disk or url
 }

@@ -33,6 +33,9 @@ incompatible types (see \code{\link[vctrs:vctrs-conditions]{stop_incompatible_ty
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[vctrs:vctrs-conditions]{stop_incompatible_type()}}).}
 }
+\value{
+A length-zero \R{} object.
+}
 \description{
 Double dispatch methods to support \code{\link[vctrs:vec_ptype2]{vctrs::vec_ptype2()}}.
 }

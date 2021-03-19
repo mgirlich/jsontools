@@ -6,6 +6,8 @@
 #'
 #' @keywords internal
 #' @method vec_cast json2
+#'
+#' @return A `json2` vector.
 #' @export
 #' @export vec_cast.json2
 vec_cast.json2 <- function(x, to, ...) UseMethod("vec_cast.json2")
