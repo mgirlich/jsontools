@@ -1,8 +1,12 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Written package names, software names and API (application programming interface) names in single quotes.
-* Documented return values.
+* Documented return values in `json_merge.Rd`, `parse_json.Rd`, `read_json.Rd`,
+  and `vec_cast.json2.Rd`.
+* In the following documenting the return type does not really make sense:
+  * `object.Rd`: This is not a documentation of a function or data but only a
+    separate topic to be shown in the help.
+  * `pipe.Rd`: Documentation of the magrittr pipe `%>%`.
 
 ## Test environments
 * local OS X install, R 3.6.1
