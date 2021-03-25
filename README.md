@@ -25,20 +25,19 @@ The three main parts are:
 
 ## Installation
 
-jsontools is not yet release on CRAN. You can install it from GitHub
-with
-
 ``` r
-# install.packages("devtools")
+install.packages("jsontools")
+
+# Or the the development version from GitHub:
 devtools::install_github("mgirlich/jsontools")
 ```
+
+## Overview
 
 ``` r
 library(jsontools)
 got_json <- got_chars_json
 ```
-
-## Overview
 
 First, let’s find out what’s the type of the JSON
 
@@ -215,14 +214,13 @@ got_chars_df <- tibble::tibble(chars_json = got_chars) %>%
 
 got_chars_df
 #> # A tibble: 5 x 7
-#>   url      id name  alive
-#>   <chr> <int> <chr> <lgl>
-#> 1 http…  1022 Theo… TRUE 
-#> 2 http…  1052 Tyri… TRUE 
-#> 3 http…  1074 Vict… TRUE 
-#> 4 http…  1109 Will  FALSE
-#> 5 http…  1166 Areo… TRUE 
-#> # … with 3 more variables: titles <json2>, aliases <json2>, allegiances <json2>
+#>   url           id name    alive           titles          aliases   allegiances
+#>   <chr>      <int> <chr>   <lgl>          <json2>          <json2>       <json2>
+#> 1 https://w…  1022 Theon … TRUE  ["Prince of Win… ["Prince of Foo… ["House Grey…
+#> 2 https://w…  1052 Tyrion… TRUE  ["Acting Hand o… ["The Imp","Hal… ["House Lann…
+#> 3 https://w…  1074 Victar… TRUE  ["Lord Captain … ["The Iron Capt… ["House Grey…
+#> 4 https://w…  1109 Will    FALSE             [""]             [""]            []
+#> 5 https://w…  1166 Areo H… TRUE  ["Captain of th…             [""] ["House Nyme…
 ```
 
 We can also unnest arrays with `json_unnest_longer()`. This is basically

@@ -33,10 +33,10 @@ The three main parts are:
 
 ## Installation
 
-jsontools is not yet release on CRAN. You can install it from GitHub with
-
 ``` r
-# install.packages("devtools")
+install.packages("jsontools")
+
+# Or the the development version from GitHub:
 devtools::install_github("mgirlich/jsontools")
 ```
 

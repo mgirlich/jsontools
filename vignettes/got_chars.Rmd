@@ -14,12 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Overview
 ```{r setup}
 library(jsontools)
 got_json <- got_chars_json
 ```
 
-## Overview
 First, let's find out what's the type of the JSON
 
 ```{r type}
