@@ -11,6 +11,7 @@ Description: A toolbox for working with JSON vectors similar to
     in parsing and formatting JSON, extracting data from JSON, and
     modifying JSON data.
 License: GPL-3
+URL: https://github.com/mgirlich/jsontools
 Depends: 
     R (>= 3.2.0)
 Imports: 

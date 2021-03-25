@@ -11,6 +11,13 @@ A toolbox for working with JSON vectors similar to
     in parsing and formatting JSON, extracting data from JSON, and
     modifying JSON data.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mgirlich/jsontools}
+}
+
+}
 \author{
 \strong{Maintainer}: Maximilian Girlich \email{maximilian.girlich@outlook.com}
 
