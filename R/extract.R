@@ -90,7 +90,7 @@ json_extract <- function(x,
   replace_not_found(x_result, path_not_found, default)
 }
 
-replace_not_found <- function(x, not_found_flag, default) {
+replace_not_found <- function(x, not_found_flag, default, ..., error_call = caller_env()) {
   if (any(not_found_flag)) {
     if (is_null(default)) {
       msg <- c(
@@ -98,7 +98,7 @@ replace_not_found <- function(x, not_found_flag, default) {
         i = "Did you provide an incorrect path?",
         i = "With `default` you can specify a default value for missing elements."
       )
-      stop_jsontools(msg)
+      stop_jsontools(msg, call = error_call)
     }
   }
 

@@ -1,6 +1,6 @@
 # parse_json works
 
-    Can't convert <double> to <character>.
+    Can't convert `x` <double> to <character>.
 
 # parse_json works only for scalar character
 
@@ -8,7 +8,7 @@
 
 ---
 
-    Can't convert <double> to <character>.
+    Can't convert `x` <double> to <character>.
 
 # parse_json works for NA
 

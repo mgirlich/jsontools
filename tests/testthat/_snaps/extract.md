@@ -4,13 +4,13 @@
 
 # json_extract handles missing elements
 
-    `path` does not always exist.
+    x `path` does not always exist.
     i Did you provide an incorrect path?
     i With `default` you can specify a default value for missing elements.
 
 ---
 
-    `path` does not always exist.
+    x `path` does not always exist.
     i Did you provide an incorrect path?
     i With `default` you can specify a default value for missing elements.
 

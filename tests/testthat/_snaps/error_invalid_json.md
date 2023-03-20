@@ -1,0 +1,35 @@
+# useful error message
+
+    Code
+      json2(input)
+    Error <jsontools_error_invalid_json>
+      invalid JSON at 12 locations:
+        2, 4, 6, 8, 10, ..., 16, 18, 20, 22, 24
+      
+      2: offset 1
+      parse error: premature EOF
+                                             {"a": 1
+                           (right here) ------^
+      
+      4: offset 1
+      parse error: premature EOF
+                                             {"a": 1
+                           (right here) ------^
+      
+      6: offset 1
+      parse error: premature EOF
+                                             {"a": 1
+                           (right here) ------^
+      
+      8: offset 1
+      parse error: premature EOF
+                                             {"a": 1
+                           (right here) ------^
+      
+      10: offset 1
+      parse error: premature EOF
+                                             {"a": 1
+                           (right here) ------^
+      
+      ... (7 more errors)
+

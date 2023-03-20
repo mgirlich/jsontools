@@ -1,5 +1,5 @@
 > json2(input)
-Error: invalid JSON at 12 locations:
+Error in json2(input): invalid JSON at 12 locations:
   2, 4, 6, 8, 10, ..., 16, 18, 20, 22, 24
 
 2: offset 1

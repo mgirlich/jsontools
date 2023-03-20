@@ -139,7 +139,7 @@
 # json_unnest_wider can wrap scalars
 
     Issue when extracting key `a`
-    * Cannot combine JSON array/object with scalar values.
+    * x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 

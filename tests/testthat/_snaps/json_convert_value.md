@@ -16,25 +16,25 @@
 
 ---
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
 ---
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
 ---
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
 ---
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
@@ -48,13 +48,13 @@
 
 # json_vec_c handles mix of array/object and text
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
 ---
 
-    Cannot combine JSON array/object with scalar values.
+    x Cannot combine JSON array/object with scalar values.
     i Use `wrap_scalars = TRUE` to wrap scalars in an array.
     i Use `ptype = character()` to return result as text.
 
@@ -72,7 +72,7 @@
 
 ---
 
-    Can't convert <double> to <character>.
+    Can't convert `..1` <double> to <character>.
 
 # json_convert_value can handle objects
 
@@ -92,5 +92,5 @@
 
 ---
 
-    Can't combine <character> and <integer>.
+    Can't combine `ptype` <character> and `integer()` <integer>.
 

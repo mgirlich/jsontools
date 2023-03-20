@@ -1,4 +1,4 @@
-stop_jsontools <- function(message, ..., error_type = NULL) {
+stop_jsontools <- function(message, ..., error_type = NULL, call = caller_env()) {
   class <- "jsontools_error"
   if (!is.null(error_type)) {
     class <- c(paste0("jsontools_error_", error_type), class)
@@ -7,7 +7,8 @@ stop_jsontools <- function(message, ..., error_type = NULL) {
   abort(
     message = message,
     class = class,
-    ...
+    ...,
+    call = call
   )
 }
 
