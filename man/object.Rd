@@ -10,7 +10,9 @@ Creating JSON objects
 
 
 Given some \code{R} values you can easily create an object with them by putting
-them into a named list and applying \code{format_json()}:\preformatted{id <- 1
+them into a named list and applying \code{format_json()}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{id <- 1
 x <- 1:3
 y <- c("a", "b")
 
@@ -23,15 +25,17 @@ tibble::tibble(
   y = c("a", "b", "c")
 ) \%>\%
   format_json(dataframe = "columns")
-}
+}\if{html}{\out{</div>}}
 
 To create multiple objects at once (basically a vectorised version) put the
-values in a data frame and apply \code{format_json_rowwise()}:\preformatted{df <- tibble::tibble(
+values in a data frame and apply \code{format_json_rowwise()}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{df <- tibble::tibble(
   id = 1,
   x = list(1:2, 3:4, 5),
   y = c("a", "b", "c")
 )
 format_json_rowwise(df)
-}
+}\if{html}{\out{</div>}}
 }
 

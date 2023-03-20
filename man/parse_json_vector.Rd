@@ -25,23 +25,11 @@ parse_json_vector(
 \item{.null}{Return the prototype of \code{.null} if \code{x} is \code{NULL}
 or a zero length character}
 
-\item{simplifyVector}{passed on
-to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
-
-\item{simplifyDataFrame}{passed on
-to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
-
-\item{simplifyMatrix}{passed on
-to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
-
-\item{flatten}{passed on
+\item{simplifyVector, simplifyDataFrame, simplifyMatrix, flatten, ...}{passed on
 to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 
 \item{bigint_as_char}{Parse big integers as character? The option
 \code{jsontools.bigint_as_char} is used as default.}
-
-\item{...}{passed on
-to \code{\link[jsonlite:read_json]{jsonlite::parse_json}}.}
 }
 \value{
 A list of the same length as \code{x}.

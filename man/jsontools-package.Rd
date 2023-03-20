@@ -6,10 +6,7 @@
 \alias{jsontools-package}
 \title{jsontools: Working with JSON Vectors}
 \description{
-A toolbox for working with JSON vectors similar to
-    the functions 'Postgres' provides to work with JSON columns. It supports
-    in parsing and formatting JSON, extracting data from JSON, and
-    modifying JSON data.
+A toolbox for working with JSON vectors similar to the functions 'Postgres' provides to work with JSON columns. It supports in parsing and formatting JSON, extracting data from JSON, and modifying JSON data.
 }
 \seealso{
 Useful links:

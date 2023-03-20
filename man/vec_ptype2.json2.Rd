@@ -19,19 +19,13 @@
 vec_ptype2.pq_json(x, y, ..., x_arg = "", y_arg = "")
 }
 \arguments{
-\item{x}{Vector types.}
-
-\item{y}{Vector types.}
+\item{x, y}{Vector types.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
+\item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
-incompatible types (see \code{\link[vctrs:vctrs-conditions]{stop_incompatible_type()}}).}
-
-\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[vctrs:vctrs-conditions]{stop_incompatible_type()}}).}
+incompatible types (see \code{\link[vctrs:stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \value{
 A length-zero \R{} object.
