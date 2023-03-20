@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/jsontools)](https://CRAN.R-project.org/package=jsontools)
+[![R-CMD-check](https://github.com/mgirlich/jsontools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mgirlich/jsontools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
