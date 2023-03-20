@@ -73,10 +73,15 @@ json_is_valid <- function(x) {
 #' @param x A character vector.
 #' @param x_arg Argument name for `x`. Used in error message to inform the user
 #'   about the location of the error.
+#' @param ... These dots are for future extensions and must be empty.
+#' @param error_call The execution environment of a currently running function,
+#'   e.g. [rlang::caller_env()]. The function will be mentioned in error
+#'   messages as the source of the error. See the call argument of
+#'   [rlang::abort()] for more information.
 #'
 #' @return `json_is_valid()` returns a vector of `TRUE` and `FALSE`.
-#' `json_assert_valid()` either throws an error with information on the invalid
-#' elements or returns `x` invisibly
+#'   `json_assert_valid()` either throws an error with information on the
+#'   invalid elements or returns `x` invisibly
 #' @export
 #'
 #' @examples

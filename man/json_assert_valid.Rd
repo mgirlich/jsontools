@@ -7,18 +7,25 @@
 \usage{
 json_is_valid(x)
 
-json_assert_valid(x, x_arg = "")
+json_assert_valid(x, x_arg = "", ..., error_call = caller_env())
 }
 \arguments{
 \item{x}{A character vector.}
 
 \item{x_arg}{Argument name for \code{x}. Used in error message to inform the user
 about the location of the error.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{error_call}{The execution environment of a currently running function,
+e.g. \code{\link[rlang:stack]{rlang::caller_env()}}. The function will be mentioned in error
+messages as the source of the error. See the call argument of
+\code{\link[rlang:abort]{rlang::abort()}} for more information.}
 }
 \value{
 \code{json_is_valid()} returns a vector of \code{TRUE} and \code{FALSE}.
-\code{json_assert_valid()} either throws an error with information on the invalid
-elements or returns \code{x} invisibly
+\code{json_assert_valid()} either throws an error with information on the
+invalid elements or returns \code{x} invisibly
 }
 \description{
 Uses \code{\link[jsonlite:validate]{jsonlite::validate()}} under the hood.

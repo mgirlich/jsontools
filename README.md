@@ -127,10 +127,10 @@ json_extract(got_chars, "$.name")
 The second argument `"$.name"` specifies the `path` of the element we
 want to extract. The basic syntax is relatively simple:
 
--   `$.name` to extract the attribute `name` of a JSON object.
--   `$[0]` to extract the first element of a JSON array. Keep in mind
-    that the index here starts with 0 unlike in `R`!
--   `$[last]` to extract the last element.
+- `$.name` to extract the attribute `name` of a JSON object.
+- `$[0]` to extract the first element of a JSON array. Keep in mind that
+  the index here starts with 0 unlike in `R`!
+- `$[last]` to extract the last element.
 
 If you wonder about the dollar sign `$`: it stands for the current
 element. Simply always start the path with it and you will be fine.
@@ -150,7 +150,7 @@ tibble::tibble(
   name = json_extract(got_chars, "$.name"),
   alive = json_extract(got_chars, "$.alive")
 )
-#> # A tibble: 5 x 3
+#> # A tibble: 5 × 3
 #>      id name              alive
 #>   <int> <chr>             <lgl>
 #> 1  1022 Theon Greyjoy     TRUE 
@@ -169,7 +169,8 @@ tibble::tibble(
   alive = json_extract(got_chars, "$.alive"),
   titles = json_extract(got_chars, "$.titles")
 )
-#> Error: Cannot combine JSON array/object with scalar values.
+#> Error in `json_ptype_common()`:
+#> ! ✖ Cannot combine JSON array/object with scalar values.
 #> ℹ Use `wrap_scalars = TRUE` to wrap scalars in an array.
 #> ℹ Use `ptype = character()` to return result as text.
 ```
@@ -213,14 +214,15 @@ got_chars_df <- tibble::tibble(chars_json = got_chars) %>%
   json_unnest_wider(chars_json, wrap_scalars = TRUE)
 
 got_chars_df
-#> # A tibble: 5 x 7
-#>   url           id name    alive           titles          aliases   allegiances
-#>   <chr>      <int> <chr>   <lgl>          <json2>          <json2>       <json2>
-#> 1 https://w…  1022 Theon … TRUE  ["Prince of Win… ["Prince of Foo… ["House Grey…
-#> 2 https://w…  1052 Tyrion… TRUE  ["Acting Hand o… ["The Imp","Hal… ["House Lann…
-#> 3 https://w…  1074 Victar… TRUE  ["Lord Captain … ["The Iron Capt… ["House Grey…
-#> 4 https://w…  1109 Will    FALSE             [""]             [""]            []
-#> 5 https://w…  1166 Areo H… TRUE  ["Captain of th…             [""] ["House Nyme…
+#> # A tibble: 5 × 7
+#>   url                            id name  alive     titles    aliases allegian…¹
+#>   <chr>                       <int> <chr> <lgl>    <json2>    <json2>    <json2>
+#> 1 https://www.anapioficeandf…  1022 Theo… TRUE  ["Prince … ["Prince … ["House G…
+#> 2 https://www.anapioficeandf…  1052 Tyri… TRUE  ["Acting … ["The Imp… ["House L…
+#> 3 https://www.anapioficeandf…  1074 Vict… TRUE  ["Lord Ca… ["The Iro… ["House G…
+#> 4 https://www.anapioficeandf…  1109 Will  FALSE       [""]       [""]         []
+#> 5 https://www.anapioficeandf…  1166 Areo… TRUE  ["Captain…       [""] ["House N…
+#> # … with abbreviated variable name ¹​allegiances
 ```
 
 We can also unnest arrays with `json_unnest_longer()`. This is basically
@@ -229,7 +231,7 @@ a version `json_flatten()` for data frames
 ``` r
 got_chars_df[c("id", "name", "titles")] %>% 
   json_unnest_longer(titles)
-#> # A tibble: 9 x 3
+#> # A tibble: 9 × 3
 #>      id name              titles                                                
 #>   <int> <chr>             <chr>                                                 
 #> 1  1022 Theon Greyjoy     "Prince of Winterfell"                                

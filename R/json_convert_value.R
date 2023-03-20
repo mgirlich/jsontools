@@ -39,8 +39,7 @@ should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
     (is_null(ptype) || inherits(ptype, "json2"))
 }
 
-#' @noRd
-#' @title Convert characters according to JSON types
+#' Convert characters according to JSON types
 #'
 #' Convert the values returned by `json_each` according to the types.
 #'
@@ -48,6 +47,7 @@ should_wrap_scalars <- function(wrap_scalars, ptype, json_types) {
 #' @param json_types Character vector of JSON types.
 #'
 #' @return A list of parsed values.
+#' @noRd
 #'
 #' @examples
 #' convert_json_type(c("1", "[1]"), c("integer", "array"))
