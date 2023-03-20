@@ -26,12 +26,12 @@ print.json2 <- function(x, ..., max_char = 1e3) {
 }
 
 #' @export
-vec_ptype_abbr.json2 <- function(x) {
+vec_ptype_abbr.json2 <- function (x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   "json2"
 }
 
 #' @export
-vec_ptype_full.json2 <- function(x) {
+vec_ptype_full.json2 <- function(x, ...) {
   "json2"
 }
 
