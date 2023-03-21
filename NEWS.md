@@ -1,4 +1,4 @@
-# jsontools (development version)
+# jsontools 0.1.1
 
 * Fixed the consistency with `vctrs::vec_ptype_full()` and
   `vctrs::vec_ptype_abbr()`.
